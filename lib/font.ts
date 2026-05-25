@@ -1,6 +1,6 @@
 import {
 
-  Geist_Mono,
+  IBM_Plex_Mono,
   Inter,
   Fraunces,
   Tajawal,
@@ -11,9 +11,10 @@ import { cn } from './utils';
 
 
 
-const fontMono = Geist_Mono({
+const fontMono = IBM_Plex_Mono({
   subsets: ['latin'],
-  variable: '--font-mono'
+  weight: ['400', '500'],
+  variable: '--font-en-mono'
 });
 
 const fontEnBase = Inter({
