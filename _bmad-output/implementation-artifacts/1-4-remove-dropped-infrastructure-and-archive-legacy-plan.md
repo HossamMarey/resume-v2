@@ -1,6 +1,6 @@
 # Story 1.4: Remove dropped infrastructure and archive legacy plan
 
-Status: review
+Status: done
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
