@@ -3,6 +3,7 @@
 import { usePathname } from "next/navigation"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
+import { profile } from "@/lib/content/profile"
 
 const tabs = [
   { href: "/", label: "Elements" },
@@ -20,14 +21,29 @@ function isActiveTab(pathname: string, href: string): boolean {
 
 export function DevToolsChrome() {
   const pathname = usePathname()
+  const displayName = profile.name?.trim() || "Hossam Marey"
+  const displayRole = profile.role?.trim() || "Senior Front-End Developer"
 
   return (
     <header className="border-b border-hairline bg-surface">
-      <div className="px-4 py-2 text-xs font-mono text-muted-foreground">
-        {/* Identity strip placeholder — Story 2.2 */}
-        devtools://hossam
+      <div className="flex items-center justify-between px-4 py-2">
+        <div
+          className="flex items-baseline gap-2"
+          aria-label={`${displayName}, ${displayRole}`}
+        >
+          <span className="text-sm font-semibold text-foreground">
+            {displayName}
+          </span>
+          <span className="font-mono text-xs uppercase tracking-wider text-muted-foreground">
+            {displayRole}
+          </span>
+        </div>
+        <div className="ms-auto flex items-center gap-3">
+          {/* Recruiter Mode chip — Epic 6 */}
+          {/* XP bar — Story 2.5 */}
+        </div>
       </div>
-      <nav aria-label="DevTools panels">
+      <nav aria-label="DevTools tabs">
         <ul className="flex gap-1 px-4">
           {tabs.map((tab) => {
             const isActive = isActiveTab(pathname, tab.href)

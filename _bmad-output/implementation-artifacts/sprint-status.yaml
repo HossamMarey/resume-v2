@@ -44,7 +44,7 @@ story_location: _bmad-output/implementation-artifacts
 
 development_status:
   # Epic 1: Foundation & Visual Identity
-  epic-1: in-progress
+  epic-1: done
   1-1-rewrite-design-tokens-to-obsidian-signal-lime: done
   1-2-add-base-utility-layers-selection-grid-scanlines: done
   1-3-build-shared-cross-cutting-helpers: done
@@ -53,8 +53,8 @@ development_status:
 
   # Epic 2: Persistent DevTools Chrome, Navigation & XP Spine
   epic-2: in-progress
-  2-1-establish-the-chrome-route-group-and-root-layout: ready-for-dev
-  2-2-identity-strip-and-devtools-tab-navigation: backlog
+  2-1-establish-the-chrome-route-group-and-root-layout: done
+  2-2-identity-strip-and-devtools-tab-navigation: done
   2-3-mobile-bottom-tab-bar: backlog
   2-4-theme-provider-and-d-hotkey-dark-only: backlog
   2-5-xp-event-bus-hook-and-chrome-xp-bar-with-tab-visit-grant: backlog
