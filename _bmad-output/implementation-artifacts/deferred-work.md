@@ -77,3 +77,47 @@ Surfaced by quick-dev review loops. Each entry: source spec, finding, suggested 
 **Where:** `lib/content/experience.ts` — `parseDateRange` preserves source casing, so the Inovola employment ends up with `endDate: "sep. 2022"` (lowercase) while siblings use `"Mar. 2021"`. Downstream sort/parse may distinguish "Sep." vs "sep.".
 
 **Why deferred:** Cosmetic; downstream renderer can title-case month abbreviations. Real fix is parsing dates into proper `Date` objects rather than free-form strings — out of scope for this spec.
+
+---
+
+## From code review of story 2.1 (2026-05-30)
+
+### 10. No error or loading boundaries in chrome group
+
+**Where:** `app/(chrome)/`, `app/recruiter/` — no `error.tsx` or `loading.tsx` files.
+
+**Why deferred:** Out of scope for Story 2.1. Runtime errors currently bubble to generic Next.js overlay.
+
+**Suggested fix:** Add `error.tsx` and `loading.tsx` to `(chrome)` and root `app/`.
+
+### 11. Zod parse crash at module initialization
+
+**Where:** `lib/content/projects.ts:391` — `ProjectsCollectionSchema.parse()` runs at top level.
+
+**Why deferred:** Pre-existing from content migration (commit `cd5dd09`). Not caused by Story 2.1.
+
+**Suggested fix:** Move parsing into a function or wrap in try/catch with safe fallback.
+
+### 12. Missing root `not-found.tsx`
+
+**Where:** `app/not-found.tsx` does not exist.
+
+**Why deferred:** Out of scope for Story 2.1. Unknown routes show default Next.js 404 without chrome styling.
+
+**Suggested fix:** Create custom `not-found.tsx` at app root.
+
+### 13. Rapid navigation feels blocked by `mode="wait"`
+
+**Where:** `app/(chrome)/layout.tsx:67` — `AnimatePresence mode="wait"` waits 200ms for exit fade.
+
+**Why deferred:** UX tuning, not a bug. Fast tab clicks queue transitions. Can be addressed in Story 2.2+ if it feels sluggish in practice.
+
+**Suggested fix:** Switch to `mode="popLayout"` or reduce exit duration further.
+
+### 14. `<main className="flex-1">` without flex parent
+
+**Where:** `app/(chrome)/layout.tsx:66` — `flex-1` requires a flex container parent.
+
+**Why deferred:** Layout refinement deferred to later stories (2.2–2.5) when the full chrome structure is built.
+
+**Suggested fix:** Ensure `<body>` or a wrapper establishes `display: flex; flex-direction: column; min-height: 100vh`.

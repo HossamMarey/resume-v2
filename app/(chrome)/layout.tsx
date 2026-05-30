@@ -1,0 +1,64 @@
+"use client"
+
+import type { ReactNode } from "react"
+import { usePathname } from "next/navigation"
+import { motion, AnimatePresence } from "framer-motion"
+import { DevToolsChrome } from "@/components/devtools-chrome"
+import { useShouldAnimate } from "@/hooks/use-should-animate"
+import { useEffect, useState } from "react"
+
+const pageVariants = {
+  initial: { opacity: 0 },
+  animate: {
+    opacity: 1,
+    transition: { duration: 0.2, ease: "easeOut" as const },
+  },
+  exit: {
+    opacity: 0,
+    transition: { duration: 0.15, ease: "easeOut" as const },
+  },
+}
+
+export default function ChromeLayout({
+  children,
+}: Readonly<{
+  children: ReactNode
+}>) {
+  const animate = useShouldAnimate()
+  const pathname = usePathname()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    const raf = requestAnimationFrame(() => setMounted(true))
+    return () => cancelAnimationFrame(raf)
+  }, [])
+
+  return (
+    <>
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-0 focus:top-0 focus:z-50 focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground"
+      >
+        Skip to content
+      </a>
+      <DevToolsChrome />
+      <main id="main-content" className="flex-1">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={pathname}
+            variants={pageVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            transition={{
+              duration: mounted ? (animate ? 0.2 : 0.001) : 0.001,
+              ease: "easeOut",
+            }}
+          >
+            {children}
+          </motion.div>
+        </AnimatePresence>
+      </main>
+    </>
+  )
+}

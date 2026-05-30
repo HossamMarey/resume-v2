@@ -1,38 +1,32 @@
-import { Inter } from "next/font/google"
+import type { ReactNode } from "react"
 
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { TooltipProvider } from "@/components/ui/tooltip"
-import { cn } from "@/lib/utils";
-import { fontVariables } from "@/lib/font";
-
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-sans",
-})
+import { Toaster } from "@/components/ui/sonner"
+import { cn } from "@/lib/utils"
+import { fontVariables } from "@/lib/font"
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode
+  children: ReactNode
 }>) {
   return (
     <html
       lang="en"
+      dir="ltr"
       suppressHydrationWarning
-
-      className={cn("h-full antialiased ", fontVariables)}
+      className={cn("h-full antialiased", fontVariables)}
     >
       <body>
         <ThemeProvider>
           <TooltipProvider>
-
-
-            <main  >{children}</main>
-
-
+            {children}
+            <Toaster />
           </TooltipProvider>
         </ThemeProvider>
+        {/* KonamiListener placeholder — Story 2.5 */}
       </body>
     </html>
   )

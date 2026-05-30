@@ -52,8 +52,8 @@ development_status:
   epic-1-retrospective: optional
 
   # Epic 2: Persistent DevTools Chrome, Navigation & XP Spine
-  epic-2: backlog
-  2-1-establish-the-chrome-route-group-and-root-layout: backlog
+  epic-2: in-progress
+  2-1-establish-the-chrome-route-group-and-root-layout: ready-for-dev
   2-2-identity-strip-and-devtools-tab-navigation: backlog
   2-3-mobile-bottom-tab-bar: backlog
   2-4-theme-provider-and-d-hotkey-dark-only: backlog
