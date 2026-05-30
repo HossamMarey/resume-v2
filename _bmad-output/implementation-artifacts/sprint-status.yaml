@@ -48,7 +48,7 @@ development_status:
   1-1-rewrite-design-tokens-to-obsidian-signal-lime: done
   1-2-add-base-utility-layers-selection-grid-scanlines: done
   1-3-build-shared-cross-cutting-helpers: done
-  1-4-remove-dropped-infrastructure-and-archive-legacy-plan: backlog
+  1-4-remove-dropped-infrastructure-and-archive-legacy-plan: review
   epic-1-retrospective: optional
 
   # Epic 2: Persistent DevTools Chrome, Navigation & XP Spine
