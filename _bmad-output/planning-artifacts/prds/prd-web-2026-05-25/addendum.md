@@ -532,7 +532,7 @@ NFR-A6: Recruiter Mode prints clean. CSS targets:
     --hairline: rgba(0,0,0,0.2);
   }
   .no-print { display: none; }
-  body { font-family: "Inter Tight", system-ui, sans-serif; }
+  body { font-family: "Inter", system-ui, sans-serif; }
   /* Single-column flow, no card backgrounds, no marquees */
 }
 ```

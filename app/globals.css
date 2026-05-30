@@ -54,7 +54,7 @@
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
+  --radius-xl: var(--radius);
 
   /* Computed Shadow Variants */
   --shadow-2xs: var(--shadow-2xs);
@@ -74,112 +74,100 @@
   --tracking-widest: calc(var(--letter-spacing) + 0.1em);
 }
 
+/*
+ * devtools://hossam — Obsidian + Signal Lime, dark-only (addendum §0.1–0.2).
+ * Canonical OKLCH token set lives in :root so colors paint before hydration
+ * and with JS disabled. next-themes still adds `.dark` on <html> (Story 2.4)
+ * so the `dark:` variant resolves; the values no longer depend on it.
+ */
 :root {
-  --background: #fbf6ef;
-  --foreground: #241f1b;
-  --card: #ffffff;
-  --card-foreground: #241f1b;
-  --popover: #ffffff;
-  --popover-foreground: #241f1b;
-  --primary: #c64a2b;
-  --primary-foreground: #ffffff;
-  --secondary: #f3eadb;
-  --secondary-foreground: #241f1b;
-  --muted: #f3eadb;
-  --muted-foreground: #6a5d53;
-  --accent: #e8ded0;
-  --accent-foreground: #241f1b;
-  --destructive: #c64a2b;
-  --destructive-foreground: #ffffff;
-  --border: #e8e2d9;
-  --input: #e8e2d9;
-  --ring: #c64a2b;
-  --chart-1: #c64a2b;
-  --chart-2: #6f7a3a;
-  --chart-3: #c68a3a;
-  --chart-4: #8a2a2a;
-  --chart-5: #3a2e26;
-  --sidebar: #fbf6ef;
-  --sidebar-foreground: #241f1b;
-  --sidebar-primary: #c64a2b;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #e8ded0;
-  --sidebar-accent-foreground: #241f1b;
-  --sidebar-border: #e8e2d9;
-  --sidebar-ring: #c64a2b;
-  --font-base: var(--font-en-base), -apple-system, system-ui, sans-serif;
-  --font-title: var(--font-en-title), Georgia, serif;
-  --font-mono: var(--font-en-mono), ui-monospace, "SF Mono", Menlo, monospace;
-  --radius: 0.375rem;
-
-  --lime: oklch(0.92 0.21 125);
-  --lime-foreground: oklch(0.18 0.02 260);
+  /* Surfaces — Obsidian */
+  --background: oklch(0.155 0.012 260);
+  --foreground: oklch(0.96 0.005 260);
   --surface: oklch(0.19 0.012 260);
   --surface-2: oklch(0.225 0.014 260);
   --hairline: oklch(1 0 0 / 8%);
+
+  /* Accent — Signal Lime */
+  --lime: oklch(0.92 0.21 125);
+  --lime-foreground: oklch(0.18 0.02 260);
+  --primary: var(--lime);
+  --primary-foreground: var(--lime-foreground);
+
+  /* Text / muted */
+  --muted-foreground: oklch(0.7 0.02 260);
+
+  /* shadcn semantic surfaces mapped onto the obsidian steps */
+  --card: var(--surface);
+  --card-foreground: var(--foreground);
+  --popover: var(--surface);
+  --popover-foreground: var(--foreground);
+  --secondary: var(--surface-2);
+  --secondary-foreground: var(--foreground);
+  --muted: var(--surface-2);
+  --accent: var(--surface-2);
+  --accent-foreground: var(--foreground);
+
+  /* Status */
   --status-ok: oklch(0.85 0.18 145);
   --status-warn: oklch(0.85 0.16 85);
   --status-err: oklch(0.7 0.22 25);
-  --input-dark: oklch(0.13 0.012 260);
-  --shadow-2xs: 0px 1px 3px 0px rgba(36, 31, 27, 0.05);
-  --shadow-xs: 0px 1px 3px 0px rgba(36, 31, 27, 0.05);
-  --shadow-sm: 0px 2px 8px -2px rgba(36, 31, 27, 0.08);
-  --shadow: 0px 4px 16px -4px rgba(36, 31, 27, 0.1);
-  --shadow-md: 0px 8px 24px -8px rgba(36, 31, 27, 0.12);
-  --shadow-lg: 0px 14px 28px -12px rgba(36, 31, 27, 0.18);
-  --shadow-xl: 0px 20px 48px -12px rgba(36, 31, 27, 0.28);
-  --shadow-2xl: 0px 30px 60px -30px rgba(36, 31, 27, 0.35);
-  --tracking-normal: 0em;
-  --spacing: 0.25rem;
-}
-
-.dark {
-  --background: oklch(0.155 0.012 260);
-  --foreground: oklch(0.96 0.005 260);
-  --card: var(--surface);
-  --card-foreground: oklch(0.96 0.005 260);
-  --popover: var(--surface);
-  --popover-foreground: oklch(0.96 0.005 260);
-  --primary: var(--lime);
-  --primary-foreground: var(--lime-foreground);
-  --secondary: var(--surface-2);
-  --secondary-foreground: oklch(0.96 0.005 260);
-  --muted: var(--surface-2);
-  --muted-foreground: oklch(0.7 0.02 260);
-  --accent: var(--surface-2);
-  --accent-foreground: oklch(0.96 0.005 260);
   --destructive: oklch(0.62 0.22 25);
-  --destructive-foreground: oklch(0.96 0.005 260);
-  --border: var(--hairline);
-  --input: var(--hairline);
-  --ring: var(--lime);
+  --destructive-foreground: var(--foreground);
+
+  /* Charts — /perf rings and waterfall method coloring */
   --chart-1: var(--lime);
   --chart-2: oklch(0.75 0.15 200);
   --chart-3: oklch(0.78 0.16 60);
   --chart-4: oklch(0.7 0.22 25);
   --chart-5: oklch(0.6 0.18 300);
-  --sidebar: oklch(0.155 0.012 260);
-  --sidebar-foreground: oklch(0.96 0.005 260);
+
+  /* Borders / inputs / rings — input sits darker than surface (addendum §0.3 #4) */
+  --border: var(--hairline);
+  --input: oklch(0.13 0.012 260);
+  --ring: var(--lime);
+
+  /* Sidebar (shadcn) */
+  --sidebar: var(--background);
+  --sidebar-foreground: var(--foreground);
   --sidebar-primary: var(--lime);
   --sidebar-primary-foreground: var(--lime-foreground);
   --sidebar-accent: var(--surface-2);
-  --sidebar-accent-foreground: oklch(0.96 0.005 260);
+  --sidebar-accent-foreground: var(--foreground);
   --sidebar-border: var(--hairline);
   --sidebar-ring: var(--lime);
 
+  /* Geometry — 6px max radius */
   --radius: 0.375rem;
-  --shadow-2xs: 0px 1px 3px 0px rgba(0, 0, 0, 0.1);
-  --shadow-xs: 0px 1px 3px 0px rgba(0, 0, 0, 0.1);
-  --shadow-sm: 0px 2px 8px -2px rgba(0, 0, 0, 0.2);
-  --shadow: 0px 4px 16px -4px rgba(0, 0, 0, 0.25);
-  --shadow-md: 0px 8px 24px -8px rgba(0, 0, 0, 0.3);
-  --shadow-lg: 0px 14px 28px -12px rgba(0, 0, 0, 0.4);
-  --shadow-xl: 0px 20px 48px -12px rgba(0, 0, 0, 0.5);
-  --shadow-2xl: 0px 30px 60px -30px rgba(0, 0, 0, 0.6);
-}
 
-* {
-  color-scheme: light dark;
+  /*
+   * Fonts — next/font CSS variables (lib/font.ts) MUST be the first entry in
+   * each stack, or the loaded font assignment is lost to the fallbacks.
+   */
+  --font-base:
+    var(--font-en-base), "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-title: var(--font-en-title), "Fraunces", var(--font-en-base), serif;
+  --font-mono: var(--font-en-mono), ui-monospace, "Geist Mono", monospace;
+
+  /*
+   * No drop shadows — depth comes from background-color steps
+   * (background → surface → surface-2) + hairline borders only
+   * (design-system §4–§5, addendum §0.3 #1). Tokens kept so shadcn
+   * `shadow-*` utilities resolve to a no-op rather than an undefined var.
+   */
+  --shadow-2xs: none;
+  --shadow-xs: none;
+  --shadow-sm: none;
+  --shadow: none;
+  --shadow-md: none;
+  --shadow-lg: none;
+  --shadow-xl: none;
+  --shadow-2xl: none;
+
+  --letter-spacing: 0em;
+  --tracking-normal: 0em;
+  --spacing: 0.25rem;
+  color-scheme: dark;
 }
 
 [dir="rtl"],
@@ -192,7 +180,13 @@ html[dir="rtl"],
 @layer base {
   * {
     @apply border-border outline-ring/50;
-    font-family: var(--font-base);
+    font-family: var(--font-sans);
+  }
+  html,
+  body {
+    font-feature-settings:
+      "ss01" on,
+      "cv11" on;
   }
   body {
     @apply bg-background text-foreground;
@@ -284,6 +278,26 @@ html[dir="rtl"],
   scrollbar-gutter: stable both-edges;
 }
 
+/* Signature DevTools surface texture (FR-013, addendum §0.1). Dark-only by
+   construction (white over Obsidian). Composited on the hero at reduced
+   opacity in Story 3.1 — defined here, not applied. */
+@utility bg-grid {
+  background-image:
+    linear-gradient(to right, rgb(255 255 255 / 4%) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(255 255 255 / 4%) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+@utility bg-scan {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 3px,
+    rgb(255 255 255 / 2%) 3px,
+    rgb(255 255 255 / 2%) 4px
+  );
+}
+
 input[type="number"],
 button[role="switch"] {
   direction: ltr !important;
@@ -298,7 +312,7 @@ input[type="number"] {
   direction: inherit !important;
 }
 
-/* 
+/*
 role="dialog" id="radix-_r_b_" aria-describedby="radix-_r_d_" aria-labelledby="radix-_r_c_" data-state="open" */
 
 div[role="dialog"][data-state="open"][data-slot="dialog-content"] {
@@ -306,8 +320,8 @@ div[role="dialog"][data-state="open"][data-slot="dialog-content"] {
   overflow-y: auto;
 }
 
+/* Inverted lime: highlighting feels like the site is selecting you (addendum §0.3 #5) */
 ::selection {
-  background-color: var(--primary-foreground);
-  color: var(--primary);
-  text-selection-color: var(--primary);
+  background-color: var(--primary);
+  color: var(--primary-foreground);
 }

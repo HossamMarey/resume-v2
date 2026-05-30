@@ -38,6 +38,22 @@ Surfaced by quick-dev review loops. Each entry: source spec, finding, suggested 
 
 ---
 
+## From code review of stories 1.1–1.3 (2026-05-30)
+
+### 8. ThemeHotkey still toggles light mode
+
+**Where:** `components/theme-provider.tsx:46` — `setTheme(resolvedTheme === "dark" ? "light" : "dark")`.
+
+**Why deferred:** Pre-existing behavior from commit `643002c`; Story 2.4 will change the `D` hotkey to a dark-only toast. `theme-provider.tsx` was only touched by Story 1.3 to import shared `isTypingTarget`.
+
+### 9. `import * as React from "react"` pattern in theme-provider
+
+**Where:** `components/theme-provider.tsx:3` — old React import pattern.
+
+**Why deferred:** Pre-existing from commit `643002c`. Project context prefers no `import React` (JSX runtime is `react-jsx`). File was only modified by Story 1.3 to add the `isTypingTarget` import.
+
+---
+
 ## From spec-lib-content-migration (2026-05-25, loop 1 review)
 
 ### 5. `Object.freeze` on lib/content collections is shallow

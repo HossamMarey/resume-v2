@@ -42,7 +42,7 @@ _Locked versions from `package.json` (2026-05-25). Do not bump majors without a 
 - `next-themes` `0.4.6` (`class` attribute strategy)
 
 **Motion / interaction**
-- `framer-motion` `12.40.0` — **import as `motion/react`**, NOT `framer-motion`
+- `framer-motion` `12.40.0` — **import from `framer-motion`** (the `motion`/`motion/react` package is NOT installed; decision 2026-05-30)
 - `cmdk` `1.1.1`, `sonner` `2.0.7`
 
 **Data / forms**
@@ -101,7 +101,7 @@ _Locked versions from `package.json` (2026-05-25). Do not bump majors without a 
 
 #### framer-motion / motion
 
-- **Import path is `motion/react`** (v12 entry), never `framer-motion`.
+- **Import from `framer-motion`** — the rebranded `motion` package (which would provide `motion/react`) is not installed in this repo, so use the `framer-motion` specifier. (decision 2026-05-30, Story 1.3)
 - **Every animation gated by `prefers-reduced-motion`** via `useReducedMotion()` or duration collapse to `0.001s`. No exceptions.
 - **`AnimatePresence mode="wait"`** for route/panel swaps.
 - **`useInView({ once: true })`** for scroll-triggered reveals.
@@ -291,7 +291,7 @@ The 4 known conflicts are RESOLVED. See "Resolved Decisions" above for full cont
 #### Anti-patterns specific to this project
 
 - ❌ Adding `tailwind.config.*` — Tailwind v4 doesn't use it.
-- ❌ Importing `framer-motion` — it's `motion/react` in v12.
+- ❌ Importing `motion/react` — that subpath needs the uninstalled `motion` package; import from `framer-motion` instead.
 - ❌ Importing from `lib/data/index.ts` in new code — migrate to `lib/content/projects.ts` instead. Legacy file is scheduled for deletion.
 - ❌ Adding Dexie / IndexedDB usage — it's dropped. `localStorage` is the only persistence.
 - ❌ Adding a light-mode color block to `app/globals.css` — site is dark-only per resolved decision.
@@ -324,7 +324,7 @@ The 7 spec-vs-code questions are resolved. Agents follow these answers as ground
 
 1. **Palette: Obsidian + Signal Lime (per `docs/design-system.md`), dark-only.**
    - Action item: rewrite `app/globals.css` tokens to match. Replace cream `#fbf6ef` / terracotta `#c64a2b` with Obsidian `#0B0D10` base + Signal Lime `#C6F24E` accent.
-   - Swap fonts: Geist Mono → **IBM Plex Mono**; Inter + Fraunces → **Inter Tight** (and a serif title font per spec; if a separate title font is needed, propose before adding).
+   - Swap fonts: Geist Mono → **IBM Plex Mono** (labels/REPL/mono). **Keep Inter** (body) and **keep Fraunces** (titles). [RESOLVED 2026-05-30: the earlier "Inter Tight" note is superseded — UX spec + Architecture + `lib/font.ts` standardize on Inter + Fraunces; Inter Tight drops the serif/sans contrast the design system requires.]
    - Remove the `:root` light-mode variables. Site is dark-only — the light/dark CSS swap goes away.
    - The `next-themes` provider stays for the `D` key hotkey infrastructure, but `defaultTheme="dark"` with no system option.
 
@@ -363,7 +363,7 @@ The 7 spec-vs-code questions are resolved. Agents follow these answers as ground
 
 ## Source Documents
 
-- `docs/design-system.md` — **CANONICAL.** Visual system spec (Obsidian + Lime, dark-only, IBM Plex Mono + Inter Tight).
+- `docs/design-system.md` — **CANONICAL.** Visual system spec (Obsidian + Lime, dark-only, IBM Plex Mono + Inter + Fraunces).
 - `docs/plan.md` — **Pending rewrite.** Treat as intent; will be archived to `docs/archive/plan-tanstack-original.md` and rewritten Next.js-native.
 - `docs/tech-equirements.md` — **DEPRECATED.** Template-legacy NFRs from a todo app — do not use to justify implementation.
 - `lib/data/index.ts` — **DEPRECATED.** Legacy resume content; migrate to `lib/content/projects.ts` (Zod-validated typed model).

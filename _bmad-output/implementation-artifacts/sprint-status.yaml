@@ -1,0 +1,104 @@
+# generated: 2026-05-30
+# last_updated: 2026-05-30
+# project: web
+# project_key: NOKEY
+# tracking_system: file-system
+# story_location: _bmad-output/implementation-artifacts
+
+# STATUS DEFINITIONS:
+# ==================
+# Epic Status:
+#   - backlog: Epic not yet started
+#   - in-progress: Epic actively being worked on
+#   - done: All stories in epic completed
+#
+# Epic Status Transitions:
+#   - backlog → in-progress: Automatically when first story is created (via create-story)
+#   - in-progress → done: Manually when all stories reach 'done' status
+#
+# Story Status:
+#   - backlog: Story only exists in epic file
+#   - ready-for-dev: Story file created in stories folder
+#   - in-progress: Developer actively working on implementation
+#   - review: Ready for code review (via Dev's code-review workflow)
+#   - done: Story completed
+#
+# Retrospective Status:
+#   - optional: Can be completed but not required
+#   - done: Retrospective has been completed
+#
+# WORKFLOW NOTES:
+# ===============
+# - Epic transitions to 'in-progress' automatically when first story is created
+# - Stories can be worked in parallel if team capacity allows
+# - Developer typically creates next story after previous one is 'done' to incorporate learnings
+# - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
+
+generated: 2026-05-30
+last_updated: 2026-05-30
+project: web
+# epic-1 set in-progress on 2026-05-30 (first story created via create-story)
+project_key: NOKEY
+tracking_system: file-system
+story_location: _bmad-output/implementation-artifacts
+
+development_status:
+  # Epic 1: Foundation & Visual Identity
+  epic-1: in-progress
+  1-1-rewrite-design-tokens-to-obsidian-signal-lime: done
+  1-2-add-base-utility-layers-selection-grid-scanlines: done
+  1-3-build-shared-cross-cutting-helpers: done
+  1-4-remove-dropped-infrastructure-and-archive-legacy-plan: backlog
+  epic-1-retrospective: optional
+
+  # Epic 2: Persistent DevTools Chrome, Navigation & XP Spine
+  epic-2: backlog
+  2-1-establish-the-chrome-route-group-and-root-layout: backlog
+  2-2-identity-strip-and-devtools-tab-navigation: backlog
+  2-3-mobile-bottom-tab-bar: backlog
+  2-4-theme-provider-and-d-hotkey-dark-only: backlog
+  2-5-xp-event-bus-hook-and-chrome-xp-bar-with-tab-visit-grant: backlog
+  epic-2-retrospective: optional
+
+  # Epic 3: Static Content Surfaces — Elements, Performance, Sources
+  epic-3: backlog
+  3-1-elements-hero-with-identity-and-inspect-me-cta: backlog
+  3-2-principles-as-a-computed-styles-panel: backlog
+  3-3-stack-marquee-with-reduced-motion-fallback: backlog
+  3-4-performance-score-rings-and-page-weight-budget: backlog
+  3-5-sources-file-tree-and-preview-pane: backlog
+  epic-3-retrospective: optional
+
+  # Epic 4: Project Network & Case Studies
+  epic-4: backlog
+  4-1-network-waterfall-table-desktop-grid-mobile-card: backlog
+  4-2-url-persisted-filters-with-empty-state: backlog
+  4-3-statically-generated-case-study-detail: backlog
+  4-4-layout-shared-row-detail-transition-and-prev-next-pager: backlog
+  4-5-grant-project-open-xp: backlog
+  epic-4-retrospective: optional
+
+  # Epic 5: Console, Command Palette & Konami
+  epic-5: backlog
+  5-1-console-repl-shell-with-history: backlog
+  5-2-command-registry-with-voiced-outputs: backlog
+  5-3-command-palette-with-four-groups: backlog
+  5-4-konami-unlock-with-chrome-pulse: backlog
+  epic-5-retrospective: optional
+
+  # Epic 6: Recruiter Mode & Boss-Level Contact
+  epic-6: backlog
+  6-1-recruiter-editorial-resume-route: backlog
+  6-2-dual-recruiter-mode-toggle-with-persistence: backlog
+  6-3-boss-level-contact-form-ui: backlog
+  6-4-validation-as-tests-and-stubbed-submit-with-xp: backlog
+  epic-6-retrospective: optional
+
+  # Epic 7: Launch Readiness — SEO, Print, Performance & Deploy
+  epic-7: backlog
+  7-1-per-route-metadata-and-json-ld: backlog
+  7-2-robots-sitemap-and-og-images: backlog
+  7-3-recruiter-print-stylesheet: backlog
+  7-4-mock-content-ci-gate-and-pre-commit-hooks: backlog
+  7-5-csp-lighthouse-pass-and-vercel-deploy: backlog
+  epic-7-retrospective: optional
