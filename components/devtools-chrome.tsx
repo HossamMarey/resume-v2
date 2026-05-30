@@ -4,16 +4,31 @@ import { usePathname } from "next/navigation"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
 import { profile } from "@/lib/content/profile"
+import {
+  Code,
+  Globe,
+  Terminal,
+  Activity,
+  FileText,
+} from "lucide-react"
+import type { LucideIcon } from "lucide-react"
 
-const tabs = [
-  { href: "/", label: "Elements" },
-  { href: "/work", label: "Network" },
-  { href: "/console", label: "Console" },
-  { href: "/perf", label: "Performance" },
-  { href: "/sources", label: "Sources" },
+interface Tab {
+  href: string
+  label: string
+  icon: LucideIcon
+}
+
+const tabs: Tab[] = [
+  { href: "/", label: "Elements", icon: Code },
+  { href: "/work", label: "Network", icon: Globe },
+  { href: "/console", label: "Console", icon: Terminal },
+  { href: "/perf", label: "Performance", icon: Activity },
+  { href: "/sources", label: "Sources", icon: FileText },
 ]
 
-function isActiveTab(pathname: string, href: string): boolean {
+function isActiveTab(pathname: string | null, href: string): boolean {
+  if (!pathname) return false
   if (pathname === href) return true
   if (href === "/") return false
   return pathname.startsWith(href + "/")
@@ -43,7 +58,9 @@ export function DevToolsChrome() {
           {/* XP bar — Story 2.5 */}
         </div>
       </div>
-      <nav aria-label="DevTools tabs">
+
+      {/* Desktop tab row — hidden on mobile */}
+      <nav aria-label="DevTools tabs" className="hidden sm:flex">
         <ul className="flex gap-1 px-4">
           {tabs.map((tab) => {
             const isActive = isActiveTab(pathname, tab.href)
@@ -67,5 +84,45 @@ export function DevToolsChrome() {
         </ul>
       </nav>
     </header>
+  )
+}
+
+export function MobileBottomNav() {
+  const pathname = usePathname()
+
+  return (
+    <nav
+      aria-label="DevTools tabs"
+      className="fixed bottom-0 inset-x-0 z-50 flex sm:hidden border-t border-hairline bg-surface pb-[env(safe-area-inset-bottom)]"
+    >
+      <ul className="flex w-full">
+        {tabs.map((tab) => {
+          const isActive = isActiveTab(pathname, tab.href)
+          const Icon = tab.icon
+          return (
+            <li key={tab.href} className="flex-1">
+              <Link
+                href={tab.href}
+                className={cn(
+                  "flex flex-col items-center justify-center min-h-[44px] min-w-[44px] gap-1 border-t-2 px-1 py-1 transition-colors focus-visible:ring-1 focus-visible:ring-lime focus-visible:outline-none",
+                  isActive
+                    ? "border-lime text-foreground"
+                    : "border-transparent text-muted-foreground"
+                )}
+                aria-current={isActive ? "page" : undefined}
+              >
+                <Icon className="h-4 w-4 shrink-0" aria-hidden="true" />
+                <span className="hidden [@media(min-width:380px)]:block font-mono text-[0.625rem] uppercase tracking-wider truncate max-w-full leading-none">
+                  {tab.label}
+                </span>
+                {isActive && (
+                  <span className="[@media(min-width:380px)]:hidden h-1 w-1 rounded-full bg-lime" aria-hidden="true" />
+                )}
+              </Link>
+            </li>
+          )
+        })}
+      </ul>
+    </nav>
   )
 }

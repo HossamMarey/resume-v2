@@ -55,7 +55,7 @@ development_status:
   epic-2: in-progress
   2-1-establish-the-chrome-route-group-and-root-layout: done
   2-2-identity-strip-and-devtools-tab-navigation: done
-  2-3-mobile-bottom-tab-bar: backlog
+  2-3-mobile-bottom-tab-bar: done
   2-4-theme-provider-and-d-hotkey-dark-only: backlog
   2-5-xp-event-bus-hook-and-chrome-xp-bar-with-tab-visit-grant: backlog
   epic-2-retrospective: optional

@@ -3,7 +3,7 @@
 import type { ReactNode } from "react"
 import { usePathname } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
-import { DevToolsChrome } from "@/components/devtools-chrome"
+import { DevToolsChrome, MobileBottomNav } from "@/components/devtools-chrome"
 import { useShouldAnimate } from "@/hooks/use-should-animate"
 import { useEffect, useState } from "react"
 
@@ -42,7 +42,10 @@ export default function ChromeLayout({
         Skip to content
       </a>
       <DevToolsChrome />
-      <main id="main-content" className="flex-1">
+      <main
+        id="main-content"
+        className="flex-1 pb-[calc(4rem+env(safe-area-inset-bottom))] sm:pb-0"
+      >
         <AnimatePresence mode="wait">
           <motion.div
             key={pathname}
@@ -59,6 +62,7 @@ export default function ChromeLayout({
           </motion.div>
         </AnimatePresence>
       </main>
+      <MobileBottomNav />
     </>
   )
 }

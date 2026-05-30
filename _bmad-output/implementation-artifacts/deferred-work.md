@@ -114,6 +114,18 @@ Surfaced by quick-dev review loops. Each entry: source spec, finding, suggested 
 
 **Suggested fix:** Switch to `mode="popLayout"` or reduce exit duration further.
 
+---
+
+## From code review of story 2.3 (2026-05-30)
+
+### 15. `key={pathname}` may be `null` during SSR causing remount
+
+**Where:** `app/(chrome)/layout.tsx:48` — `usePathname()` returns `null` during SSR and initial hydration pass, so `motion.div` mounts with `key={null}`; once hydration completes the key flips to the real path, forcing React to remount the child even though the route hasn't changed. The `mounted` flag collapses animation duration, but the remount still wastes work and can reset child focus/state.
+
+**Why deferred:** Pre-existing from Story 2.1, already deferred there.
+
+**Suggested fix:** Use a stable key or handle null pathname before passing to `key` prop.
+
 ### 14. `<main className="flex-1">` without flex parent
 
 **Where:** `app/(chrome)/layout.tsx:66` — `flex-1` requires a flex container parent.
