@@ -35,7 +35,9 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 
 generated: 2026-05-30
-last_updated: 2026-05-31 # 3-5 set done on 2026-05-31 (code-review: 12 patches applied, gates green)
+last_updated: 2026-05-31 # 4-1 set done on 2026-05-31 (code-review: 4 patches applied, gates green)
+# 4-1 set review on 2026-05-31 (dev-story)
+# 3-5 set done on 2026-05-31 (code-review: 12 patches applied, gates green)
 # 3-2 set ready-for-dev on 2026-05-31 (create-story)
 # 2-5 set in-progress then review on 2026-05-31 (dev-story)
 # 2-5 set done on 2026-05-31 (code-review: 3 patches applied, gates green)
@@ -78,8 +80,8 @@ development_status:
   epic-3-retrospective: optional
 
   # Epic 4: Project Network & Case Studies
-  epic-4: backlog
-  4-1-network-waterfall-table-desktop-grid-mobile-card: backlog
+  epic-4: in-progress
+  4-1-network-waterfall-table-desktop-grid-mobile-card: done
   4-2-url-persisted-filters-with-empty-state: backlog
   4-3-statically-generated-case-study-detail: backlog
   4-4-layout-shared-row-detail-transition-and-prev-next-pager: backlog
