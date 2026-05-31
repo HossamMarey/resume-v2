@@ -1,7 +1,7 @@
 import { z } from "zod"
 
 export const ProfileSchema = z.object({
-  name: z.string(),
+  name: z.string().min(1),
   role: z.string().min(1),
   location: z.string(),
   email: z.union([z.literal(""), z.string().email()]),
@@ -32,16 +32,14 @@ export const ProfileSchema = z.object({
 export type Profile = z.infer<typeof ProfileSchema>
 
 const rawProfile: Profile = {
-  name: "",
+  name: "Hossam Marey",
   role: "Senior Front-End Developer",
-  location: "",
+  location: "Egypt",
   email: "",
   tagline:
     "I build fast, accessible interfaces for data-heavy products — then teach how it was done.",
-  years: 0,
-  socials: [
-    { label: "GitHub", href: "https://github.com/HossamMarey" },
-  ],
+  years: 8,
+  socials: [{ label: "GitHub", href: "https://github.com/HossamMarey" }],
   principles: [],
   metrics: [],
 }

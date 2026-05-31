@@ -193,3 +193,31 @@ Surfaced by quick-dev review loops. Each entry: source spec, finding, suggested 
 **Why deferred:** Out-of-scope change bundled into the same working tree.
 
 **Suggested fix:** Confirm it's intentional and commit it separately from the Story 2.5 changes.
+
+---
+
+## From code review of story 3.1 (2026-05-31)
+
+### 23. User-facing résumé skill typos in experience data
+
+**Where:** `lib/content/experience.ts` — skill list contains `"Nuxt,js"` (comma instead of dot), `"Ant.Design"`, and `"TailwindCss"`. Surfaced when the block was reformatted by Prettier in this change.
+
+**Why deferred:** Pre-existing data, not introduced by Story 3.1 (only an adjacent line was reflowed). The hero story doesn't render experience data.
+
+**Suggested fix:** Correct to `"Nuxt.js"`, `"Ant Design"`, `"Tailwind CSS"`.
+
+### 24. `profile.email` left empty while neighbors were populated
+
+**Where:** `lib/content/profile.ts:38` — `email: ""`. The schema permits `""` via `z.union([z.literal(""), z.string().email()])`, so it parses, but it's an incomplete profile field.
+
+**Why deferred:** Not consumed by the Story 3.1 hero; the contact surface is Epic 6. Author the real address when that lands.
+
+**Suggested fix:** Populate `email` when the contact form / footer surfaces it.
+
+### 25. Single-opener palette seam — clobber, test isolation, unused event const
+
+**Where:** `lib/command-palette/bus.ts` — (a) `registerPaletteOpener` is last-writer-wins: a second register silently clobbers the first and the first's unsubscribe becomes a dead no-op; (b) `bus.test.ts` `beforeEach` is an empty stub that can't reset the module-level `opener`, so isolation relies on each test cleaning up; (c) `PALETTE_OPEN_EVENT` is exported but unused (the seam is callback-based, not event-based).
+
+**Why deferred:** Acceptable for the current single-consumer design — only Epic 5's palette will register an opener. Mirrors the `lib/xp/bus.ts` style intentionally.
+
+**Suggested fix:** When Epic 5 wires the real palette, decide whether to dev-warn on double-register (or ref-count), add an exported test-reset hook + `afterEach`, and either consume `PALETTE_OPEN_EVENT` or remove it.
