@@ -1,7 +1,8 @@
 "use client"
 
 import * as React from "react"
-import { ThemeProvider as NextThemesProvider, useTheme } from "next-themes"
+import { ThemeProvider as NextThemesProvider } from "next-themes"
+import { toast } from "sonner"
 
 import { isTypingTarget } from "@/lib/keyboard"
 
@@ -13,6 +14,7 @@ function ThemeProvider({
     <NextThemesProvider
       attribute="class"
       defaultTheme="dark"
+      enableSystem={false}
       disableTransitionOnChange
       {...props}
     >
@@ -23,8 +25,6 @@ function ThemeProvider({
 }
 
 function ThemeHotkey() {
-  const { resolvedTheme, setTheme } = useTheme()
-
   React.useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
       if (event.defaultPrevented || event.repeat) {
@@ -43,7 +43,9 @@ function ThemeHotkey() {
         return
       }
 
-      setTheme(resolvedTheme === "dark" ? "light" : "dark")
+      toast("Site is dark-only. The vibe is intentional.", {
+        id: "theme-dark-only",
+      })
     }
 
     window.addEventListener("keydown", onKeyDown)
@@ -51,7 +53,7 @@ function ThemeHotkey() {
     return () => {
       window.removeEventListener("keydown", onKeyDown)
     }
-  }, [resolvedTheme, setTheme])
+  }, [])
 
   return null
 }
