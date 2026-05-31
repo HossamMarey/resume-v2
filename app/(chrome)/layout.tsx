@@ -4,6 +4,7 @@ import type { ReactNode } from "react"
 import { usePathname } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
 import { DevToolsChrome, MobileBottomNav } from "@/components/devtools-chrome"
+import { emitXP } from "@/lib/xp/bus"
 import { useShouldAnimate } from "@/hooks/use-should-animate"
 import { useEffect, useState } from "react"
 
@@ -17,6 +18,14 @@ const pageVariants = {
     opacity: 0,
     transition: { duration: 0.15, ease: "easeOut" as const },
   },
+}
+
+const tabReasons: Record<string, string> = {
+  "/": "visit:elements",
+  "/work": "visit:network",
+  "/console": "visit:console",
+  "/perf": "visit:performance",
+  "/sources": "visit:sources",
 }
 
 export default function ChromeLayout({
@@ -33,11 +42,16 @@ export default function ChromeLayout({
     return () => cancelAnimationFrame(raf)
   }, [])
 
+  useEffect(() => {
+    const reason = pathname ? tabReasons[pathname] : undefined
+    if (reason) emitXP(10, reason)
+  }, [pathname])
+
   return (
     <>
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:absolute focus:left-0 focus:top-0 focus:z-50 focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-0 focus:left-0 focus:z-50 focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground"
       >
         Skip to content
       </a>

@@ -36,6 +36,8 @@
 
 generated: 2026-05-30
 last_updated: 2026-05-31
+# 2-5 set in-progress then review on 2026-05-31 (dev-story)
+# 2-5 set done on 2026-05-31 (code-review: 3 patches applied, gates green)
 project: web
 # epic-1 set in-progress on 2026-05-30 (first story created via create-story)
 project_key: NOKEY
@@ -57,7 +59,7 @@ development_status:
   2-2-identity-strip-and-devtools-tab-navigation: done
   2-3-mobile-bottom-tab-bar: done
   2-4-theme-provider-and-d-hotkey-dark-only: done
-  2-5-xp-event-bus-hook-and-chrome-xp-bar-with-tab-visit-grant: ready-for-dev
+  2-5-xp-event-bus-hook-and-chrome-xp-bar-with-tab-visit-grant: done
   epic-2-retrospective: optional
 
   # Epic 3: Static Content Surfaces — Elements, Performance, Sources

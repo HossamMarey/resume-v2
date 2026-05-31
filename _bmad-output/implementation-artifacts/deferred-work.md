@@ -133,3 +133,63 @@ Surfaced by quick-dev review loops. Each entry: source spec, finding, suggested 
 **Why deferred:** Layout refinement deferred to later stories (2.2–2.5) when the full chrome structure is built.
 
 **Suggested fix:** Ensure `<body>` or a wrapper establishes `display: flex; flex-direction: column; min-height: 100vh`.
+
+---
+
+## From code review of story 2.5 (2026-05-31)
+
+### 16. Toast `id`/`key` collides on same-millisecond emits; single-slot drops rapid grants
+
+**Where:** `components/devtools-chrome.tsx:57,64-68,88` — `setToast({ id: timestamp })` where `timestamp = Date.now()`. Two emits in the same ms produce an identical `AnimatePresence` key (enter/exit skipped); the toast is a single slot, so a second grant within 1200ms replaces the first before it finishes.
+
+**Why deferred:** Latent — tab navigation can't produce two emits in the same ms, and reasons are deduped. Becomes triggerable once epics 4.5/5.2/5.4/6.4 add multiple XP emitters.
+
+**Suggested fix:** Key the toast by a monotonic counter (or `${timestamp}-${reason}`) and/or queue toasts instead of single-slot replacement.
+
+### 17. No cross-tab `storage` event sync
+
+**Where:** `hooks/use-xp.ts` — `useXP` reads `localStorage` once on mount and only updates via the in-page `hm:xp` event. XP granted in tab A never reaches tab B, and tab B can overwrite the higher persisted value with its stale total on reload.
+
+**Why deferred:** Out of scope for this story; no cross-tab requirement in the spec.
+
+**Suggested fix:** Add a `window` `storage` event listener in `useXP` that re-reads `hm_xp_v1` when it changes in another tab.
+
+### 18. Multiple `useXP` consumers double-count
+
+**Where:** `hooks/use-xp.ts:39-53` — each `useXP` instance independently subscribes to `hm:xp` and independently `writeXp`s its own React state. A second mounted consumer both double-counts and races the persisted value (last writer wins).
+
+**Why deferred:** Only the chrome consumes `useXP` today. Latent until the REPL/contact surfaces (epics 5–6) read XP.
+
+**Suggested fix:** Single shared subscription (context provider or a module-level store) feeding all consumers, or document that `useXP` is single-instance.
+
+### 19. Nested routes grant no visit XP though the tab shows active
+
+**Where:** `app/(chrome)/layout.tsx:23-29` — `tabReasons` is an exact-match map, so `/work/[slug]` returns `undefined` and never grants `visit:network`, even though `isActiveTab` highlights Network. Deep-linking into a project detail looks visited but isn't.
+
+**Why deferred:** Detail routes are stubs; confirm whether deep-links should grant the parent tab's visit XP.
+
+**Suggested fix:** Match by tab prefix (longest-prefix) instead of exact pathname when resolving the visit reason.
+
+### 20. `useShouldAnimate` flashes bar/toast for reduced-motion users
+
+**Where:** `components/xp-bar.tsx:13`, `components/xp-toast.tsx:22` — framer's `useReducedMotion()` returns `null` before resolution, so `useShouldAnimate()` is `true` on the first render; the bar/toast mount visible then snap to `null` for users who actually prefer reduced motion. Neither component has a mounted gate (unlike the hook/layout).
+
+**Why deferred:** Cosmetic single-frame flash; no functional impact.
+
+**Suggested fix:** Add a mounted gate to these two components, or have `useShouldAnimate` return `false` until resolved.
+
+### 21. Import-ordering guardrail not followed in the two modified files
+
+**Where:** `components/devtools-chrome.tsx:1-15`, `app/(chrome)/layout.tsx:1-9` — external imports (`lucide-react`, `react`) appear after internal `@/` aliases with no blank-line grouping, contrary to the project import-ordering guardrail. The new files comply; the modified files carried (and slightly extended) pre-existing disorder.
+
+**Why deferred:** Cosmetic, lint passes, pre-existing pattern not introduced by this story.
+
+**Suggested fix:** Reorder to External → internal aliases → relative, blank lines between groups, when these files are next touched.
+
+### 22. `favicon.ico` swapped but not part of the story
+
+**Where:** `app/favicon.ico` — binary changed (25931→4286 bytes) in the working tree but is not in the story's File List and is unrelated to the XP system.
+
+**Why deferred:** Out-of-scope change bundled into the same working tree.
+
+**Suggested fix:** Confirm it's intentional and commit it separately from the Story 2.5 changes.

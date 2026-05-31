@@ -1,16 +1,17 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import { usePathname } from "next/navigation"
 import Link from "next/link"
+import { AnimatePresence } from "framer-motion"
 import { cn } from "@/lib/utils"
 import { profile } from "@/lib/content/profile"
-import {
-  Code,
-  Globe,
-  Terminal,
-  Activity,
-  FileText,
-} from "lucide-react"
+import { XP_EVENT } from "@/lib/xp/bus"
+import type { XPEventDetail } from "@/lib/xp/bus"
+import { XPBar } from "@/components/xp-bar"
+import { XPToast } from "@/components/xp-toast"
+import { useXP } from "@/hooks/use-xp"
+import { Code, Globe, Terminal, Activity, FileText } from "lucide-react"
 import type { LucideIcon } from "lucide-react"
 
 interface Tab {
@@ -34,10 +35,37 @@ function isActiveTab(pathname: string | null, href: string): boolean {
   return pathname.startsWith(href + "/")
 }
 
+interface ActiveToast {
+  id: number
+  delta: number
+  reason: string
+}
+
+const TOAST_DURATION_MS = 1200
+
 export function DevToolsChrome() {
   const pathname = usePathname()
+  const { xp } = useXP()
+  const [toast, setToast] = useState<ActiveToast | null>(null)
   const displayName = profile.name?.trim() || "Hossam Marey"
   const displayRole = profile.role?.trim() || "Senior Front-End Developer"
+
+  useEffect(() => {
+    function onXp(event: Event) {
+      const { delta, reason, timestamp } = (event as CustomEvent<XPEventDetail>)
+        .detail
+      setToast({ id: timestamp, delta, reason })
+    }
+
+    window.addEventListener(XP_EVENT, onXp)
+    return () => window.removeEventListener(XP_EVENT, onXp)
+  }, [])
+
+  useEffect(() => {
+    if (!toast) return
+    const timer = setTimeout(() => setToast(null), TOAST_DURATION_MS)
+    return () => clearTimeout(timer)
+  }, [toast])
 
   return (
     <header className="border-b border-hairline bg-surface">
@@ -49,13 +77,22 @@ export function DevToolsChrome() {
           <span className="text-sm font-semibold text-foreground">
             {displayName}
           </span>
-          <span className="font-mono text-xs uppercase tracking-wider text-muted-foreground">
+          <span className="font-mono text-xs tracking-wider text-muted-foreground uppercase">
             {displayRole}
           </span>
         </div>
-        <div className="ms-auto flex items-center gap-3">
+        <div className="relative ms-auto flex items-center gap-3">
           {/* Recruiter Mode chip — Epic 6 */}
-          {/* XP bar — Story 2.5 */}
+          <XPBar xp={xp} />
+          <AnimatePresence>
+            {toast && (
+              <XPToast
+                key={toast.id}
+                delta={toast.delta}
+                reason={toast.reason}
+              />
+            )}
+          </AnimatePresence>
         </div>
       </div>
 
@@ -69,7 +106,7 @@ export function DevToolsChrome() {
                 <Link
                   href={tab.href}
                   className={cn(
-                    "inline-block border-b-2 px-3 py-2 font-mono text-xs uppercase tracking-wider transition-colors",
+                    "inline-block border-b-2 px-3 py-2 font-mono text-xs tracking-wider uppercase transition-colors",
                     isActive
                       ? "border-lime text-foreground"
                       : "border-transparent text-muted-foreground hover:text-foreground"
@@ -93,7 +130,7 @@ export function MobileBottomNav() {
   return (
     <nav
       aria-label="DevTools tabs"
-      className="fixed bottom-0 inset-x-0 z-50 flex sm:hidden border-t border-hairline bg-surface pb-[env(safe-area-inset-bottom)]"
+      className="fixed inset-x-0 bottom-0 z-50 flex border-t border-hairline bg-surface pb-[env(safe-area-inset-bottom)] sm:hidden"
     >
       <ul className="flex w-full">
         {tabs.map((tab) => {
@@ -104,7 +141,7 @@ export function MobileBottomNav() {
               <Link
                 href={tab.href}
                 className={cn(
-                  "flex flex-col items-center justify-center min-h-[44px] min-w-[44px] gap-1 border-t-2 px-1 py-1 transition-colors focus-visible:ring-1 focus-visible:ring-lime focus-visible:outline-none",
+                  "flex min-h-[44px] min-w-[44px] flex-col items-center justify-center gap-1 border-t-2 px-1 py-1 transition-colors focus-visible:ring-1 focus-visible:ring-lime focus-visible:outline-none",
                   isActive
                     ? "border-lime text-foreground"
                     : "border-transparent text-muted-foreground"
@@ -112,11 +149,14 @@ export function MobileBottomNav() {
                 aria-current={isActive ? "page" : undefined}
               >
                 <Icon className="h-4 w-4 shrink-0" aria-hidden="true" />
-                <span className="hidden [@media(min-width:380px)]:block font-mono text-[0.625rem] uppercase tracking-wider truncate max-w-full leading-none">
+                <span className="hidden max-w-full truncate font-mono text-[0.625rem] leading-none tracking-wider uppercase [@media(min-width:380px)]:block">
                   {tab.label}
                 </span>
                 {isActive && (
-                  <span className="[@media(min-width:380px)]:hidden h-1 w-1 rounded-full bg-lime" aria-hidden="true" />
+                  <span
+                    className="h-1 w-1 rounded-full bg-lime [@media(min-width:380px)]:hidden"
+                    aria-hidden="true"
+                  />
                 )}
               </Link>
             </li>
