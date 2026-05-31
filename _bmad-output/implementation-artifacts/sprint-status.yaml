@@ -36,6 +36,7 @@
 
 generated: 2026-05-30
 last_updated: 2026-05-31
+# 3-2 set ready-for-dev on 2026-05-31 (create-story)
 # 2-5 set in-progress then review on 2026-05-31 (dev-story)
 # 2-5 set done on 2026-05-31 (code-review: 3 patches applied, gates green)
 # epic-3 set in-progress + 3-1 set ready-for-dev on 2026-05-31 (create-story)
@@ -69,7 +70,7 @@ development_status:
   # Epic 3: Static Content Surfaces — Elements, Performance, Sources
   epic-3: in-progress
   3-1-elements-hero-with-identity-and-inspect-me-cta: done
-  3-2-principles-as-a-computed-styles-panel: backlog
+  3-2-principles-as-a-computed-styles-panel: review
   3-3-stack-marquee-with-reduced-motion-fallback: backlog
   3-4-performance-score-rings-and-page-weight-budget: backlog
   3-5-sources-file-tree-and-preview-pane: backlog
