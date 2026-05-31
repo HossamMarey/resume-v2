@@ -62,7 +62,12 @@ const rawProfile: Profile = {
       body: "Every component is a precedent. I design for the next ten features, not the current ticket, so the codebase grows narrower, not wider, over time.",
     },
   ],
-  metrics: [],
+  metrics: [
+    { label: "Years shipped", value: "8", suffix: "+" },
+    { label: "Projects shipped", value: "22" },
+    { label: "Talks & articles", value: "3" },
+    { label: "Mentees", value: "5" },
+  ],
 }
 
 export const profile: Profile = ProfileSchema.parse(rawProfile)

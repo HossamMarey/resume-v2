@@ -260,6 +260,26 @@ Surfaced by quick-dev review loops. Each entry: source spec, finding, suggested 
 
 ---
 
+## From code review of story 3.4 (2026-05-31)
+
+### 34. formatBytes only handles bytes and kilobytes
+
+**Where:** `components/page-weight-budget.tsx:14-16` — `formatBytes` branches at 1024 to KB but has no MB/GB path.
+
+**Why deferred:** Current page-weight data totals <500KB; no realistic need for larger units in v1.
+
+**Suggested fix:** Add MB branch when data grows.
+
+### 35. Stale displayValue on prop change
+
+**Where:** `components/score-ring.tsx:51` — `useState` initializes from `numericValue` but never resets when props change.
+
+**Why deferred:** Profile metrics are static data; no dynamic prop updates expected.
+
+**Suggested fix:** Add a `useEffect` keyed on `value` to reset `displayValue` if the component ever receives live data.
+
+---
+
 ## From code review of story 3.3 (2026-05-31)
 
 ### 30. Duplicate skill names would cause React key collisions
@@ -293,3 +313,47 @@ Surfaced by quick-dev review loops. Each entry: source spec, finding, suggested 
 **Why deferred:** Framer-motion is a mature library that likely handles SSR hydration for `useReducedMotion`. Other components (`xp-bar`, `principles-panel`) use the same hook without reported issues. Monitor if hydration warnings appear in production.
 
 **Suggested fix:** If confirmed, add a `mounted` gate to render a neutral placeholder until the motion preference is resolved client-side.
+
+---
+
+## From code review of story 3.4 + 3.5 (2026-05-31)
+
+### 36. Hardcoded ID coupling in preview pane
+
+**Where:** `components/file-preview-pane.tsx:14,22` — Magic strings `"resume"` and `"contact"` tightly couple the preview pane to specific tree IDs.
+
+**Why deferred:** Design choice for static preview content; changing data source array would silently break UI.
+
+**Suggested fix:** If dynamic tree data is needed in future, refactor to a config-driven map or switch statement with a default/fallback branch.
+
+### 37. PDF embed has no load-error fallback
+
+**Where:** `components/file-preview-pane.tsx:33-37` — If `/hossam-marey-resume.pdf` 404s or fails to load, the `<embed>` shows the browser's default broken-plugin UI.
+
+**Why deferred:** Out of scope for this story; PDF loading failure is an edge case that can be handled when real deployment paths are finalized.
+
+**Suggested fix:** Add an `onError` handler or wrapper that shows a "PDF unavailable" message with a direct download link fallback.
+
+### 38. Missing `aria-expanded` on folder treeitems
+
+**Where:** `components/file-tree.tsx:79` — Folders carry `role="treeitem"` inside `role="tree"` but lack `aria-expanded`.
+
+**Why deferred:** Folders are flat and non-expandable in current design; adding `aria-expanded` would be misleading since there are no children to expand.
+
+**Suggested fix:** If nested folders are added later, implement full `aria-expanded`/`aria-controls` semantics.
+
+### 39. Missing Home/End keyboard support in tree
+
+**Where:** `components/file-tree.tsx:24-56` — Only ArrowUp/ArrowDown are handled; Home/End keys are ignored.
+
+**Why deferred:** Not specified in acceptance criteria; nice-to-have for full ARIA compliance.
+
+**Suggested fix:** Add Home/End handlers to jump to first/last item when tree gains focus.
+
+### 40. `aria-live` lacks `aria-busy` during transitions
+
+**Where:** `components/file-preview-pane.tsx:18` — When switching files, React re-renders section content without `aria-busy="true"`.
+
+**Why deferred:** Over-engineering for static content; screen readers handle `aria-live="polite"` adequately for infrequent content swaps.
+
+**Suggested fix:** Add `aria-busy` state management if dynamic/live data updates are introduced later.

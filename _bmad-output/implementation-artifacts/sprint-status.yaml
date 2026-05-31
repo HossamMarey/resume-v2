@@ -35,7 +35,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 
 generated: 2026-05-30
-last_updated: 2026-05-31 # 3-3 set done (code-review: 4 patches applied, gates green)
+last_updated: 2026-05-31 # 3-5 set done on 2026-05-31 (code-review: 12 patches applied, gates green)
 # 3-2 set ready-for-dev on 2026-05-31 (create-story)
 # 2-5 set in-progress then review on 2026-05-31 (dev-story)
 # 2-5 set done on 2026-05-31 (code-review: 3 patches applied, gates green)
@@ -69,12 +69,12 @@ development_status:
   epic-2-retrospective: optional
 
   # Epic 3: Static Content Surfaces — Elements, Performance, Sources
-  epic-3: in-progress
+  epic-3: done
   3-1-elements-hero-with-identity-and-inspect-me-cta: done
   3-2-principles-as-a-computed-styles-panel: done
   3-3-stack-marquee-with-reduced-motion-fallback: done
-  3-4-performance-score-rings-and-page-weight-budget: backlog
-  3-5-sources-file-tree-and-preview-pane: backlog
+  3-4-performance-score-rings-and-page-weight-budget: done
+  3-5-sources-file-tree-and-preview-pane: done
   epic-3-retrospective: optional
 
   # Epic 4: Project Network & Case Studies

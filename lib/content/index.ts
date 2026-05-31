@@ -28,3 +28,10 @@ export {
   type Skill,
   type SkillGroup,
 } from "./skills"
+
+export {
+  pageWeightBudget,
+  PageWeightItemSchema,
+  PageWeightCategory,
+  type PageWeightItem,
+} from "./page-weight"
