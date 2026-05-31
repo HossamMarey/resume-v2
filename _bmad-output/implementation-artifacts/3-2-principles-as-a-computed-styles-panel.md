@@ -1,6 +1,6 @@
 # Story 3.2: Principles as a Computed-styles panel
 
-Status: review
+Status: done
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -155,3 +155,15 @@ const shouldAnimate = useShouldAnimate()
 - `components/principles-panel.tsx` — New: `"use client"` scroll-reveal principles panel, composes `ComputedStylesPanel`/`ComputedStylesCell`.
 - `components/principles-panel.test.tsx` — New: colocated tests for heading levels, content rendering.
 - `app/(chrome)/page.tsx` — Updated: mounted `PrinciplesPanel` below hero section; stays Server Component.
+
+### Review Findings
+
+_Code review 2026-05-31 (3 adversarial layers: Blind Hunter, Edge Case Hunter, Acceptance Auditor). 1 decision-needed, 0 patch, 4 deferred, 7 dismissed as noise._
+
+- [x] [Review][Patch] Cell layout is a vertical `flex flex-col` stack, not label-left / value-right [components/principles-panel.tsx:51] — AC1 + the spec's KEY EMPHASIS require each cell to read "property: value" (title at inline-start, body at inline-end). **RESOLVED 2026-05-31:** patched to `grid grid-cols-[auto_1fr] items-start gap-4` (title inline-start / body inline-end, RTL-safe via grid order, top-aligned for multi-line bodies). Gates re-run green (typecheck/lint/38 tests/format).
+- [x] [Review][Defer] No-JS / hydration-delay leaves the panel visually hidden [components/principles-panel.tsx:33-45] — deferred, project-wide scroll-reveal pattern (same as `inspect-me-cta`, `xp-bar`); content is SSR'd into the DOM so SEO/SR are fine.
+- [x] [Review][Defer] Empty `principles` array would render an empty bordered grid + dangling `<h2>` [components/principles-panel.tsx:48-58] — deferred, content contract mandates 4 non-empty entries and the test guards length; an empty-guard is optional hardening.
+- [x] [Review][Defer] Nothing enforces an even count for the `sm:grid-cols-2` grid [components/principles-panel.tsx:48; lib/content/profile.ts schema] — deferred, odd counts leave a ragged last row; schema has no `.length()` and spec said don't weaken it.
+- [x] [Review][Defer] Duplicate `key`/`title`/`body` would break React keys and the `getByText` assertions [components/principles-panel.tsx:50; components/principles-panel.test.tsx:36-37] — deferred, all current values are unique; latent test fragility only.
+
+**Dismissed (noise / spec-sanctioned):** (1) "invisible-forever via `animate={{}}`" — the `animate` shape is copied verbatim from the spec Dev Notes; IntersectionObserver is universal in the target browsers and the panel is below a full-height hero, so the reveal behaves as designed. (2) Test IntersectionObserver stub only exercises the hidden branch — the spec explicitly endorses asserting rendered output over reveal timing; the 4 assertions cover AC3/AC4. (3) `text-lime` vs `text-primary` — `text-lime` is a registered token (not a hex), and the spec says "optionally `text-lime`". (4) `transition` still passed when `shouldAnimate` is false — harmless (`initial={false}` skips the animation). (5) Repeated `font-mono … uppercase` label classes across two sites — extracting for two uses is over-engineering. (6) Nested ternary in `animate` hard to read — matches the spec's prescribed shape. (7) `ease: "easeOut"` string literal — pure nit.

@@ -221,3 +221,39 @@ Surfaced by quick-dev review loops. Each entry: source spec, finding, suggested 
 **Why deferred:** Acceptable for the current single-consumer design — only Epic 5's palette will register an opener. Mirrors the `lib/xp/bus.ts` style intentionally.
 
 **Suggested fix:** When Epic 5 wires the real palette, decide whether to dev-warn on double-register (or ref-count), add an exported test-reset hook + `afterEach`, and either consume `PALETTE_OPEN_EVENT` or remove it.
+
+---
+
+## From code review of story 3.2 (2026-05-31)
+
+### 26. No-JS / hydration-delay leaves the principles panel visually hidden
+
+**Where:** `components/principles-panel.tsx:33-45` — when `shouldAnimate` is true, the `motion.div` mounts at `initial={{ opacity: 0 }}` and only animates to visible once `useInView` (IntersectionObserver) fires. If JS fails to load or hydration is delayed, the content is present in the DOM (SSR'd, good for SEO/screen readers) but never visually appears.
+
+**Why deferred:** Project-wide scroll-reveal pattern, not introduced uniquely by this story (`inspect-me-cta.tsx`, `xp-bar.tsx` gate the same way). Content is in the DOM; only the visual reveal is JS-gated.
+
+**Suggested fix:** If progressive-enhancement resilience becomes a goal, adopt a project-wide convention (e.g. CSS `@media (scripting: none)` fallback that forces visible, or a `mounted`-gated visible default) across all scroll-reveal components.
+
+### 27. Empty `principles` array renders an empty bordered grid with a dangling heading
+
+**Where:** `components/principles-panel.tsx:48-58` — `principles.map(...)` over `[]` yields zero cells, but `<ComputedStylesPanel>` still renders its `border-hairline bg-hairline` wrapper and the `<h2>Principles</h2>` still renders, advertising a section with no content. `ProfileSchema.principles` is `z.array(...)` with no `.min(1)`, so `[]` is valid (it was the prior state).
+
+**Why deferred:** The content contract (AC4) mandates 4 non-empty entries and the test asserts length; an empty panel can't occur with the shipped content. Empty-guard is optional hardening.
+
+**Suggested fix:** Early-return `null` (or skip the section) when `principles.length === 0`.
+
+### 28. Nothing enforces an even count for the `sm:grid-cols-2` layout
+
+**Where:** `components/principles-panel.tsx:48` (`sm:grid-cols-2`) and the `ProfileSchema.principles` array (no length constraint). 4 entries render a clean 2×2; an odd count (3, 5) leaves a ragged last row.
+
+**Why deferred:** Currently exactly 4 are authored; the spec said do not weaken/over-constrain the schema. Cosmetic only if the count later changes.
+
+**Suggested fix:** If a fixed grid is a hard requirement, add `.length(4)` to the schema or document the even-count assumption near the component.
+
+### 29. Duplicate `key`/`title`/`body` would break React keys and the test assertions
+
+**Where:** `components/principles-panel.tsx:50` (`key={principle.key}`) and `components/principles-panel.test.tsx:36-37` (`getByText(principle.title)` / `getByText(principle.body)` throw on >1 match). The schema permits duplicate strings (only `.min(1)` per field).
+
+**Why deferred:** All four current entries have unique keys/titles/bodies; this is latent test fragility, not a live bug.
+
+**Suggested fix:** When authoring future principles, keep `key`/`title`/`body` unique; if duplicates become possible, switch the test to scoped queries (`within(...)`) and ensure `key` uniqueness.

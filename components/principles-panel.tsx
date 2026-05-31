@@ -48,7 +48,7 @@ export function PrinciplesPanel({ principles }: PrinciplesPanelProps) {
         <ComputedStylesPanel className="sm:grid-cols-2">
           {principles.map((principle) => (
             <ComputedStylesCell key={principle.key}>
-              <div className="flex flex-col gap-2">
+              <div className="grid grid-cols-[auto_1fr] items-start gap-4">
                 <h3 className="font-mono text-sm text-lime">
                   {principle.title}
                 </h3>

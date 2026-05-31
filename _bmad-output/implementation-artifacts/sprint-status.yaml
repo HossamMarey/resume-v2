@@ -35,7 +35,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 
 generated: 2026-05-30
-last_updated: 2026-05-31
+last_updated: 2026-05-31 # 3-2 code-review done
 # 3-2 set ready-for-dev on 2026-05-31 (create-story)
 # 2-5 set in-progress then review on 2026-05-31 (dev-story)
 # 2-5 set done on 2026-05-31 (code-review: 3 patches applied, gates green)
@@ -43,6 +43,7 @@ last_updated: 2026-05-31
 # 3-1 set in-progress on 2026-06-02 (dev-story)
 # 3-1 set review on 2026-06-02 (dev-story)
 # 3-1 set done on 2026-05-31 (code-review: 6 patches applied incl. platform-aware key hint, gates green)
+# 3-2 set done on 2026-05-31 (code-review: AC1 label-left/value-right patch applied, gates green)
 project: web
 # epic-1 set in-progress on 2026-05-30 (first story created via create-story)
 project_key: NOKEY
@@ -70,7 +71,7 @@ development_status:
   # Epic 3: Static Content Surfaces — Elements, Performance, Sources
   epic-3: in-progress
   3-1-elements-hero-with-identity-and-inspect-me-cta: done
-  3-2-principles-as-a-computed-styles-panel: review
+  3-2-principles-as-a-computed-styles-panel: done
   3-3-stack-marquee-with-reduced-motion-fallback: backlog
   3-4-performance-score-rings-and-page-weight-budget: backlog
   3-5-sources-file-tree-and-preview-pane: backlog
