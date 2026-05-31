@@ -2,10 +2,13 @@ import { z } from "zod"
 
 export const SkillLevel = z.union([z.literal(1), z.literal(2), z.literal(3)])
 
+export const SkillTier = z.union([z.literal("primary"), z.literal("secondary")])
+
 export const SkillSchema = z.object({
   name: z.string().min(1),
   icon: z.string().optional(),
   level: SkillLevel,
+  tier: SkillTier,
 })
 
 export type Skill = z.infer<typeof SkillSchema>
@@ -97,9 +100,18 @@ const legacy: LegacyGroup[] = [
 
 const rawSkillGroups: SkillGroup[] = legacy.map((g) => ({
   name: g.group,
-  skills: g.data.map((s) => ({ name: s.title, icon: s.img, level: s.level })),
+  skills: g.data.map((s) => ({
+    name: s.title,
+    icon: s.img,
+    level: s.level,
+    tier: s.level === 1 ? "primary" : "secondary",
+  })),
 }))
 
 export const skillGroups: readonly SkillGroup[] = Object.freeze(
   SkillGroupsCollectionSchema.parse(rawSkillGroups)
+)
+
+export const primarySkills: readonly Skill[] = Object.freeze(
+  skillGroups.flatMap((g) => g.skills).filter((s) => s.tier === "primary")
 )

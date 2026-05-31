@@ -20,9 +20,11 @@ export {
 
 export {
   SkillLevel,
+  SkillTier,
   SkillSchema,
   SkillGroupSchema,
   skillGroups,
+  primarySkills,
   type Skill,
   type SkillGroup,
 } from "./skills"

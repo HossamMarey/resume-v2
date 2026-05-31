@@ -2,6 +2,8 @@ import type { Metadata } from "next"
 
 import { InspectMeCta } from "@/components/inspect-me-cta"
 import { PrinciplesPanel } from "@/components/principles-panel"
+import { StackMarquee } from "@/components/stack-marquee"
+import { primarySkills } from "@/lib/content/skills"
 import { profile } from "@/lib/content/profile"
 
 export const metadata: Metadata = {
@@ -41,6 +43,8 @@ export default function ElementsPage() {
       </section>
 
       <PrinciplesPanel principles={profile.principles} />
+
+      <StackMarquee skills={primarySkills} />
     </>
   )
 }

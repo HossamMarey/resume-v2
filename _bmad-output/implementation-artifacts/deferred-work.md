@@ -257,3 +257,39 @@ Surfaced by quick-dev review loops. Each entry: source spec, finding, suggested 
 **Why deferred:** All four current entries have unique keys/titles/bodies; this is latent test fragility, not a live bug.
 
 **Suggested fix:** When authoring future principles, keep `key`/`title`/`body` unique; if duplicates become possible, switch the test to scoped queries (`within(...)`) and ensure `key` uniqueness.
+
+---
+
+## From code review of story 3.3 (2026-05-31)
+
+### 30. Duplicate skill names would cause React key collisions
+
+**Where:** `components/stack-marquee.tsx` — `key={skill.name}`. If two groups contain the same level-1 skill name, `primarySkills` will contain duplicates and React will warn or reconcile incorrectly.
+
+**Why deferred:** Pre-existing data concern, not introduced by this change. Current legacy data has unique skill names across groups.
+
+**Suggested fix:** Consider using a composite key (`${groupName}-${skill.name}`) if data ever overlaps.
+
+### 31. Print media shows duplicated skills
+
+**Where:** `components/stack-marquee.tsx` — The second track is `aria-hidden` (hidden from assistive tech) but not visually hidden, so printed pages include every skill twice.
+
+**Why deferred:** Print styles are not part of this story's scope (Epic 7 covers print readiness).
+
+**Suggested fix:** Add a print-media rule to hide the duplicate track, or render a single non-duplicated list for print.
+
+### 32. Scroll speed scales with content width
+
+**Where:** `app/globals.css` — `@keyframes marquee` animates `translateX(-50%)` with a fixed 35s duration. The pixel distance depends on the total track width, so a shorter list crawls while a longer list flies by.
+
+**Why deferred:** The spec says "~25-40s for one full cycle" and "tune in the browser" — exact speed is a design tuning consideration, not a functional bug.
+
+**Suggested fix:** If consistent perceived speed is desired, switch to a JS-driven animation that adjusts duration based on content width.
+
+### 33. Hydration mismatch risk on reduced-motion clients
+
+**Where:** `components/stack-marquee.tsx` — `useShouldAnimate()` wraps `useReducedMotion()` from framer-motion. During SSR, the hook likely returns a default value that may differ from the client's `prefers-reduced-motion` setting, potentially causing a hydration mismatch where the server renders the animated branch but the client expects the static branch.
+
+**Why deferred:** Framer-motion is a mature library that likely handles SSR hydration for `useReducedMotion`. Other components (`xp-bar`, `principles-panel`) use the same hook without reported issues. Monitor if hydration warnings appear in production.
+
+**Suggested fix:** If confirmed, add a `mounted` gate to render a neutral placeholder until the motion preference is resolved client-side.
