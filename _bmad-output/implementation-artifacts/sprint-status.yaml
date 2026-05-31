@@ -35,7 +35,9 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 
 generated: 2026-05-30
-last_updated: 2026-05-31 # 4-3 set done on 2026-05-31 (code-review: 12 patches applied, gates green)
+last_updated: 2026-05-31 # 4-4 set done on 2026-05-31 (code-review: 3 patches applied, gates green)
+# 4-4 set review on 2026-05-31 (dev-story)
+# 4-3 set done on 2026-05-31 (code-review: 12 patches applied, gates green)
 # 4-3 set review on 2026-05-31 (dev-story)
 # 4-2 set done on 2026-05-31 (code-review: aria-expanded patch applied, gates green)
 # 4-1 set done on 2026-05-31 (code-review: 4 patches applied, gates green)
@@ -87,7 +89,7 @@ development_status:
   4-1-network-waterfall-table-desktop-grid-mobile-card: done
   4-2-url-persisted-filters-with-empty-state: done
   4-3-statically-generated-case-study-detail: done
-  4-4-layout-shared-row-detail-transition-and-prev-next-pager: backlog
+  4-4-layout-shared-row-detail-transition-and-prev-next-pager: done
   4-5-grant-project-open-xp: backlog
   epic-4-retrospective: optional
 

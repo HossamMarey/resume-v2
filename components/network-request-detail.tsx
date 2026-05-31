@@ -1,5 +1,3 @@
-import Link from "next/link"
-
 import {
   ComputedStylesCell,
   ComputedStylesPanel,
@@ -19,31 +17,6 @@ export function NetworkRequestDetail({ project }: NetworkRequestDetailProps) {
 
   return (
     <article>
-      <nav
-        aria-label="Breadcrumb"
-        className="mb-6 text-sm text-muted-foreground"
-      >
-        <Link href="/work" className="hover:text-foreground">
-          Network
-        </Link>
-        <span className="mx-2" aria-hidden="true">
-          /
-        </span>
-        <span className="text-foreground">{project.name}</span>
-      </nav>
-
-      <div className="mb-6 flex items-center gap-3">
-        <h1 className="font-mono text-xl text-foreground">{project.name}</h1>
-        {project.meta.mock && process.env.NODE_ENV !== "production" && (
-          <Badge
-            variant="outline"
-            className="border-lime/40 font-mono text-[10px] text-lime"
-          >
-            [MOCK]
-          </Badge>
-        )}
-      </div>
-
       <section className="mb-8">
         <h2 className="mb-2 font-mono text-sm tracking-wider text-muted-foreground uppercase">
           Problem
@@ -53,7 +26,7 @@ export function NetworkRequestDetail({ project }: NetworkRequestDetailProps) {
             {project.problem}
           </p>
         ) : (
-          <p className="text-sm italic text-muted-foreground">
+          <p className="text-sm text-muted-foreground italic">
             No problem description provided.
           </p>
         )}
@@ -68,7 +41,7 @@ export function NetworkRequestDetail({ project }: NetworkRequestDetailProps) {
             {project.role}
           </p>
         ) : (
-          <p className="text-sm italic text-muted-foreground">
+          <p className="text-sm text-muted-foreground italic">
             No role description provided.
           </p>
         )}
@@ -102,7 +75,7 @@ export function NetworkRequestDetail({ project }: NetworkRequestDetailProps) {
             ))}
           </ComputedStylesPanel>
         ) : (
-          <p className="text-sm italic text-muted-foreground">
+          <p className="text-sm text-muted-foreground italic">
             No decisions recorded.
           </p>
         )}
@@ -123,7 +96,7 @@ export function NetworkRequestDetail({ project }: NetworkRequestDetailProps) {
             ))}
           </ComputedStylesPanel>
         ) : (
-          <p className="text-sm italic text-muted-foreground">
+          <p className="text-sm text-muted-foreground italic">
             No outcomes recorded.
           </p>
         )}
@@ -149,7 +122,7 @@ export function NetworkRequestDetail({ project }: NetworkRequestDetailProps) {
             ))}
           </div>
         ) : (
-          <p className="text-sm italic text-muted-foreground">
+          <p className="text-sm text-muted-foreground italic">
             No links provided.
           </p>
         )}

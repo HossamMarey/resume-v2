@@ -32,17 +32,6 @@ const featuredProject: Project = {
 }
 
 describe("NetworkRequestDetail", () => {
-  afterEach(() => {
-    vi.unstubAllEnvs()
-  })
-
-  it("renders one h1 with the project name", () => {
-    render(<NetworkRequestDetail project={featuredProject} />)
-    const headings = screen.getAllByRole("heading", { level: 1 })
-    expect(headings).toHaveLength(1)
-    expect(headings[0]).toHaveTextContent("Buguard")
-  })
-
   it("renders sections in order: Problem, Role, Stack, Decisions, Outcomes, Links", () => {
     render(<NetworkRequestDetail project={featuredProject} />)
     const h2s = screen
@@ -58,14 +47,16 @@ describe("NetworkRequestDetail", () => {
     ])
   })
 
-  it("renders a breadcrumb link to /work", () => {
+  it("does not contain an h1 heading", () => {
     render(<NetworkRequestDetail project={featuredProject} />)
-    const breadcrumb = screen.getByRole("navigation", {
-      name: "Breadcrumb",
-    })
-    const link = screen.getByRole("link", { name: "Network" })
-    expect(breadcrumb).toContainElement(link)
-    expect(link).toHaveAttribute("href", "/work")
+    expect(screen.queryByRole("heading", { level: 1 })).not.toBeInTheDocument()
+  })
+
+  it("does not contain a breadcrumb navigation", () => {
+    render(<NetworkRequestDetail project={featuredProject} />)
+    expect(
+      screen.queryByRole("navigation", { name: "Breadcrumb" })
+    ).not.toBeInTheDocument()
   })
 
   it("renders stack entries as badges", () => {
@@ -87,26 +78,6 @@ describe("NetworkRequestDetail", () => {
     expect(previewLink).toHaveAttribute("rel", "noopener noreferrer")
   })
 
-  it("does not show [MOCK] badge when meta.mock is false", () => {
-    vi.stubEnv("NODE_ENV", "development")
-    render(<NetworkRequestDetail project={featuredProject} />)
-    expect(screen.queryByText("[MOCK]")).not.toBeInTheDocument()
-  })
-
-  it("shows [MOCK] badge when meta.mock is true and not in production", () => {
-    vi.stubEnv("NODE_ENV", "development")
-    const mockProject = { ...featuredProject, meta: { mock: true } }
-    render(<NetworkRequestDetail project={mockProject} />)
-    expect(screen.getByText("[MOCK]")).toBeInTheDocument()
-  })
-
-  it("hides [MOCK] badge when meta.mock is true but in production", () => {
-    vi.stubEnv("NODE_ENV", "production")
-    const mockProject = { ...featuredProject, meta: { mock: true } }
-    render(<NetworkRequestDetail project={mockProject} />)
-    expect(screen.queryByText("[MOCK]")).not.toBeInTheDocument()
-  })
-
   it("filters out null/empty links", () => {
     const projectWithEmptyLink: Project = {
       ...featuredProject,
@@ -120,11 +91,7 @@ describe("NetworkRequestDetail", () => {
     expect(
       screen.queryByRole("link", { name: /Empty/i })
     ).not.toBeInTheDocument()
-    expect(
-      screen.getByRole("link", { name: /Preview/i })
-    ).toBeInTheDocument()
-    expect(
-      screen.getByRole("link", { name: /Valid/i })
-    ).toBeInTheDocument()
+    expect(screen.getByRole("link", { name: /Preview/i })).toBeInTheDocument()
+    expect(screen.getByRole("link", { name: /Valid/i })).toBeInTheDocument()
   })
 })

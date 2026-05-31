@@ -385,3 +385,21 @@ Surfaced by quick-dev review loops. Each entry: source spec, finding, suggested 
 **Why deferred:** Pre-existing from Story 4.1; schema should validate clamping.
 
 **Suggested fix:** Clamp values with `Math.min(1, Math.max(0, value))` before passing to Framer Motion, or tighten schema validation.
+
+## Deferred from: code review of 4-4-layout-shared-row-detail-transition-and-prev-next-pager (2026-05-31)
+
+### 44. Pager duplicate prev/next when exactly 2 featured projects
+
+**Where:** `components/case-study-pager.tsx:21-23` — With exactly 2 featured projects, modulo arithmetic yields `prev === next` (both link to the same project). The `< 2` guard on line 12 catches 0 and 1 but not the degenerate 2-case.
+
+**Why deferred:** Currently 3 featured projects exist; not triggered in production. Low priority.
+
+**Suggested fix:** Guard `featured.length < 3` or show only a single "Back to list" link when exactly 2.
+
+### 45. layoutId cross-page animation degrades under AnimatePresence mode="wait"
+
+**Where:** `components/case-study-header.tsx:36`, `components/network-waterfall-row.tsx:52` — Under `mode="wait"`, the outgoing page fully unmounts before the incoming page mounts, preventing framer-motion from bridging the shared-element snapshot. The `layoutId` props are measured on every render but produce no visible cross-page transition.
+
+**Why deferred:** Pre-existing limitation already tracked in item #13. Switching to `mode="popLayout"` in the chrome layout would fix it but is a global change requiring re-verification of all tabs.
+
+**Suggested fix:** Switch `AnimatePresence mode="wait"` to `mode="popLayout"` in `app/(chrome)/layout.tsx` (item #13) and re-verify all five tab routes.
