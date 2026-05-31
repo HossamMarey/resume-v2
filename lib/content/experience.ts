@@ -180,7 +180,8 @@ const legacyFulltime: LegacyEmployment[] = [
     projects: [
       {
         title: "BuilderZ Project",
-        description: "E-learning and management system for selling online courses.",
+        description:
+          "E-learning and management system for selling online courses.",
         date: "Aug. 2021 - Present",
         skills: ["Vue.js", "Nuxt,js", "Ant.Design", "TailwindCss"],
         roles: [

@@ -35,7 +35,9 @@ export default async function CaseStudyPage({
   return (
     <section className="p-4">
       <h1 className="font-mono text-lg">Case Study: {project.name}</h1>
-      <p className="text-muted-foreground">Stub content for case study detail.</p>
+      <p className="text-muted-foreground">
+        Stub content for case study detail.
+      </p>
     </section>
   )
 }
