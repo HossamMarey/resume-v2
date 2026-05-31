@@ -58,6 +58,8 @@ const mockProjects: Project[] = [
     decisions: [],
     outcomes: [],
     links: [],
+    featured: true,
+    meta: { mock: false },
   },
   {
     slug: "beta",
@@ -79,6 +81,8 @@ const mockProjects: Project[] = [
     decisions: [],
     outcomes: [],
     links: [],
+    featured: true,
+    meta: { mock: false },
   },
   {
     slug: "gamma",
@@ -100,6 +104,8 @@ const mockProjects: Project[] = [
     decisions: [],
     outcomes: [],
     links: [],
+    featured: true,
+    meta: { mock: false },
   },
 ]
 

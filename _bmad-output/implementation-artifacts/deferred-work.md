@@ -357,3 +357,31 @@ Surfaced by quick-dev review loops. Each entry: source spec, finding, suggested 
 **Why deferred:** Over-engineering for static content; screen readers handle `aria-live="polite"` adequately for infrequent content swaps.
 
 **Suggested fix:** Add `aria-busy` state management if dynamic/live data updates are introduced later.
+
+---
+
+## From code review of story 4.3 (2026-05-31)
+
+### 41. Method badge hidden from assistive technology
+
+**Where:** `components/network-waterfall-row.tsx:83` — `aria-hidden="true"` on METHOD badge means screen readers don't know the HTTP method.
+
+**Why deferred:** Pre-existing from Story 4.1.
+
+**Suggested fix:** Add `aria-label` to the row or expose the method in an accessible column.
+
+### 42. Keyboard focus missing on table row
+
+**Where:** `components/network-waterfall-row.tsx:75` — Only the `<Link>` inside the row is focusable. Keyboard users cannot navigate to the row itself to hear the full row context.
+
+**Why deferred:** Pre-existing from Story 4.1.
+
+**Suggested fix:** Add `tabIndex={0}` and an `aria-label` summarizing the row, or make the entire row a semantic link/button.
+
+### 43. timeWeight/startOffset animation exceeds container bounds
+
+**Where:** `components/network-waterfall-row.tsx:122-131` — If schema validation is bypassed and values exceed 1.0 or are negative, the motion bar will overflow or render backwards.
+
+**Why deferred:** Pre-existing from Story 4.1; schema should validate clamping.
+
+**Suggested fix:** Clamp values with `Math.min(1, Math.max(0, value))` before passing to Framer Motion, or tighten schema validation.

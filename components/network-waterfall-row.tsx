@@ -38,6 +38,42 @@ interface NetworkWaterfallRowProps {
   project: Project
 }
 
+function ProjectNameLink({
+  project,
+  className,
+}: NetworkWaterfallRowProps & { className?: string }) {
+  const base = cn("truncate text-foreground hover:underline", className)
+
+  if (project.featured) {
+    return (
+      <Link href={`/work/${project.slug}`} className={base}>
+        {project.name}
+      </Link>
+    )
+  }
+
+  const previewLink = project.links.find(
+    (l) =>
+      l.label.toLowerCase().includes("preview") ||
+      l.label.toLowerCase().includes("live")
+  )
+  const href = previewLink?.href || project.links[0]?.href
+  if (href) {
+    return (
+      <a href={href} target="_blank" rel="noopener noreferrer" className={base}>
+        {project.name}
+        <span className="sr-only"> (opens in new tab)</span>
+      </a>
+    )
+  }
+
+  return (
+    <span className={cn("truncate text-foreground", className)}>
+      {project.name}
+    </span>
+  )
+}
+
 export function NetworkWaterfallRow({ project }: NetworkWaterfallRowProps) {
   const shouldAnimate = useShouldAnimate()
 
@@ -56,12 +92,7 @@ export function NetworkWaterfallRow({ project }: NetworkWaterfallRowProps) {
         </Badge>
       </td>
       <td className="px-2 py-1.5">
-        <Link
-          href={`/work/${project.slug}`}
-          className="truncate text-foreground hover:underline"
-        >
-          {project.name}
-        </Link>
+        <ProjectNameLink project={project} />
       </td>
       <td className="px-2 py-1.5 font-mono text-xs text-muted-foreground">
         {project.type}
@@ -131,12 +162,7 @@ export function NetworkWaterfallCard({ project }: NetworkWaterfallRowProps) {
         >
           {project.method}
         </Badge>
-        <Link
-          href={`/work/${project.slug}`}
-          className="flex-1 truncate text-sm text-foreground hover:underline"
-        >
-          {project.name}
-        </Link>
+        <ProjectNameLink project={project} className="flex-1 text-sm" />
         <Badge
           variant="outline"
           className={cn(

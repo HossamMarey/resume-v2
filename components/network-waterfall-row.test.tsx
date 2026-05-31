@@ -49,6 +49,56 @@ const mockProject: Project = {
   decisions: [],
   outcomes: [],
   links: [],
+  featured: true,
+  meta: { mock: false },
+}
+
+const nonFeaturedWithLink: Project = {
+  slug: "legacy-project",
+  name: "Legacy Project",
+  org: "",
+  method: "GET",
+  status: "archived",
+  statusCode: 200,
+  type: "web",
+  size: "5 MB",
+  sizeWeight: 0.3,
+  time: "3 mo",
+  timeWeight: 0.15,
+  startOffset: 0,
+  year: 2021,
+  stack: ["html"],
+  problem: "",
+  role: "",
+  decisions: [],
+  outcomes: [],
+  links: [{ label: "Preview", href: "https://example.com" }],
+  featured: false,
+  meta: { mock: false },
+}
+
+const nonFeaturedNoLink: Project = {
+  slug: "no-link-project",
+  name: "No Link Project",
+  org: "",
+  method: "GET",
+  status: "archived",
+  statusCode: 200,
+  type: "web",
+  size: "2 MB",
+  sizeWeight: 0.2,
+  time: "1 mo",
+  timeWeight: 0.1,
+  startOffset: 0,
+  year: 2020,
+  stack: ["css"],
+  problem: "",
+  role: "",
+  decisions: [],
+  outcomes: [],
+  links: [],
+  featured: false,
+  meta: { mock: false },
 }
 
 describe("NetworkWaterfallRow", () => {
@@ -207,5 +257,91 @@ describe("statusColor", () => {
 
   it("returns status-err for 410", () => {
     expect(statusColor(410)).toContain("status-err")
+  })
+})
+
+describe("Featured vs non-featured linking (Row)", () => {
+  beforeEach(() => {
+    mockUseShouldAnimate.mockReturnValue(false)
+  })
+
+  afterEach(() => {
+    vi.resetAllMocks()
+  })
+
+  it("featured project links internally to /work/[slug]", () => {
+    render(
+      <table>
+        <tbody>
+          <NetworkWaterfallRow project={mockProject} />
+        </tbody>
+      </table>
+    )
+    expect(screen.getByRole("link", { name: "Test Project" })).toHaveAttribute(
+      "href",
+      "/work/test-project"
+    )
+  })
+
+  it("non-featured project with link opens external URL", () => {
+    render(
+      <table>
+        <tbody>
+          <NetworkWaterfallRow project={nonFeaturedWithLink} />
+        </tbody>
+      </table>
+    )
+    const link = screen.getByRole("link", { name: /Legacy Project/i })
+    expect(link).toHaveAttribute("href", "https://example.com")
+    expect(link).toHaveAttribute("target", "_blank")
+    expect(link).toHaveAttribute("rel", "noopener noreferrer")
+  })
+
+  it("non-featured project without link renders plain text", () => {
+    render(
+      <table>
+        <tbody>
+          <NetworkWaterfallRow project={nonFeaturedNoLink} />
+        </tbody>
+      </table>
+    )
+    expect(screen.getByText("No Link Project")).toBeInTheDocument()
+    expect(
+      screen.queryByRole("link", { name: /No Link Project/i })
+    ).not.toBeInTheDocument()
+  })
+})
+
+describe("Featured vs non-featured linking (Card)", () => {
+  beforeEach(() => {
+    mockUseShouldAnimate.mockReturnValue(false)
+  })
+
+  afterEach(() => {
+    vi.resetAllMocks()
+  })
+
+  it("featured project card links internally", () => {
+    render(<NetworkWaterfallCard project={mockProject} />)
+    expect(screen.getByRole("link", { name: "Test Project" })).toHaveAttribute(
+      "href",
+      "/work/test-project"
+    )
+  })
+
+  it("non-featured project card with link opens external URL", () => {
+    render(<NetworkWaterfallCard project={nonFeaturedWithLink} />)
+    const link = screen.getByRole("link", { name: /Legacy Project/i })
+    expect(link).toHaveAttribute("href", "https://example.com")
+    expect(link).toHaveAttribute("target", "_blank")
+    expect(link).toHaveAttribute("rel", "noopener noreferrer")
+  })
+
+  it("non-featured project card without link renders plain text", () => {
+    render(<NetworkWaterfallCard project={nonFeaturedNoLink} />)
+    expect(screen.getByText("No Link Project")).toBeInTheDocument()
+    expect(
+      screen.queryByRole("link", { name: /No Link Project/i })
+    ).not.toBeInTheDocument()
   })
 })

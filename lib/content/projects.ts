@@ -28,6 +28,8 @@ export const ProjectSchema = z.object({
       href: z.string().url(),
     })
   ),
+  featured: z.boolean(),
+  meta: z.object({ mock: z.boolean() }),
 })
 
 export type Project = z.infer<typeof ProjectSchema>
@@ -108,15 +110,27 @@ function transform(entry: LegacyEntry): Project {
     decisions: [],
     outcomes: [],
     links: toLinks(entry.links.preview, entry.links.code, entry.links.design),
+    featured: false,
+    meta: { mock: true },
   }
 }
 
-const legacyProjects: LegacyEntry[] = [
+const featuredProjects: Project[] = [
   {
-    title: "Buguard",
-    description:
-      "Buguard, LLC is a multinational cybersecurity firm offering various services to companies worldwide, including penetration testing, GRC services, and managed security services. They operate in North America, Europe, the Middle East and Africa",
-    tags: [
+    slug: "buguard",
+    name: "Buguard",
+    org: "Buguard, LLC",
+    method: "GET",
+    status: "shipped",
+    statusCode: 200,
+    type: "web",
+    size: "Enterprise",
+    sizeWeight: 0.9,
+    time: "12 mo",
+    timeWeight: 0.8,
+    startOffset: 0,
+    year: 2022,
+    stack: [
       "html",
       "css",
       "tailwindCss",
@@ -127,13 +141,32 @@ const legacyProjects: LegacyEntry[] = [
       "typescript",
       "react-pdf",
     ],
-    links: { preview: "https://buguard.io/", code: null, design: null },
+    problem:
+      "[PLACEHOLDER — awaiting authored content] Multinational cybersecurity firm needing a unified platform across regions.",
+    role: "[PLACEHOLDER — awaiting authored content] Lead front-end developer.",
+    decisions: [
+      "[PLACEHOLDER] Architecture decision to be authored by Hossam.",
+    ],
+    outcomes: ["[PLACEHOLDER] Key outcome to be authored by Hossam."],
+    links: [{ label: "Preview", href: "https://buguard.io/" }],
+    featured: true,
+    meta: { mock: true },
   },
   {
-    title: "Dark Atlas",
-    description:
-      "Dark Atlas is a proactive dark web monitoring platform that helps businesses prevent data breaches",
-    tags: [
+    slug: "dark-atlas",
+    name: "Dark Atlas",
+    org: "Dark Atlas",
+    method: "GET",
+    status: "shipped",
+    statusCode: 200,
+    type: "web",
+    size: "Enterprise",
+    sizeWeight: 0.85,
+    time: "10 mo",
+    timeWeight: 0.7,
+    startOffset: 0.1,
+    year: 2023,
+    stack: [
       "html",
       "css",
       "tailwindCss",
@@ -144,13 +177,32 @@ const legacyProjects: LegacyEntry[] = [
       "typescript",
       "react-pdf",
     ],
-    links: { preview: "https://darkatlas.io/", code: null, design: null },
+    problem:
+      "[PLACEHOLDER — awaiting authored content] Proactive dark web monitoring platform to help businesses prevent data breaches.",
+    role: "[PLACEHOLDER — awaiting authored content] Lead front-end developer.",
+    decisions: [
+      "[PLACEHOLDER] Architecture decision to be authored by Hossam.",
+    ],
+    outcomes: ["[PLACEHOLDER] Key outcome to be authored by Hossam."],
+    links: [{ label: "Preview", href: "https://darkatlas.io/" }],
+    featured: true,
+    meta: { mock: true },
   },
   {
-    title: "Masheed Gate",
-    description:
-      "We are building a new E-commerce website for selling construction materials",
-    tags: [
+    slug: "masheed-gate",
+    name: "Masheed Gate",
+    org: "Masheed Gate",
+    method: "POST",
+    status: "shipped",
+    statusCode: 200,
+    type: "web",
+    size: "Enterprise",
+    sizeWeight: 0.8,
+    time: "8 mo",
+    timeWeight: 0.6,
+    startOffset: 0.15,
+    year: 2023,
+    stack: [
       "html",
       "css",
       "tailwindCss",
@@ -162,12 +214,20 @@ const legacyProjects: LegacyEntry[] = [
       "react-query",
       "typescript",
     ],
-    links: {
-      preview: "https://www.masheedgate.com/",
-      code: null,
-      design: null,
-    },
+    problem:
+      "[PLACEHOLDER — awaiting authored content] E-commerce platform for selling construction materials.",
+    role: "[PLACEHOLDER — awaiting authored content] Lead front-end developer.",
+    decisions: [
+      "[PLACEHOLDER] Architecture decision to be authored by Hossam.",
+    ],
+    outcomes: ["[PLACEHOLDER] Key outcome to be authored by Hossam."],
+    links: [{ label: "Preview", href: "https://www.masheedgate.com/" }],
+    featured: true,
+    meta: { mock: true },
   },
+]
+
+const legacyProjects: LegacyEntry[] = [
   {
     title: "Eazy.to",
     description:
@@ -385,7 +445,10 @@ const legacyProjects: LegacyEntry[] = [
   },
 ]
 
-const rawProjects: Project[] = legacyProjects.map(transform)
+const rawProjects: Project[] = [
+  ...featuredProjects,
+  ...legacyProjects.map(transform),
+]
 
 export const projects: readonly Project[] = Object.freeze(
   ProjectsCollectionSchema.parse(rawProjects)

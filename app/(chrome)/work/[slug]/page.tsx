@@ -1,9 +1,29 @@
+import dynamic from "next/dynamic"
 import type { Metadata } from "next"
 import { notFound } from "next/navigation"
+
 import { projects } from "@/lib/content/projects"
 
+const warnedSlugs = new Set<string>()
+
+const NetworkRequestDetail = dynamic(
+  () =>
+    import("@/components/network-request-detail").then(
+      (m) => m.NetworkRequestDetail
+    ),
+  {
+    loading: () => (
+      <div className="animate-pulse space-y-4">
+        <div className="h-4 w-1/3 rounded bg-muted" />
+        <div className="h-8 w-1/2 rounded bg-muted" />
+        <div className="h-32 rounded bg-muted" />
+      </div>
+    ),
+  }
+)
+
 export function generateStaticParams() {
-  return projects.map((p) => ({ slug: p.slug }))
+  return projects.filter((p) => p.featured).map((p) => ({ slug: p.slug }))
 }
 
 export async function generateMetadata({
@@ -13,10 +33,11 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params
   const project = projects.find((p) => p.slug === slug)
+  if (!project || !project.featured) {
+    return { title: "Project Detail — devtools://hossam" }
+  }
   return {
-    title: project
-      ? `${project.name} — devtools://hossam`
-      : "Project Detail — devtools://hossam",
+    title: `${project.name} — devtools://hossam`,
   }
 }
 
@@ -28,16 +49,24 @@ export default async function CaseStudyPage({
   const { slug } = await params
   const project = projects.find((p) => p.slug === slug)
 
-  if (!project) {
+  if (!project || !project.featured) {
     notFound()
+  }
+
+  if (
+    project.meta.mock &&
+    process.env.NODE_ENV !== "production" &&
+    !warnedSlugs.has(project.slug)
+  ) {
+    warnedSlugs.add(project.slug)
+    console.warn(
+      `[MOCK] Case study "${project.slug}" contains placeholder content.`
+    )
   }
 
   return (
     <section className="p-4">
-      <h1 className="font-mono text-lg">Case Study: {project.name}</h1>
-      <p className="text-muted-foreground">
-        Stub content for case study detail.
-      </p>
+      <NetworkRequestDetail project={project} />
     </section>
   )
 }
