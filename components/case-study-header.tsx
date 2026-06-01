@@ -1,10 +1,8 @@
 "use client"
 
-import { motion } from "framer-motion"
 import Link from "next/link"
 
 import { Badge } from "@/components/ui/badge"
-import { useShouldAnimate } from "@/hooks/use-should-animate"
 
 import type { Project } from "@/lib/content/projects"
 
@@ -13,8 +11,6 @@ interface CaseStudyHeaderProps {
 }
 
 export function CaseStudyHeader({ project }: CaseStudyHeaderProps) {
-  const shouldAnimate = useShouldAnimate()
-
   return (
     <>
       <nav
@@ -33,19 +29,7 @@ export function CaseStudyHeader({ project }: CaseStudyHeaderProps) {
       </nav>
 
       <div className="mb-6 flex items-center gap-3">
-        <h1 className="font-mono text-xl text-foreground">
-          {shouldAnimate ? (
-            <motion.span
-              layout="position"
-              layoutId={`project-${project.slug}`}
-              className="inline-block"
-            >
-              {project.name}
-            </motion.span>
-          ) : (
-            <span>{project.name}</span>
-          )}
-        </h1>
+        <h1 className="font-mono text-xl text-foreground">{project.name}</h1>
         {project.meta.mock && process.env.NODE_ENV !== "production" && (
           <Badge
             variant="outline"

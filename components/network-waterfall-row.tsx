@@ -42,23 +42,12 @@ function ProjectNameLink({
   project,
   className,
 }: NetworkWaterfallRowProps & { className?: string }) {
-  const shouldAnimate = useShouldAnimate()
   const base = cn("truncate text-foreground hover:underline", className)
 
   if (project.featured) {
     return (
       <Link href={`/work/${project.slug}`} className={base}>
-        {shouldAnimate ? (
-          <motion.span
-            layout="position"
-            layoutId={`project-${project.slug}`}
-            className="inline-block max-w-full truncate align-bottom"
-          >
-            {project.name}
-          </motion.span>
-        ) : (
-          <span>{project.name}</span>
-        )}
+        {project.name}
       </Link>
     )
   }

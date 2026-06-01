@@ -53,6 +53,10 @@ context: ['{project-root}/_bmad-output/project-context.md']
 - Given `prefers-reduced-motion: reduce`, when `/work` renders, then featured names remain visible (plain span path unchanged).
 - Given the existing suite, when `yarn test:run`/`typecheck`/`lint` run, then all pass and `yarn format` is clean.
 
+## Spec Change Log
+
+- **2026-06-01 — `inline-block` insufficient; root cause was the shared-layout animation, not display.** Live testing showed featured names still vanished after the `inline-block` change. The true cause is the `layoutId`/`layout` shared-element transition getting stuck (transform/opacity handoff never completing) under the chrome's `AnimatePresence mode="wait"` — the exact risk flagged in Story 4.4's review finding and deferred-work #13. **Amendment:** removed the Framer Motion wrapper from the featured name on both ends of the pair (`network-waterfall-row.tsx` row + `case-study-header.tsx` title); they now render as a plain `<Link>`/`<h1>`. This trades the 4.4 row→detail morph (degrades to the existing route crossfade) for guaranteed visibility on the load-bearing project list. **Avoids:** the known-bad stuck-invisible state. **KEEP:** non-featured branches, the waterfall bar animation, and reduced-motion behavior were already untouched — leave them. **Follow-up option:** restore the morph later via `AnimatePresence mode="popLayout"` (deferred-work #13), which requires re-verifying all five tabs.
+
 ## Design Notes
 
 Framer Motion docs are explicit: layout animations require a transformable box — `display: inline` elements "won't animate correctly; use `inline-block`." The `<td>` table context amplifies the mis-projection into a full disappearance. `max-w-full truncate align-bottom` preserves the 4.1 truncation intent and avoids the inline-block baseline shift; the inner span now owns the ellipsis while the `<Link>`'s `truncate` is harmless.
