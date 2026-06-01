@@ -49,7 +49,11 @@ function ProjectNameLink({
     return (
       <Link href={`/work/${project.slug}`} className={base}>
         {shouldAnimate ? (
-          <motion.span layout="position" layoutId={`project-${project.slug}`}>
+          <motion.span
+            layout="position"
+            layoutId={`project-${project.slug}`}
+            className="inline-block max-w-full truncate align-bottom"
+          >
             {project.name}
           </motion.span>
         ) : (

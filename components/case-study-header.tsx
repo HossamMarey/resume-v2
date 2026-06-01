@@ -35,7 +35,11 @@ export function CaseStudyHeader({ project }: CaseStudyHeaderProps) {
       <div className="mb-6 flex items-center gap-3">
         <h1 className="font-mono text-xl text-foreground">
           {shouldAnimate ? (
-            <motion.span layout="position" layoutId={`project-${project.slug}`}>
+            <motion.span
+              layout="position"
+              layoutId={`project-${project.slug}`}
+              className="inline-block"
+            >
               {project.name}
             </motion.span>
           ) : (
