@@ -1,8 +1,19 @@
 import { render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
-import { describe, expect, it } from "vitest"
+import { describe, expect, it, vi } from "vitest"
 
 import { ConsoleREPL } from "./console-repl"
+
+const mockPush = vi.hoisted(() => vi.fn())
+const mockEmitXP = vi.hoisted(() => vi.fn())
+
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({ push: mockPush }),
+}))
+
+vi.mock("@/lib/xp/bus", () => ({
+  emitXP: mockEmitXP,
+}))
 
 describe("ConsoleREPL", () => {
   const setup = () => {
@@ -10,6 +21,11 @@ describe("ConsoleREPL", () => {
       user: userEvent.setup(),
     }
   }
+
+  beforeEach(() => {
+    mockPush.mockClear()
+    mockEmitXP.mockClear()
+  })
 
   it("auto-focuses the input on mount", async () => {
     render(<ConsoleREPL />)
@@ -25,7 +41,10 @@ describe("ConsoleREPL", () => {
     await user.type(input, "hello")
     await user.keyboard("{Enter}")
 
-    expect(screen.getByText(/hello/)).toBeInTheDocument()
+    const echoedLine = screen.getByText((content, element) => {
+      return element?.tagName === "DIV" && content === "hello"
+    })
+    expect(echoedLine).toBeInTheDocument()
     expect(input).toHaveValue("")
   })
 
@@ -148,5 +167,113 @@ describe("ConsoleREPL", () => {
     render(<ConsoleREPL />)
     const input = screen.getByRole("textbox", { name: /console input/i })
     expect(input.tagName).toBe("INPUT")
+  })
+
+  describe("registry integration", () => {
+    it("renders voiced output for whoami", async () => {
+      const { user } = setup()
+      render(<ConsoleREPL />)
+
+      const input = screen.getByRole("textbox", { name: /console input/i })
+      await user.type(input, "whoami")
+      await user.keyboard("{Enter}")
+
+      const echoedLine = screen.getByText((content, element) => {
+        return element?.tagName === "DIV" && content === "whoami"
+      })
+      expect(echoedLine).toBeInTheDocument()
+      expect(screen.getByText(/Hossam Marey/)).toBeInTheDocument()
+    })
+
+    it("renders command not found for unknown commands", async () => {
+      const { user } = setup()
+      render(<ConsoleREPL />)
+
+      const input = screen.getByRole("textbox", { name: /console input/i })
+      await user.type(input, "xyzzy")
+      await user.keyboard("{Enter}")
+
+      expect(screen.getByText(/command not found: xyzzy/)).toBeInTheDocument()
+    })
+
+    it("renders did you mean for near-miss commands", async () => {
+      const { user } = setup()
+      render(<ConsoleREPL />)
+
+      const input = screen.getByRole("textbox", { name: /console input/i })
+      await user.type(input, "whoam")
+      await user.keyboard("{Enter}")
+
+      expect(screen.getByText(/did you mean: whoami\?/)).toBeInTheDocument()
+    })
+
+    it("clears transcript but preserves history", async () => {
+      const { user } = setup()
+      render(<ConsoleREPL />)
+
+      const input = screen.getByRole("textbox", { name: /console input/i })
+
+      await user.type(input, "hello")
+      await user.keyboard("{Enter}")
+
+      await user.type(input, "clear")
+      await user.keyboard("{Enter}")
+
+      const transcript = screen.getByRole("log")
+      expect(transcript.children).toHaveLength(0)
+
+      // History still works
+      await user.keyboard("{ArrowUp}")
+      expect(input).toHaveValue("clear")
+
+      await user.keyboard("{ArrowUp}")
+      expect(input).toHaveValue("hello")
+    })
+
+    it("emits XP on successful command", async () => {
+      const { user } = setup()
+      render(<ConsoleREPL />)
+
+      const input = screen.getByRole("textbox", { name: /console input/i })
+      await user.type(input, "help")
+      await user.keyboard("{Enter}")
+
+      expect(mockEmitXP).toHaveBeenCalledWith(5, "repl:command")
+    })
+
+    it("does not emit XP on command not found", async () => {
+      const { user } = setup()
+      render(<ConsoleREPL />)
+
+      const input = screen.getByRole("textbox", { name: /console input/i })
+      await user.type(input, "nope")
+      await user.keyboard("{Enter}")
+
+      expect(mockEmitXP).not.toHaveBeenCalled()
+    })
+
+    it("navigates on contact command", async () => {
+      const { user } = setup()
+      render(<ConsoleREPL />)
+
+      const input = screen.getByRole("textbox", { name: /console input/i })
+      await user.type(input, "contact")
+      await user.keyboard("{Enter}")
+
+      expect(mockPush).toHaveBeenCalledWith("/sources")
+    })
+
+    it("triggers download on download resume", async () => {
+      const { user } = setup()
+      const clickSpy = vi.spyOn(HTMLAnchorElement.prototype, "click")
+      render(<ConsoleREPL />)
+
+      const input = screen.getByRole("textbox", { name: /console input/i })
+      await user.type(input, "download resume")
+      await user.keyboard("{Enter}")
+
+      expect(clickSpy).toHaveBeenCalled()
+      clickSpy.mockRestore()
+    })
   })
 })

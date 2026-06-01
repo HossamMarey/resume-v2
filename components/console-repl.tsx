@@ -2,26 +2,31 @@
 
 import type { FormEvent, KeyboardEvent } from "react"
 
+import { useRouter } from "next/navigation"
 import { useCallback, useEffect, useRef, useState } from "react"
 
 import { ArrowDown, ArrowUp } from "lucide-react"
 
+import { runCommand } from "@/lib/repl/commands"
+import type { ReplLine } from "@/lib/repl/commands"
+import { emitXP } from "@/lib/xp/bus"
+
 type ConsoleLine = {
   id: number
-  kind: "input" | "notice"
+  kind: "input" | "notice" | "output" | "error"
   text: string
 }
 
-// Story 5.2 seam: replace this stub with lib/repl/commands.ts
-// The registry returns response lines (including "command not found")
-// and fires emitXP(5, "repl:command") on success.
-// Stub seam for Story 5.2 command registry
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-function runCommand(_command: string): ConsoleLine[] {
-  return []
+function mapReplLine(id: number, line: ReplLine): ConsoleLine {
+  return {
+    id,
+    kind: line.kind,
+    text: line.text,
+  }
 }
 
 export function ConsoleREPL() {
+  const router = useRouter()
   const [transcript, setTranscript] = useState<ConsoleLine[]>([])
   const [history, setHistory] = useState<string[]>([])
   const [historyIndex, setHistoryIndex] = useState(-1)
@@ -83,18 +88,48 @@ export function ConsoleREPL() {
         text: command,
       }
 
-      const outputLines = runCommand(command)
-      setTranscript((prev) => [...prev, inputLine, ...outputLines])
+      const result = runCommand(command)
+
+      setTranscript((prev) => {
+        if (result.effect?.type === "clear") return []
+        const outputLines = result.lines.map((l) =>
+          mapReplLine(idRef.current++, l)
+        )
+        return [...prev, inputLine, ...outputLines]
+      })
       setHistory((prev) => [...prev, command])
       setHistoryIndex(-1)
       setDraft("")
       setInput("")
 
+      if (result.status === "ok") {
+        emitXP(5, "repl:command")
+
+        if (result.effect) {
+          switch (result.effect.type) {
+            case "download": {
+              if (!result.effect.href.startsWith("/")) break
+              const a = document.createElement("a")
+              a.href = result.effect.href
+              a.download = ""
+              document.body.appendChild(a)
+              a.click()
+              document.body.removeChild(a)
+              break
+            }
+            case "navigate": {
+              router.push(result.effect.to)
+              break
+            }
+          }
+        }
+      }
+
       requestAnimationFrame(() => {
         scrollToBottom()
       })
     },
-    [input, scrollToBottom]
+    [input, scrollToBottom, router]
   )
 
   const handleKeyDown = useCallback(
@@ -135,6 +170,19 @@ export function ConsoleREPL() {
     [scrollToBottom]
   )
 
+  const lineClass = (kind: ConsoleLine["kind"]): string => {
+    switch (kind) {
+      case "notice":
+        return "text-muted-foreground"
+      case "error":
+        return "text-status-err"
+      case "output":
+      case "input":
+      default:
+        return "text-foreground"
+    }
+  }
+
   return (
     <div className="flex h-full flex-col">
       <div
@@ -144,14 +192,7 @@ export function ConsoleREPL() {
         role="log"
       >
         {transcript.map((line) => (
-          <div
-            key={line.id}
-            className={
-              line.kind === "notice"
-                ? "text-muted-foreground"
-                : "text-foreground"
-            }
-          >
+          <div key={line.id} className={lineClass(line.kind)}>
             {line.kind === "input" && <span className="me-1 text-lime">$</span>}
             {line.text}
           </div>

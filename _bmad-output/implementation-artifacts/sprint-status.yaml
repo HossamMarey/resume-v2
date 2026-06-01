@@ -35,7 +35,8 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 
 generated: 2026-05-30
-last_updated: 2026-06-01 # 5-1 set done on 2026-06-01 (code-review: 5 patches applied, gates green)
+last_updated: 2026-06-01 # 5-2 set review on 2026-06-01 (dev-story)
+# 5-1 set done on 2026-06-01 (code-review: 5 patches applied, gates green)
 # 5-1 set review on 2026-06-01 (dev-story)
 # epic-5 set in-progress + 5-1 set ready-for-dev on 2026-06-01 (create-story)
 # 4-5 set done on 2026-06-01 (code-review: clean, gates green)
@@ -100,7 +101,7 @@ development_status:
   # Epic 5: Console, Command Palette & Konami
   epic-5: in-progress
   5-1-console-repl-shell-with-history: done
-  5-2-command-registry-with-voiced-outputs: backlog
+  5-2-command-registry-with-voiced-outputs: review
   5-3-command-palette-with-four-groups: backlog
   5-4-konami-unlock-with-chrome-pulse: backlog
   epic-5-retrospective: optional

@@ -1,0 +1,254 @@
+import { profile, projects } from "@/lib/content"
+
+export type ReplLineKind = "output" | "notice" | "error"
+
+export type ReplEffect =
+  | { type: "clear" }
+  | { type: "download"; href: string }
+  | { type: "navigate"; to: string }
+
+export interface ReplLine {
+  kind: ReplLineKind
+  text: string
+}
+
+export interface ReplResult {
+  lines: ReplLine[]
+  status: "ok" | "not-found"
+  effect?: ReplEffect
+}
+
+function line(kind: ReplLineKind, text: string): ReplLine {
+  return { kind, text }
+}
+
+function ok(lines: ReplLine[], effect?: ReplEffect): ReplResult {
+  return { lines, status: "ok", effect }
+}
+
+function notFound(input: string, suggestion?: string): ReplResult {
+  const lines: ReplLine[] = [
+    line(
+      "error",
+      `command not found: ${input}. Type 'help' for available commands.`
+    ),
+  ]
+  if (suggestion) {
+    lines.push(line("error", `did you mean: ${suggestion}?`))
+  }
+  return { lines, status: "not-found" }
+}
+
+export function levenshtein(a: string, b: string): number {
+  const s = a.toLowerCase()
+  const t = b.toLowerCase()
+  const m = s.length
+  const n = t.length
+
+  if (m === 0) return n
+  if (n === 0) return m
+
+  let prev = new Array(n + 1)
+  let curr = new Array(n + 1)
+
+  for (let j = 0; j <= n; j++) {
+    prev[j] = j
+  }
+
+  for (let i = 1; i <= m; i++) {
+    curr[0] = i
+    for (let j = 1; j <= n; j++) {
+      const cost = s[i - 1] === t[j - 1] ? 0 : 1
+      curr[j] = Math.min(prev[j] + 1, curr[j - 1] + 1, prev[j - 1] + cost)
+    }
+    ;[prev, curr] = [curr, prev]
+  }
+
+  return prev[n]
+}
+
+interface CommandEntry {
+  name: string
+  summary: string
+  run(args: string[]): ReplResult
+}
+
+function suggest(input: string, registry: CommandEntry[]): string | undefined {
+  let best: string | undefined
+  let bestDist = Infinity
+
+  for (const entry of registry) {
+    const dist = levenshtein(input, entry.name)
+    if (dist < 3 && dist < bestDist) {
+      bestDist = dist
+      best = entry.name
+    }
+  }
+
+  return best
+}
+
+const registry: CommandEntry[] = [
+  {
+    name: "help",
+    summary: "list available commands",
+    run() {
+      const maxLen = Math.max(...registry.map((c) => c.name.length))
+      const lines = registry.map((c) =>
+        line("output", `${c.name.padEnd(maxLen)} — ${c.summary}`)
+      )
+      return ok(lines)
+    },
+  },
+  {
+    name: "whoami",
+    summary: "who is Hossam",
+    run() {
+      const lines: ReplLine[] = [
+        line(
+          "output",
+          `${profile.name} — ${profile.role} · ${profile.years}+ yrs · ${profile.location}`
+        ),
+        line("output", `> ${profile.tagline}`),
+        line(
+          "output",
+          "> Right now I'm making a DevTools panel pretend to be a résumé. You're standing inside it."
+        ),
+      ]
+      return ok(lines)
+    },
+  },
+  {
+    name: "projects",
+    summary: "list projects (flags: --shipped, --tag <x>)",
+    run(args) {
+      const shippedFlag = args.includes("--shipped")
+      const tagIdx = args.indexOf("--tag")
+      const tagValue = tagIdx !== -1 ? args[tagIdx + 1] : undefined
+      const tagFilter =
+        tagValue && !tagValue.startsWith("--")
+          ? tagValue.toLowerCase()
+          : undefined
+
+      if (tagIdx !== -1 && !tagFilter) {
+        return ok([
+          line("output", "flag --tag requires a value"),
+          line("output", "usage: projects [--shipped] [--tag <stack-item>]"),
+        ])
+      }
+
+      let filtered = [...projects]
+
+      if (shippedFlag) {
+        filtered = filtered.filter((p) => p.status === "shipped")
+      }
+
+      if (tagFilter) {
+        filtered = filtered.filter((p) =>
+          p.stack.some((s) => s.toLowerCase().includes(tagFilter))
+        )
+      }
+
+      if (filtered.length === 0) {
+        const filterDesc = tagFilter
+          ? `--tag ${args[tagIdx + 1]}`
+          : shippedFlag
+            ? "--shipped"
+            : ""
+        return ok([line("output", `no requests match: ${filterDesc}`)])
+      }
+
+      const lines = filtered.map((p, i) =>
+        line(
+          "output",
+          `${i + 1}. [${p.method}] ${p.name} (${p.status}) — ${p.year}`
+        )
+      )
+      return ok(lines)
+    },
+  },
+  {
+    name: "contact",
+    summary: "navigate to contact form",
+    run() {
+      return ok([line("output", "Opening the contact channel…")], {
+        type: "navigate",
+        to: "/sources",
+      })
+    },
+  },
+  {
+    name: "theme",
+    summary: "show current theme (dark-only)",
+    run(args) {
+      if (args.length === 0) {
+        return ok([
+          line("output", "current theme: dark"),
+          line("output", "usage: theme <dark|light>"),
+        ])
+      }
+
+      const sub = args[0].toLowerCase()
+      if (sub === "dark") {
+        return ok([line("output", "theme is already dark.")])
+      }
+
+      return ok([line("output", "Site is dark-only. The vibe is intentional.")])
+    },
+  },
+  {
+    name: "clear",
+    summary: "clear the transcript",
+    run() {
+      return ok([], { type: "clear" })
+    },
+  },
+  {
+    name: "download resume",
+    summary: "download résumé PDF",
+    run() {
+      return ok([line("output", "Initiating résumé descent…")], {
+        type: "download",
+        href: "/hossam-marey-resume.pdf",
+      })
+    },
+  },
+]
+
+export function runCommand(raw: string): ReplResult {
+  const trimmed = raw.trim()
+  if (!trimmed) {
+    return ok([line("output", "Type 'help' for available commands.")])
+  }
+
+  const tokens = trimmed.split(/\s+/)
+  const firstTwo = tokens.slice(0, 2).join(" ").toLowerCase()
+  const firstOne = tokens[0].toLowerCase()
+
+  let entry = registry.find((c) => c.name.toLowerCase() === firstTwo)
+  let args = tokens.slice(2)
+
+  if (!entry) {
+    entry = registry.find((c) => c.name.toLowerCase() === firstOne)
+    args = tokens.slice(1)
+  }
+
+  if (!entry) {
+    return notFound(trimmed, suggest(firstOne, registry))
+  }
+
+  if (entry.name === "projects") {
+    const knownFlags = new Set(["--shipped", "--tag"])
+    const unknownFlag = args.find(
+      (a) => a.startsWith("--") && !knownFlags.has(a)
+    )
+    if (unknownFlag) {
+      return ok([
+        line("output", `unknown flag: ${unknownFlag}`),
+        line("output", "usage: projects [--shipped] [--tag <stack-item>]"),
+      ])
+    }
+  }
+
+  return entry.run(args)
+}
