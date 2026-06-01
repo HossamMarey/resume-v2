@@ -33,11 +33,12 @@ describe("ConsoleREPL", () => {
   beforeEach(() => {
     mockPush.mockClear()
     mockEmitXP.mockClear()
+    mockUseUnlocks.mockReturnValue({ unlocks: [] })
   })
 
   it("auto-focuses the input on mount", async () => {
     render(<ConsoleREPL />)
-    const input = screen.getByRole("textbox", { name: /console input/i })
+    const input = screen.getByRole("combobox", { name: /console input/i })
     expect(input).toHaveFocus()
   })
 
@@ -45,7 +46,7 @@ describe("ConsoleREPL", () => {
     const { user } = setup()
     render(<ConsoleREPL />)
 
-    const input = screen.getByRole("textbox", { name: /console input/i })
+    const input = screen.getByRole("combobox", { name: /console input/i })
     await user.type(input, "hello")
     await user.keyboard("{Enter}")
 
@@ -60,7 +61,7 @@ describe("ConsoleREPL", () => {
     const { user } = setup()
     render(<ConsoleREPL />)
 
-    const input = screen.getByRole("textbox", { name: /console input/i })
+    const input = screen.getByRole("combobox", { name: /console input/i })
     await user.type(input, "   ")
     await user.keyboard("{Enter}")
 
@@ -72,7 +73,7 @@ describe("ConsoleREPL", () => {
     const { user } = setup()
     render(<ConsoleREPL />)
 
-    const input = screen.getByRole("textbox", { name: /console input/i })
+    const input = screen.getByRole("combobox", { name: /console input/i })
 
     await user.type(input, "first")
     await user.keyboard("{Enter}")
@@ -111,7 +112,7 @@ describe("ConsoleREPL", () => {
     const { user } = setup()
     render(<ConsoleREPL />)
 
-    const input = screen.getByRole("textbox", { name: /console input/i })
+    const input = screen.getByRole("combobox", { name: /console input/i })
     await user.click(input)
     await user.paste("a\nb\nc")
 
@@ -125,7 +126,7 @@ describe("ConsoleREPL", () => {
     const { user } = setup()
     render(<ConsoleREPL />)
 
-    const input = screen.getByRole("textbox", { name: /console input/i })
+    const input = screen.getByRole("combobox", { name: /console input/i })
     await user.click(input)
     await user.paste("single")
 
@@ -139,7 +140,7 @@ describe("ConsoleREPL", () => {
     const { user } = setup()
     render(<ConsoleREPL />)
 
-    const input = screen.getByRole("textbox", { name: /console input/i })
+    const input = screen.getByRole("combobox", { name: /console input/i })
 
     await user.type(input, "command one")
     await user.keyboard("{Enter}")
@@ -173,7 +174,7 @@ describe("ConsoleREPL", () => {
 
   it("uses a real input, not contenteditable", () => {
     render(<ConsoleREPL />)
-    const input = screen.getByRole("textbox", { name: /console input/i })
+    const input = screen.getByRole("combobox", { name: /console input/i })
     expect(input.tagName).toBe("INPUT")
   })
 
@@ -182,7 +183,7 @@ describe("ConsoleREPL", () => {
       const { user } = setup()
       render(<ConsoleREPL />)
 
-      const input = screen.getByRole("textbox", { name: /console input/i })
+      const input = screen.getByRole("combobox", { name: /console input/i })
       await user.type(input, "whoami")
       await user.keyboard("{Enter}")
 
@@ -197,7 +198,7 @@ describe("ConsoleREPL", () => {
       const { user } = setup()
       render(<ConsoleREPL />)
 
-      const input = screen.getByRole("textbox", { name: /console input/i })
+      const input = screen.getByRole("combobox", { name: /console input/i })
       await user.type(input, "xyzzy")
       await user.keyboard("{Enter}")
 
@@ -208,18 +209,18 @@ describe("ConsoleREPL", () => {
       const { user } = setup()
       render(<ConsoleREPL />)
 
-      const input = screen.getByRole("textbox", { name: /console input/i })
+      const input = screen.getByRole("combobox", { name: /console input/i })
       await user.type(input, "whoam")
       await user.keyboard("{Enter}")
 
-      expect(screen.getByText(/did you mean: whoami\?/)).toBeInTheDocument()
+      expect(screen.getByText(/did you mean: \/whoami\?/)).toBeInTheDocument()
     })
 
     it("clears transcript but preserves history", async () => {
       const { user } = setup()
       render(<ConsoleREPL />)
 
-      const input = screen.getByRole("textbox", { name: /console input/i })
+      const input = screen.getByRole("combobox", { name: /console input/i })
 
       await user.type(input, "hello")
       await user.keyboard("{Enter}")
@@ -242,7 +243,7 @@ describe("ConsoleREPL", () => {
       const { user } = setup()
       render(<ConsoleREPL />)
 
-      const input = screen.getByRole("textbox", { name: /console input/i })
+      const input = screen.getByRole("combobox", { name: /console input/i })
       await user.type(input, "help")
       await user.keyboard("{Enter}")
 
@@ -253,7 +254,7 @@ describe("ConsoleREPL", () => {
       const { user } = setup()
       render(<ConsoleREPL />)
 
-      const input = screen.getByRole("textbox", { name: /console input/i })
+      const input = screen.getByRole("combobox", { name: /console input/i })
       await user.type(input, "nope")
       await user.keyboard("{Enter}")
 
@@ -265,7 +266,7 @@ describe("ConsoleREPL", () => {
       const { user } = setup()
       render(<ConsoleREPL />)
 
-      const input = screen.getByRole("textbox", { name: /console input/i })
+      const input = screen.getByRole("combobox", { name: /console input/i })
       await user.type(input, "experimental")
       await user.keyboard("{Enter}")
 
@@ -280,7 +281,7 @@ describe("ConsoleREPL", () => {
       const { user } = setup()
       render(<ConsoleREPL />)
 
-      const input = screen.getByRole("textbox", { name: /console input/i })
+      const input = screen.getByRole("combobox", { name: /console input/i })
       await user.type(input, "contact")
       await user.keyboard("{Enter}")
 
@@ -292,12 +293,92 @@ describe("ConsoleREPL", () => {
       const clickSpy = vi.spyOn(HTMLAnchorElement.prototype, "click")
       render(<ConsoleREPL />)
 
-      const input = screen.getByRole("textbox", { name: /console input/i })
+      const input = screen.getByRole("combobox", { name: /console input/i })
       await user.type(input, "download resume")
       await user.keyboard("{Enter}")
 
       expect(clickSpy).toHaveBeenCalled()
       clickSpy.mockRestore()
+    })
+  })
+
+  describe("slash autocomplete", () => {
+    it("opens a listbox filtered by the typed prefix", async () => {
+      const { user } = setup()
+      render(<ConsoleREPL />)
+
+      const input = screen.getByRole("combobox", { name: /console input/i })
+      await user.type(input, "/wh")
+
+      expect(screen.getByRole("listbox")).toBeInTheDocument()
+      expect(
+        screen.getByRole("option", { name: /\/whoami/ })
+      ).toBeInTheDocument()
+      expect(
+        screen.queryByRole("option", { name: /\/projects/ })
+      ).not.toBeInTheDocument()
+    })
+
+    it("runs the highlighted command on Enter", async () => {
+      const { user } = setup()
+      render(<ConsoleREPL />)
+
+      const input = screen.getByRole("combobox", { name: /console input/i })
+      await user.type(input, "/who")
+      await user.keyboard("{Enter}")
+
+      expect(screen.getByText(/Hossam Marey/)).toBeInTheDocument()
+      expect(input).toHaveValue("")
+    })
+
+    it("completes to /<name> on Tab without running", async () => {
+      const { user } = setup()
+      render(<ConsoleREPL />)
+
+      const input = screen.getByRole("combobox", { name: /console input/i })
+      await user.type(input, "/who")
+      await user.keyboard("{Tab}")
+
+      expect(input).toHaveValue("/whoami ")
+      expect(mockEmitXP).not.toHaveBeenCalled()
+    })
+
+    it("closes the menu on Escape but keeps the input", async () => {
+      const { user } = setup()
+      render(<ConsoleREPL />)
+
+      const input = screen.getByRole("combobox", { name: /console input/i })
+      await user.type(input, "/wh")
+      expect(screen.getByRole("listbox")).toBeInTheDocument()
+
+      await user.keyboard("{Escape}")
+      expect(screen.queryByRole("listbox")).not.toBeInTheDocument()
+      expect(input).toHaveValue("/wh")
+    })
+
+    it("ArrowDown moves the menu highlight, not history", async () => {
+      const { user } = setup()
+      render(<ConsoleREPL />)
+
+      const input = screen.getByRole("combobox", { name: /console input/i })
+      await user.type(input, "/")
+      await user.keyboard("{ArrowDown}")
+
+      const options = screen.getAllByRole("option")
+      expect(options[1]).toHaveAttribute("aria-selected", "true")
+      expect(input).toHaveValue("/")
+    })
+
+    it("never surfaces the locked experimental command", async () => {
+      const { user } = setup()
+      render(<ConsoleREPL />)
+
+      const input = screen.getByRole("combobox", { name: /console input/i })
+      await user.type(input, "/exp")
+
+      expect(
+        screen.queryByRole("option", { name: /experimental/i })
+      ).not.toBeInTheDocument()
     })
   })
 })

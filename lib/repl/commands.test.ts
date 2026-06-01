@@ -2,6 +2,7 @@ import fc from "fast-check"
 
 import {
   levenshtein,
+  listCommands,
   runCommand,
   type ReplEffect,
   type ReplResult,
@@ -9,20 +10,29 @@ import {
 
 describe("runCommand", () => {
   describe("help", () => {
-    it("lists all 7 commands", () => {
+    it("lists all 7 commands with the slash prefix", () => {
       const result = runCommand("help")
       expect(result.status).toBe("ok")
       expect(result.lines).toHaveLength(7)
       const names = result.lines.map((l) => l.text.split(" — ")[0].trim())
       expect(names).toEqual([
-        "help",
-        "whoami",
-        "projects",
-        "contact",
-        "theme",
-        "clear",
-        "download resume",
+        "/help",
+        "/whoami",
+        "/projects",
+        "/contact",
+        "/theme",
+        "/clear",
+        "/download resume",
       ])
+    })
+
+    it("resolves the same whether prefixed with a slash or not", () => {
+      expect(runCommand("/help").status).toBe("ok")
+      expect(runCommand("/whoami").status).toBe("ok")
+      expect(runCommand("/download resume").effect).toEqual({
+        type: "download",
+        href: "/hossam-marey-resume.pdf",
+      } satisfies ReplEffect)
     })
 
     it("does not list experimental when locked", () => {
@@ -165,7 +175,7 @@ describe("runCommand", () => {
       const result = runCommand("xyzzy")
       expect(result.status).toBe("not-found")
       expect(result.lines[0].text).toBe(
-        "command not found: xyzzy. Type 'help' for available commands."
+        "command not found: xyzzy. Type '/help' for available commands."
       )
     })
 
@@ -178,7 +188,7 @@ describe("runCommand", () => {
       const result = runCommand("whoam")
       expect(result.status).toBe("not-found")
       expect(result.lines).toHaveLength(2)
-      expect(result.lines[1].text).toBe("did you mean: whoami?")
+      expect(result.lines[1].text).toBe("did you mean: /whoami?")
     })
 
     it("does not suggest download resume for download cv (distance >= 3)", () => {
@@ -220,7 +230,34 @@ describe("runCommand", () => {
       expect(runCommand("HELP").status).toBe("ok")
       expect(runCommand("WhoAmI").status).toBe("ok")
       expect(runCommand("Download Resume").status).toBe("ok")
+      expect(runCommand("/HELP").status).toBe("ok")
     })
+  })
+})
+
+describe("listCommands", () => {
+  it("returns the visible commands as bare name + summary", () => {
+    const list = listCommands()
+    expect(list.map((c) => c.name)).toEqual([
+      "help",
+      "whoami",
+      "projects",
+      "contact",
+      "theme",
+      "clear",
+      "download resume",
+    ])
+    expect(list.every((c) => typeof c.summary === "string")).toBe(true)
+  })
+
+  it("excludes the locked experimental command", () => {
+    expect(listCommands().some((c) => c.name === "experimental")).toBe(false)
+  })
+
+  it("keeps experimental hidden when unlocked but content is disabled", () => {
+    expect(
+      listCommands(["konami"]).some((c) => c.name === "experimental")
+    ).toBe(false)
   })
 })
 

@@ -20,8 +20,10 @@ export const metadata: Metadata = {
 
 export default function ConsolePage() {
   return (
-    <section className="flex h-full flex-col p-4">
-      <h1 className="font-mono text-lg">Console</h1>
+    <section className="flex h-full flex-col gap-3 p-4">
+      <h1 className="font-mono text-xs tracking-wider text-muted-foreground uppercase">
+        Console
+      </h1>
       <ConsoleREPL />
     </section>
   )

@@ -23,6 +23,15 @@ export interface ReplResult {
   effect?: ReplEffect
 }
 
+// Slash commands are the canonical surface (Claude-Code style). Registry keys
+// stay bare; every display surface prefixes with "/" and runCommand accepts an
+// optional leading slash.
+const PREFIX = "/"
+
+function display(name: string): string {
+  return PREFIX + name
+}
+
 function line(kind: ReplLineKind, text: string): ReplLine {
   return { kind, text }
 }
@@ -35,7 +44,7 @@ function notFound(input: string, suggestion?: string): ReplResult {
   const lines: ReplLine[] = [
     line(
       "error",
-      `command not found: ${input}. Type 'help' for available commands.`
+      `command not found: ${input}. Type '/help' for available commands.`
     ),
   ]
   if (suggestion) {
@@ -101,7 +110,7 @@ function suggest(
     }
   }
 
-  return best
+  return best ? display(best) : undefined
 }
 
 const registry: CommandEntry[] = [
@@ -110,9 +119,9 @@ const registry: CommandEntry[] = [
     summary: "list available commands",
     run(_args, _unlocks: string[]) {
       const visible = registry.filter((c) => isVisible(c, _unlocks))
-      const maxLen = Math.max(...visible.map((c) => c.name.length))
+      const maxLen = Math.max(...visible.map((c) => display(c.name).length))
       const lines = visible.map((c) =>
-        line("output", `${c.name.padEnd(maxLen)} — ${c.summary}`)
+        line("output", `${display(c.name).padEnd(maxLen)} — ${c.summary}`)
       )
       return ok(lines)
     },
@@ -247,13 +256,27 @@ const registry: CommandEntry[] = [
   },
 ]
 
+// Visible commands for the autocomplete menu — bare names + summaries; the
+// consumer prefixes "/" for display and completion.
+export function listCommands(
+  unlocks: string[] = []
+): { name: string; summary: string }[] {
+  return registry
+    .filter((c) => isVisible(c, unlocks))
+    .map((c) => ({ name: c.name, summary: c.summary }))
+}
+
 export function runCommand(raw: string, unlocks: string[] = []): ReplResult {
   const trimmed = raw.trim()
-  if (!trimmed) {
-    return ok([line("output", "Type 'help' for available commands.")])
+  // Accept an optional single leading "/" so both /help and help resolve.
+  const normalized = (
+    trimmed.startsWith(PREFIX) ? trimmed.slice(PREFIX.length) : trimmed
+  ).trim()
+  if (!normalized) {
+    return ok([line("output", "Type '/help' for available commands.")])
   }
 
-  const tokens = trimmed.split(/\s+/)
+  const tokens = normalized.split(/\s+/)
   const firstTwo = tokens.slice(0, 2).join(" ").toLowerCase()
   const firstOne = tokens[0].toLowerCase()
 

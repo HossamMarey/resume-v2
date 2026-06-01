@@ -3,14 +3,15 @@
 import type { FormEvent, KeyboardEvent } from "react"
 
 import { useRouter } from "next/navigation"
-import { useCallback, useEffect, useRef, useState } from "react"
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react"
 
 import { ArrowDown, ArrowUp } from "lucide-react"
 
-import { runCommand } from "@/lib/repl/commands"
+import { listCommands, runCommand } from "@/lib/repl/commands"
 import type { ReplLine } from "@/lib/repl/commands"
 import { useUnlocks } from "@/hooks/use-unlocks"
 import { emitXP } from "@/lib/xp/bus"
+import { cn } from "@/lib/utils"
 
 type ConsoleLine = {
   id: number
@@ -34,9 +35,28 @@ export function ConsoleREPL() {
   const [historyIndex, setHistoryIndex] = useState(-1)
   const [input, setInput] = useState("")
   const [draft, setDraft] = useState("")
+  const [menuIndex, setMenuIndex] = useState(0)
+  const [menuDismissed, setMenuDismissed] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
   const transcriptRef = useRef<HTMLDivElement>(null)
   const idRef = useRef(0)
+  const listboxId = useId()
+
+  // Autocomplete is a Claude-Code-style slash menu: open while the input is a
+  // bare "/command" token (no space yet) and at least one visible command
+  // matches. Dismissed by Esc until the input changes.
+  const suggestions = useMemo(() => {
+    const token = input.trimStart()
+    const open = token.startsWith("/") && !token.slice(1).includes(" ")
+    if (!open || menuDismissed) return []
+    const query = token.slice(1).toLowerCase()
+    return listCommands(unlocks).filter((c) =>
+      c.name.toLowerCase().startsWith(query)
+    )
+  }, [input, menuDismissed, unlocks])
+  const menuOpen = suggestions.length > 0
+  const activeIndex = menuIndex < suggestions.length ? menuIndex : 0
+  const optionId = (i: number) => `${listboxId}-opt-${i}`
 
   useEffect(() => {
     inputRef.current?.focus({ preventScroll: true })
@@ -77,10 +97,9 @@ export function ConsoleREPL() {
     [history, historyIndex, input, draft]
   )
 
-  const handleSubmit = useCallback(
-    (e: FormEvent) => {
-      e.preventDefault()
-      const command = input.trim()
+  const execute = useCallback(
+    (raw: string) => {
+      const command = raw.trim()
       if (!command) return
 
       const lineId = idRef.current++
@@ -103,6 +122,8 @@ export function ConsoleREPL() {
       setHistoryIndex(-1)
       setDraft("")
       setInput("")
+      setMenuDismissed(false)
+      setMenuIndex(0)
 
       if (result.status === "ok") {
         emitXP(5, "repl:command")
@@ -131,11 +152,49 @@ export function ConsoleREPL() {
         scrollToBottom()
       })
     },
-    [input, scrollToBottom, router, unlocks]
+    [scrollToBottom, router, unlocks]
+  )
+
+  const handleSubmit = useCallback(
+    (e: FormEvent) => {
+      e.preventDefault()
+      execute(input)
+    },
+    [execute, input]
   )
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent<HTMLInputElement>) => {
+      // Menu-open branch takes precedence over history navigation.
+      if (menuOpen) {
+        switch (e.key) {
+          case "ArrowDown":
+            e.preventDefault()
+            setMenuIndex((activeIndex + 1) % suggestions.length)
+            return
+          case "ArrowUp":
+            e.preventDefault()
+            setMenuIndex(
+              (activeIndex - 1 + suggestions.length) % suggestions.length
+            )
+            return
+          case "Tab":
+            e.preventDefault()
+            setInput(`/${suggestions[activeIndex].name} `)
+            setMenuDismissed(true)
+            setMenuIndex(0)
+            return
+          case "Enter":
+            e.preventDefault()
+            execute(`/${suggestions[activeIndex].name}`)
+            return
+          case "Escape":
+            e.preventDefault()
+            setMenuDismissed(true)
+            return
+        }
+      }
+
       if (e.key === "ArrowUp") {
         e.preventDefault()
         stepHistory("prev")
@@ -144,7 +203,7 @@ export function ConsoleREPL() {
         stepHistory("next")
       }
     },
-    [stepHistory]
+    [menuOpen, suggestions, activeIndex, execute, stepHistory]
   )
 
   const handlePaste = useCallback(
@@ -187,40 +246,109 @@ export function ConsoleREPL() {
 
   return (
     <div className="flex h-full flex-col">
+      <div className="mb-3 rounded-lg border border-hairline bg-surface-2 px-3 py-2 font-mono text-sm text-muted-foreground">
+        <p className="text-foreground">devtools://hossam — console</p>
+        <p>
+          Real shell, not a prop. Type <span className="text-lime">/help</span>{" "}
+          to see what it does.
+        </p>
+      </div>
+
       <div
         ref={transcriptRef}
         aria-live="polite"
-        className="flex-1 overflow-y-auto font-mono text-sm"
+        className="flex-1 space-y-1 overflow-y-auto font-mono text-sm"
         role="log"
       >
         {transcript.map((line) => (
           <div key={line.id} className={lineClass(line.kind)}>
-            {line.kind === "input" && <span className="me-1 text-lime">$</span>}
+            {line.kind === "input" && <span className="me-1 text-lime">▸</span>}
             {line.text}
           </div>
         ))}
       </div>
 
-      <form onSubmit={handleSubmit} className="mt-2 flex items-center gap-2">
-        <span className="font-mono text-sm text-lime" aria-hidden="true">
-          $
+      <div className="relative mt-2">
+        {menuOpen && (
+          <ul
+            id={listboxId}
+            role="listbox"
+            aria-label="Command suggestions"
+            className="absolute bottom-full mb-2 max-h-60 w-full overflow-y-auto rounded-lg border border-hairline bg-popover p-1 shadow-lg"
+          >
+            {suggestions.map((c, i) => (
+              <li
+                key={c.name}
+                id={optionId(i)}
+                role="option"
+                aria-selected={i === activeIndex}
+                onMouseDown={(e) => {
+                  // Run before the input blurs (mousedown, not click).
+                  e.preventDefault()
+                  execute(`/${c.name}`)
+                }}
+                className={cn(
+                  "flex cursor-pointer items-center justify-between gap-4 rounded px-2 py-1.5 font-mono text-sm",
+                  i === activeIndex
+                    ? "bg-muted text-foreground"
+                    : "text-muted-foreground"
+                )}
+              >
+                <span className="text-lime">/{c.name}</span>
+                <span className="truncate text-xs text-muted-foreground">
+                  {c.summary}
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
+
+        <form
+          onSubmit={handleSubmit}
+          className="flex items-center gap-2 rounded-lg border border-hairline bg-surface px-3 py-2 focus-within:ring-1 focus-within:ring-ring"
+        >
+          <span className="font-mono text-sm text-lime" aria-hidden="true">
+            ▸
+          </span>
+          <input
+            ref={inputRef}
+            aria-label="Console input"
+            aria-autocomplete="list"
+            aria-expanded={menuOpen}
+            aria-controls={menuOpen ? listboxId : undefined}
+            aria-activedescendant={menuOpen ? optionId(activeIndex) : undefined}
+            autoComplete="off"
+            className="flex-1 bg-transparent font-mono text-sm text-foreground outline-none"
+            onChange={(e) => {
+              setInput(e.target.value)
+              setMenuIndex(0)
+              setMenuDismissed(false)
+            }}
+            onKeyDown={handleKeyDown}
+            onPaste={handlePaste}
+            role="combobox"
+            type="text"
+            value={input}
+          />
+        </form>
+      </div>
+
+      <div className="mt-2 flex items-center gap-2 font-mono text-xs text-muted-foreground">
+        <span>
+          type <span className="text-lime">/</span> for commands
         </span>
-        <input
-          ref={inputRef}
-          aria-label="Console input"
-          className="flex-1 bg-transparent font-mono text-sm text-foreground outline-none focus-visible:ring-1 focus-visible:ring-ring"
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={handleKeyDown}
-          onPaste={handlePaste}
-          type="text"
-          value={input}
-        />
-      </form>
+        <span aria-hidden="true">·</span>
+        <span>↑↓ history</span>
+        <span aria-hidden="true">·</span>
+        <span>⇥ complete</span>
+        <span aria-hidden="true">·</span>
+        <span>↵ run</span>
+      </div>
 
       <div className="mt-2 flex gap-2 sm:hidden">
         <button
           aria-label="Previous command"
-          className="focus-visible:ring-1 focus-visible:ring-ring"
+          className="rounded border border-hairline p-1.5 text-muted-foreground focus-visible:ring-1 focus-visible:ring-ring"
           onClick={() => {
             stepHistory("prev")
             inputRef.current?.focus()
@@ -231,7 +359,7 @@ export function ConsoleREPL() {
         </button>
         <button
           aria-label="Next command"
-          className="focus-visible:ring-1 focus-visible:ring-ring"
+          className="rounded border border-hairline p-1.5 text-muted-foreground focus-visible:ring-1 focus-visible:ring-ring"
           onClick={() => {
             stepHistory("next")
             inputRef.current?.focus()
