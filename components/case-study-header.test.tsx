@@ -13,13 +13,16 @@ vi.mock("@/hooks/use-should-animate", () => ({
 
 vi.mock("framer-motion", () => ({
   motion: {
-    span: (props: React.ComponentPropsWithoutRef<"span"> & {
-      children?: React.ReactNode
-      layout?: boolean | string
-      layoutId?: string
-    }) => {
+    span: (
+      props: React.ComponentPropsWithoutRef<"span"> & {
+        children?: React.ReactNode
+        layout?: boolean | string
+        layoutId?: string
+      }
+    ) => {
       const { children, layout: _l, layoutId: _lid, ...rest } = props
-      void _l; void _lid
+      void _l
+      void _lid
       return <span {...rest}>{children}</span>
     },
   },

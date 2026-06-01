@@ -4,6 +4,7 @@ import { notFound } from "next/navigation"
 
 import { CaseStudyHeader } from "@/components/case-study-header"
 import { CaseStudyPager } from "@/components/case-study-pager"
+import { ProjectOpenXp } from "@/components/project-open-xp"
 import { projects } from "@/lib/content/projects"
 
 const warnedSlugs = new Set<string>()
@@ -68,6 +69,7 @@ export default async function CaseStudyPage({
 
   return (
     <section className="p-4">
+      <ProjectOpenXp slug={project.slug} />
       <CaseStudyHeader project={project} />
       <NetworkRequestDetail project={project} />
       <CaseStudyPager slug={project.slug} />
