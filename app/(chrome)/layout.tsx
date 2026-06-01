@@ -3,6 +3,7 @@
 import type { ReactNode } from "react"
 import { usePathname } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
+import { CommandPalette } from "@/components/command-palette"
 import { DevToolsChrome, MobileBottomNav } from "@/components/devtools-chrome"
 import { emitXP } from "@/lib/xp/bus"
 import { useShouldAnimate } from "@/hooks/use-should-animate"
@@ -76,6 +77,7 @@ export default function ChromeLayout({
           </motion.div>
         </AnimatePresence>
       </main>
+      <CommandPalette />
       <MobileBottomNav />
     </>
   )
