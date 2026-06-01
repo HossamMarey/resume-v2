@@ -1,14 +1,15 @@
 import type { Metadata } from "next"
 
+import { RecruiterResume } from "@/components/recruiter-resume"
+
 export const metadata: Metadata = {
-  title: "Recruiter Mode — devtools://hossam",
+  title: "Hossam Marey — Senior Front-End Developer",
 }
 
 export default function RecruiterPage() {
   return (
-    <main className="p-4">
-      <h1 className="font-mono text-lg">Recruiter Mode</h1>
-      <p className="text-muted-foreground">Stub content for Recruiter Mode.</p>
+    <main className="mx-auto max-w-3xl px-4 py-16">
+      <RecruiterResume />
     </main>
   )
 }
