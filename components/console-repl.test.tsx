@@ -15,6 +15,14 @@ vi.mock("@/lib/xp/bus", () => ({
   emitXP: mockEmitXP,
 }))
 
+const mockUseUnlocks = vi.hoisted(() =>
+  vi.fn(() => ({ unlocks: [] as string[] }))
+)
+
+vi.mock("@/hooks/use-unlocks", () => ({
+  useUnlocks: mockUseUnlocks,
+}))
+
 describe("ConsoleREPL", () => {
   const setup = () => {
     return {
@@ -250,6 +258,22 @@ describe("ConsoleREPL", () => {
       await user.keyboard("{Enter}")
 
       expect(mockEmitXP).not.toHaveBeenCalled()
+    })
+
+    it("passes unlocks to runCommand", async () => {
+      mockUseUnlocks.mockReturnValue({ unlocks: ["konami"] })
+      const { user } = setup()
+      render(<ConsoleREPL />)
+
+      const input = screen.getByRole("textbox", { name: /console input/i })
+      await user.type(input, "experimental")
+      await user.keyboard("{Enter}")
+
+      // With EXPERIMENTAL_ENABLED false in the real module, experimental
+      // should still be command-not-found even when unlocked.
+      expect(
+        screen.getByText(/command not found: experimental/)
+      ).toBeInTheDocument()
     })
 
     it("navigates on contact command", async () => {

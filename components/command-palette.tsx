@@ -15,13 +15,15 @@ import {
 import { useShouldAnimate } from "@/hooks/use-should-animate"
 import { isTypingTarget } from "@/lib/keyboard"
 import { registerPaletteOpener } from "@/lib/command-palette/bus"
-import { profile, projects } from "@/lib/content"
+import { EXPERIMENTAL_ENABLED, profile, projects } from "@/lib/content"
+import { useUnlocks } from "@/hooks/use-unlocks"
 import { cn } from "@/lib/utils"
 
 export function CommandPalette() {
   const [open, setOpen] = useState(false)
   const router = useRouter()
   const animate = useShouldAnimate()
+  const { isUnlocked } = useUnlocks()
 
   useEffect(() => {
     return registerPaletteOpener(() => setOpen(true))
@@ -72,6 +74,11 @@ export function CommandPalette() {
   const handleToggleRecruiterMode = () => {
     setOpen(false)
     router.push("/recruiter")
+  }
+
+  const handleOpenExperimental = () => {
+    setOpen(false)
+    router.push("/console")
   }
 
   const handleCopyEmail = () => {
@@ -186,6 +193,15 @@ export function CommandPalette() {
           >
             Toggle Theme
           </CommandItem>
+          {isUnlocked("konami") && EXPERIMENTAL_ENABLED && (
+            <CommandItem
+              value="Experimental"
+              keywords={["experimental", "unlock", "konami", "secret"]}
+              onSelect={handleOpenExperimental}
+            >
+              Experimental
+            </CommandItem>
+          )}
         </CommandGroup>
 
         <CommandGroup heading="Socials">

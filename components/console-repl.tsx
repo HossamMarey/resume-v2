@@ -9,6 +9,7 @@ import { ArrowDown, ArrowUp } from "lucide-react"
 
 import { runCommand } from "@/lib/repl/commands"
 import type { ReplLine } from "@/lib/repl/commands"
+import { useUnlocks } from "@/hooks/use-unlocks"
 import { emitXP } from "@/lib/xp/bus"
 
 type ConsoleLine = {
@@ -27,6 +28,7 @@ function mapReplLine(id: number, line: ReplLine): ConsoleLine {
 
 export function ConsoleREPL() {
   const router = useRouter()
+  const { unlocks } = useUnlocks()
   const [transcript, setTranscript] = useState<ConsoleLine[]>([])
   const [history, setHistory] = useState<string[]>([])
   const [historyIndex, setHistoryIndex] = useState(-1)
@@ -88,7 +90,7 @@ export function ConsoleREPL() {
         text: command,
       }
 
-      const result = runCommand(command)
+      const result = runCommand(command, unlocks)
 
       setTranscript((prev) => {
         if (result.effect?.type === "clear") return []
@@ -129,7 +131,7 @@ export function ConsoleREPL() {
         scrollToBottom()
       })
     },
-    [input, scrollToBottom, router]
+    [input, scrollToBottom, router, unlocks]
   )
 
   const handleKeyDown = useCallback(

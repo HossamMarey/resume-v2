@@ -1,4 +1,9 @@
-import { profile, projects } from "@/lib/content"
+import {
+  EXPERIMENTAL_ENABLED,
+  experimental,
+  profile,
+  projects,
+} from "@/lib/content"
 
 export type ReplLineKind = "output" | "notice" | "error"
 
@@ -70,14 +75,25 @@ export function levenshtein(a: string, b: string): number {
 interface CommandEntry {
   name: string
   summary: string
-  run(args: string[]): ReplResult
+  locked?: boolean
+  run(args: string[], unlocks: string[]): ReplResult
 }
 
-function suggest(input: string, registry: CommandEntry[]): string | undefined {
+function isVisible(entry: CommandEntry, unlocks: string[]): boolean {
+  if (!entry.locked) return true
+  return EXPERIMENTAL_ENABLED && unlocks.includes("konami")
+}
+
+function suggest(
+  input: string,
+  registry: CommandEntry[],
+  unlocks: string[]
+): string | undefined {
   let best: string | undefined
   let bestDist = Infinity
 
   for (const entry of registry) {
+    if (!isVisible(entry, unlocks)) continue
     const dist = levenshtein(input, entry.name)
     if (dist < 3 && dist < bestDist) {
       bestDist = dist
@@ -92,9 +108,10 @@ const registry: CommandEntry[] = [
   {
     name: "help",
     summary: "list available commands",
-    run() {
-      const maxLen = Math.max(...registry.map((c) => c.name.length))
-      const lines = registry.map((c) =>
+    run(_args, _unlocks: string[]) {
+      const visible = registry.filter((c) => isVisible(c, _unlocks))
+      const maxLen = Math.max(...visible.map((c) => c.name.length))
+      const lines = visible.map((c) =>
         line("output", `${c.name.padEnd(maxLen)} — ${c.summary}`)
       )
       return ok(lines)
@@ -114,6 +131,21 @@ const registry: CommandEntry[] = [
           "output",
           "> Right now I'm making a DevTools panel pretend to be a résumé. You're standing inside it."
         ),
+      ]
+      return ok(lines)
+    },
+  },
+  {
+    name: "experimental",
+    summary: "what I'm building next",
+    locked: true,
+    run() {
+      if (!EXPERIMENTAL_ENABLED) {
+        return notFound("experimental")
+      }
+      const lines: ReplLine[] = [
+        line("output", experimental.title),
+        ...experimental.lines.map((l) => line("output", l)),
       ]
       return ok(lines)
     },
@@ -215,7 +247,7 @@ const registry: CommandEntry[] = [
   },
 ]
 
-export function runCommand(raw: string): ReplResult {
+export function runCommand(raw: string, unlocks: string[] = []): ReplResult {
   const trimmed = raw.trim()
   if (!trimmed) {
     return ok([line("output", "Type 'help' for available commands.")])
@@ -234,7 +266,13 @@ export function runCommand(raw: string): ReplResult {
   }
 
   if (!entry) {
-    return notFound(trimmed, suggest(firstOne, registry))
+    return notFound(trimmed, suggest(firstOne, registry, unlocks))
+  }
+
+  // Locked commands stay hidden — return not-found so the user gets no hint
+  // that the command exists before it is unlocked.
+  if (entry.locked && !isVisible(entry, unlocks)) {
+    return notFound(trimmed, suggest(firstOne, registry, unlocks))
   }
 
   if (entry.name === "projects") {
@@ -250,5 +288,5 @@ export function runCommand(raw: string): ReplResult {
     }
   }
 
-  return entry.run(args)
+  return entry.run(args, unlocks)
 }

@@ -20,6 +20,23 @@ vi.mock("@/hooks/use-should-animate", () => ({
   useShouldAnimate: () => true,
 }))
 
+const mockIsUnlocked = vi.hoisted(() => vi.fn((_name: string) => false))
+
+vi.mock("@/hooks/use-unlocks", () => ({
+  useUnlocks: () => ({
+    unlocks: [],
+    isUnlocked: mockIsUnlocked,
+  }),
+}))
+
+vi.mock("@/lib/content", async () => {
+  const actual = await vi.importActual("@/lib/content")
+  return {
+    ...(actual as object),
+    EXPERIMENTAL_ENABLED: true,
+  }
+})
+
 // Mock cmdk primitives to avoid jsdom/React 19 compatibility issues
 vi.mock("@/components/ui/command", async () => {
   const React = await import("react")
@@ -268,5 +285,28 @@ describe("CommandPalette", () => {
     expect(
       screen.getByText("No matches — try a route, project, or action.")
     ).toBeInTheDocument()
+  })
+
+  it("does not show Experimental when locked", () => {
+    mockIsUnlocked.mockReturnValue(false)
+    render(<CommandPalette />)
+    fireEvent.keyDown(window, { key: "k", metaKey: true })
+    expect(screen.queryByText("Experimental")).not.toBeInTheDocument()
+  })
+
+  it("shows Experimental when unlocked and enabled", () => {
+    mockIsUnlocked.mockImplementation((name: string) => name === "konami")
+    render(<CommandPalette />)
+    fireEvent.keyDown(window, { key: "k", metaKey: true })
+    expect(screen.getByText("Experimental")).toBeInTheDocument()
+  })
+
+  it("navigates to console on Experimental select", async () => {
+    mockIsUnlocked.mockImplementation((name: string) => name === "konami")
+    const user = userEvent.setup()
+    render(<CommandPalette />)
+    fireEvent.keyDown(window, { key: "k", metaKey: true })
+    await user.click(screen.getByText("Experimental"))
+    expect(push).toHaveBeenCalledWith("/console")
   })
 })

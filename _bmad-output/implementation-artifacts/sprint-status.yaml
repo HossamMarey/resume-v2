@@ -1,5 +1,5 @@
 # generated: 2026-05-30
-# last_updated: 2026-06-01
+# last_updated: 2026-06-01 # 5-4 set review on 2026-06-01 (dev-story)
 # project: web
 # project_key: NOKEY
 # tracking_system: file-system
@@ -35,7 +35,8 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 
 generated: 2026-05-30
-last_updated: 2026-06-01 # 5-3 set ready-for-dev on 2026-06-01 (create-story)
+last_updated: 2026-06-01 # 5-4 set review on 2026-06-01 (dev-story)
+# 5-3 set ready-for-dev on 2026-06-01 (create-story)
 # 5-2 set review on 2026-06-01 (dev-story)
 # 5-1 set done on 2026-06-01 (code-review: 5 patches applied, gates green)
 # 5-1 set review on 2026-06-01 (dev-story)
@@ -104,7 +105,7 @@ development_status:
   5-1-console-repl-shell-with-history: done
   5-2-command-registry-with-voiced-outputs: review
   5-3-command-palette-with-four-groups: review
-  5-4-konami-unlock-with-chrome-pulse: backlog
+  5-4-konami-unlock-with-chrome-pulse: review
   epic-5-retrospective: optional
 
   # Epic 6: Recruiter Mode & Boss-Level Contact

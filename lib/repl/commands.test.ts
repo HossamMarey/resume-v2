@@ -25,8 +25,14 @@ describe("runCommand", () => {
       ])
     })
 
-    it("does not list experimental", () => {
+    it("does not list experimental when locked", () => {
       const result = runCommand("help")
+      const text = result.lines.map((l) => l.text).join("\n")
+      expect(text).not.toContain("experimental")
+    })
+
+    it("still hides experimental when unlocked but content is disabled", () => {
+      const result = runCommand("help", ["konami"])
       const text = result.lines.map((l) => l.text).join("\n")
       expect(text).not.toContain("experimental")
     })
@@ -191,6 +197,21 @@ describe("runCommand", () => {
       const result = runCommand("   ")
       expect(result.status).toBe("ok")
       expect(result.lines[0].text).toContain("help")
+    })
+  })
+
+  describe("experimental", () => {
+    it("returns not-found when locked", () => {
+      const result = runCommand("experimental")
+      expect(result.status).toBe("not-found")
+      expect(result.lines[0].text).toContain("command not found")
+    })
+
+    it("does not suggest experimental while locked", () => {
+      const result = runCommand("experimen")
+      expect(result.status).toBe("not-found")
+      // No "did you mean" suggestion for locked commands
+      expect(result.lines).toHaveLength(1)
     })
   })
 

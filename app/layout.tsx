@@ -2,6 +2,7 @@ import type { ReactNode } from "react"
 import type { Viewport } from "next"
 
 import "./globals.css"
+import { KonamiListener } from "@/components/konami-listener"
 import { ThemeProvider } from "@/components/theme-provider"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { Toaster } from "@/components/ui/sonner"
@@ -33,7 +34,7 @@ export default function RootLayout({
             <Toaster />
           </TooltipProvider>
         </ThemeProvider>
-        {/* KonamiListener placeholder — Story 2.5 */}
+        <KonamiListener />
       </body>
     </html>
   )

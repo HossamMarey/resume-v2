@@ -35,3 +35,10 @@ export {
   PageWeightCategory,
   type PageWeightItem,
 } from "./page-weight"
+
+export {
+  ExperimentalSchema,
+  experimental,
+  EXPERIMENTAL_ENABLED,
+  type Experimental,
+} from "./experimental"
