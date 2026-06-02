@@ -1,5 +1,5 @@
 import type { ReactNode } from "react"
-import type { Viewport } from "next"
+import type { Metadata, Viewport } from "next"
 
 import "./globals.css"
 import { KonamiListener } from "@/components/konami-listener"
@@ -8,6 +8,31 @@ import { TooltipProvider } from "@/components/ui/tooltip"
 import { Toaster } from "@/components/ui/sonner"
 import { cn } from "@/lib/utils"
 import { fontVariables } from "@/lib/font"
+import {
+  OG_LOCALE,
+  SITE_DESCRIPTION_DEFAULT,
+  SITE_NAME,
+  SITE_TITLE_DEFAULT,
+  SITE_URL,
+} from "@/lib/site"
+
+export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
+  title: {
+    template: "%s — devtools://hossam",
+    default: SITE_TITLE_DEFAULT,
+  },
+  description: SITE_DESCRIPTION_DEFAULT,
+  openGraph: {
+    type: "website",
+    siteName: SITE_NAME,
+    locale: OG_LOCALE,
+    url: "/",
+  },
+  twitter: {
+    card: "summary_large_image",
+  },
+}
 
 export const viewport: Viewport = {
   width: "device-width",

@@ -4,7 +4,16 @@ import { RecruiterResume } from "@/components/recruiter-resume"
 import { RecruiterExit } from "@/components/recruiter-exit"
 
 export const metadata: Metadata = {
-  title: "Hossam Marey — Senior Front-End Developer",
+  title: { absolute: "Hossam Marey — Senior Front-End Developer" },
+  description:
+    "Senior Front-End Developer building fast, accessible interfaces for data-heavy products. Read the editorial resume.",
+  alternates: { canonical: "/recruiter" },
+  openGraph: {
+    url: "/recruiter",
+    title: "Hossam Marey — Senior Front-End Developer",
+    description:
+      "Senior Front-End Developer building fast, accessible interfaces for data-heavy products. Read the editorial resume.",
+  },
 }
 
 export default function RecruiterPage() {

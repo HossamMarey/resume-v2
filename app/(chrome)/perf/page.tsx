@@ -6,7 +6,16 @@ import { pageWeightBudget } from "@/lib/content/page-weight"
 import { profile } from "@/lib/content/profile"
 
 export const metadata: Metadata = {
-  title: "Performance — devtools://hossam",
+  title: "Performance",
+  description:
+    "Performance panel — Lighthouse metrics and page-weight budget for devtools://hossam.",
+  alternates: { canonical: "/perf" },
+  openGraph: {
+    url: "/perf",
+    title: "Performance — devtools://hossam",
+    description:
+      "Performance panel — Lighthouse metrics and page-weight budget for devtools://hossam.",
+  },
 }
 
 export default function PerformancePage() {

@@ -5,7 +5,16 @@ import type { SourceTreeItem } from "@/components/file-tree"
 import { SourcesPanel } from "@/components/sources-panel"
 
 export const metadata: Metadata = {
-  title: "Sources — devtools://hossam",
+  title: "Sources",
+  description:
+    "Sources panel — resume, articles, and talks from devtools://hossam.",
+  alternates: { canonical: "/sources" },
+  openGraph: {
+    url: "/sources",
+    title: "Sources — devtools://hossam",
+    description:
+      "Sources panel — resume, articles, and talks from devtools://hossam.",
+  },
 }
 
 const sourcesTree: SourceTreeItem[] = [

@@ -4,8 +4,10 @@ import { notFound } from "next/navigation"
 
 import { CaseStudyHeader } from "@/components/case-study-header"
 import { CaseStudyPager } from "@/components/case-study-pager"
+import { JsonLd } from "@/components/json-ld"
 import { ProjectOpenXp } from "@/components/project-open-xp"
 import { projects } from "@/lib/content/projects"
+import { absoluteTitleForProject, firstSentence, siteUrl } from "@/lib/site"
 
 const warnedSlugs = new Set<string>()
 
@@ -37,10 +39,29 @@ export async function generateMetadata({
   const { slug } = await params
   const project = projects.find((p) => p.slug === slug)
   if (!project || !project.featured) {
-    return { title: "Project Detail — devtools://hossam" }
+    return {
+      title: { absolute: "Project Detail — devtools://hossam" },
+      description: "Project detail page — devtools://hossam.",
+      alternates: { canonical: `/work/${slug}` },
+      openGraph: {
+        url: `/work/${slug}`,
+        title: "Project Detail — devtools://hossam",
+        description: "Project detail page — devtools://hossam.",
+      },
+    }
   }
+  const title = absoluteTitleForProject(project.name)
+  const description = firstSentence(project.problem)
   return {
-    title: `${project.name} — devtools://hossam`,
+    title: { absolute: title },
+    description,
+    alternates: { canonical: `/work/${slug}` },
+    openGraph: {
+      type: "article",
+      url: `/work/${slug}`,
+      title,
+      description,
+    },
   }
 }
 
@@ -67,8 +88,34 @@ export default async function CaseStudyPage({
     )
   }
 
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: siteUrl("/"),
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Network",
+        item: siteUrl("/work"),
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: project.name,
+        item: siteUrl(`/work/${project.slug}`),
+      },
+    ],
+  }
+
   return (
     <section className="p-4">
+      <JsonLd data={breadcrumbJsonLd} />
       <ProjectOpenXp slug={project.slug} />
       <CaseStudyHeader project={project} />
       <NetworkRequestDetail project={project} />

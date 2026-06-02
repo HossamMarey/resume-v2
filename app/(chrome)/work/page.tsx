@@ -5,7 +5,16 @@ import { projects } from "@/lib/content/projects"
 import { NetworkPageClient } from "@/components/network-page-client"
 
 export const metadata: Metadata = {
-  title: "Network — devtools://hossam",
+  title: "Network",
+  description:
+    "Network panel — case studies and project waterfall for devtools://hossam.",
+  alternates: { canonical: "/work" },
+  openGraph: {
+    url: "/work",
+    title: "Network — devtools://hossam",
+    description:
+      "Network panel — case studies and project waterfall for devtools://hossam.",
+  },
 }
 
 export default function NetworkPage() {

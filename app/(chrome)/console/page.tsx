@@ -15,7 +15,16 @@ const ConsoleREPL = dynamic(
 )
 
 export const metadata: Metadata = {
-  title: "Console — devtools://hossam",
+  title: "Console",
+  description:
+    "Console panel — interactive REPL and command shell for devtools://hossam.",
+  alternates: { canonical: "/console" },
+  openGraph: {
+    url: "/console",
+    title: "Console — devtools://hossam",
+    description:
+      "Console panel — interactive REPL and command shell for devtools://hossam.",
+  },
 }
 
 export default function ConsolePage() {
