@@ -403,3 +403,10 @@ Surfaced by quick-dev review loops. Each entry: source spec, finding, suggested 
 **Why deferred:** Pre-existing limitation already tracked in item #13. Switching to `mode="popLayout"` in the chrome layout would fix it but is a global change requiring re-verification of all tabs.
 
 **Suggested fix:** Switch `AnimatePresence mode="wait"` to `mode="popLayout"` in `app/(chrome)/layout.tsx` (item #13) and re-verify all five tab routes.
+
+---
+
+## Deferred from: code review of 6-4-validation-as-tests-and-stubbed-submit-with-xp (2026-06-02)
+
+- Toast messages expose personal email `hosmarey@gmail.com` — pre-existing, intentional fallback for users whose submission fails. Not introduced by this change.
+- `new Set()` on every `handleChange` — correct React state pattern, negligible perf impact for 4-field form.

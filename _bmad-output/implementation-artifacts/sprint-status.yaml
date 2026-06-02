@@ -35,7 +35,8 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 
 generated: 2026-05-30
-last_updated: 2026-06-02 # 6-3 set done on 2026-06-02 (code-review)
+last_updated: 2026-06-02 # 6-4 set done on 2026-06-02 (code-review)
+# 6-4 set review on 2026-06-02 (dev-story)
 # 6-3 set review on 2026-06-02 (dev-story)
 # 6-3 set ready-for-dev on 2026-06-02 (create-story)
 # 6-2 set review on 2026-06-02 (dev-story)
@@ -120,7 +121,7 @@ development_status:
   6-1-recruiter-editorial-resume-route: done
   6-2-dual-recruiter-mode-toggle-with-persistence: review
   6-3-boss-level-contact-form-ui: done
-  6-4-validation-as-tests-and-stubbed-submit-with-xp: backlog
+  6-4-validation-as-tests-and-stubbed-submit-with-xp: done
   epic-6-retrospective: optional
 
   # Epic 7: Launch Readiness — SEO, Print, Performance & Deploy
