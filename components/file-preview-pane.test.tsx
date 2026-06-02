@@ -1,8 +1,13 @@
 import { render, screen } from "@testing-library/react"
+import { vi } from "vitest"
 
 import type { SourceTreeItem } from "@/components/file-tree"
 
 import { FilePreviewPane } from "@/components/file-preview-pane"
+
+vi.mock("@/hooks/use-should-animate", () => ({
+  useShouldAnimate: () => false,
+}))
 
 describe("FilePreviewPane", () => {
   it("renders an embed with correct src for resume item", () => {
@@ -35,7 +40,7 @@ describe("FilePreviewPane", () => {
     )
   })
 
-  it("renders contact stub with ComputedStylesPanel", () => {
+  it("renders the boss-level contact form", () => {
     const item: SourceTreeItem = {
       id: "contact",
       label: "contact.ts",
@@ -43,10 +48,12 @@ describe("FilePreviewPane", () => {
     }
     render(<FilePreviewPane item={item} />)
 
-    expect(screen.getByText("Contact")).toBeInTheDocument()
+    // The form should render with the name field prompt
+    expect(screen.getByLabelText(/who's asking/i)).toBeInTheDocument()
+    // The old stub text should be gone
     expect(
-      screen.getByText("Boss-level contact form coming in Epic 6.")
-    ).toBeInTheDocument()
+      screen.queryByText("Boss-level contact form coming in Epic 6.")
+    ).not.toBeInTheDocument()
   })
 
   it("renders coming soon for articles folder", () => {

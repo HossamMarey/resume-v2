@@ -2,6 +2,7 @@
 
 import type { SourceTreeItem } from "@/components/file-tree"
 
+import { BossLevelContactForm } from "@/components/boss-level-contact-form"
 import {
   ComputedStylesCell,
   ComputedStylesPanel,
@@ -39,16 +40,7 @@ export function FilePreviewPane({ item }: FilePreviewPaneProps) {
           />
         </div>
       ) : item.id === "contact" ? (
-        <ComputedStylesPanel>
-          <ComputedStylesCell>
-            <h2 className="font-mono text-sm tracking-wider text-muted-foreground uppercase">
-              Contact
-            </h2>
-            <p className="text-muted-foreground">
-              Boss-level contact form coming in Epic 6.
-            </p>
-          </ComputedStylesCell>
-        </ComputedStylesPanel>
+        <BossLevelContactForm />
       ) : (
         <ComputedStylesPanel>
           <ComputedStylesCell>

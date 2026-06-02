@@ -273,16 +273,17 @@ The 4 known conflicts are RESOLVED. See "Resolved Decisions" above for full cont
 - **Konami `↑↑↓↓←→←→BA`** via `keydown` sequence buffer with timeout. Skip when target is `<input>` / `<textarea>` / `contenteditable` (match `theme-provider.tsx` pattern).
 - **Custom event `CustomEvent("hm:xp")`** is the cross-component bus. **Do NOT add a state library** — design is intentionally lightweight.
 
-#### Contact form (v1 scope)
+#### Contact form (v1 scope) — Telegram delivery (decision 2026-06-02)
 
-- **UI-only stub.** Submit returns a faked success after a short delay; show a sonner toast confirming "message queued."
-- Build the "boss-level" UX per `plan.md`: typed terminal prompts, validation rendered as test-case results (`✓ email format`, `✓ message length`, …), keyboard-first.
-- **No backend, no Resend, no env vars in v1.** Wire real email as a v1.1 follow-up.
-- Form schema lives in `lib/schemas/contact.ts` (Zod). Same schema validates client-side and would validate server-side if a backend is added later.
+- **Real delivery to a Telegram channel** via a Next.js **route handler** `app/api/contact/route.ts` (POST). This **supersedes** the earlier "UI-only stub / Resend in v1.1" plan.
+- Build the "boss-level" UX per `plan.md`: typed terminal prompts, validation rendered as test-case results (`✓ email format`, `✓ message length`, …), keyboard-first. On submit the client `fetch("POST", "/api/contact", JSON)` and toasts on `{ ok: true }` (sonner, system-log voice), voiced-failure otherwise.
+- **Secrets are SERVER-ONLY: `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`.** NEVER `NEXT_PUBLIC_*` — that prefix inlines the bot token into the client bundle. Template in `.env.example`; real values in `.env.local` (gitignored) + Vercel env.
+- Form schema lives in `lib/schemas/contact.ts` (Zod). The **same schema validates client-side and server-side** (the route `safeParse`s the body before calling Telegram).
+- **Still no spam/rate-limit protection** — add a honeypot field or Vercel rate limiting before heavy exposure.
 
 #### Security
 
-- **No backend means no client-side secrets.** Contact form is stubbed (above). If/when real email is wired, use a Next.js server action with `RESEND_API_KEY` server-only env var.
+- **No client-side secrets.** The contact route (`app/api/contact/route.ts`) keeps `TELEGRAM_BOT_TOKEN`/`TELEGRAM_CHAT_ID` server-only (never `NEXT_PUBLIC_*`). Any future external integration follows the same server-only env pattern.
 - **Zod validation on submit** — never trust HTML5 validation alone.
 - **`dangerouslySetInnerHTML` forbidden** except for owned MDX with sanitization.
 - **No external `<script>` tags.** All deps via npm.
@@ -344,10 +345,10 @@ The 7 spec-vs-code questions are resolved. Agents follow these answers as ground
    - `lib/repository/` folder is no longer needed for a Dexie wrapper — remove if empty.
    - The "offline-first" NFR in `docs/tech-equirements.md` is dropped from scope. The XP / unlocks / visits / recruiter-mode state fits in `localStorage` (small bounded data).
 
-5. **Contact form: UI-only stub in v1.**
+5. **Contact form: real Telegram delivery in v1 (UPDATED 2026-06-02; was "UI-only stub").**
    - Build the "boss-level" typed-prompts UX per `plan.md` (validation-as-tests visual, terminal cadence).
-   - Submit returns a faked success after a brief delay; show a sonner toast.
-   - No backend, no secrets, no third-party dependency. Wire real email (Resend) as a v1.1 follow-up if/when needed.
+   - Submit POSTs to the route handler `app/api/contact/route.ts`, which validates with `lib/schemas/contact.ts` and forwards to the Telegram Bot API; show a sonner toast on `{ ok: true }`. (Resend is no longer the planned backend.)
+   - Secrets are **server-only** (`TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`) — never `NEXT_PUBLIC_*`. No third-party dependency added (native `fetch`).
 
 6. **Recruiter Mode toggle: both chrome button AND command palette.**
    - Visible toggle in the top chrome (right-aligned, near identity name).
@@ -385,4 +386,4 @@ The 7 spec-vs-code questions are resolved. Agents follow these answers as ground
 - Review quarterly; remove rules that have become obvious or obsolete.
 - Re-run `bmad-generate-project-context` to refresh from current state.
 
-_Last Updated: 2026-05-25 (7 spec-vs-code questions resolved)_
+_Last Updated: 2026-06-02 (contact form: real Telegram delivery via `app/api/contact`, server-only env — supersedes the v1 stub / Resend plan)_
