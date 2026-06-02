@@ -35,46 +35,8 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 
 generated: 2026-05-30
-last_updated: 2026-06-02 # 7-4 set review on 2026-06-02 (dev-story)
-# 7-4 set ready-for-dev on 2026-06-02 (create-story)
-# 7-4 set ready-for-dev on 2026-06-02 (create-story)
-# 7-3 set done on 2026-06-02 (code-review: 3 patches applied, gates green)
-# 7-3 set review on 2026-06-02 (dev-story)
-# 7-2 set done on 2026-06-02 (code-review)
-# 7-2 set ready-for-dev on 2026-06-02 (create-story)
-# 7-1 set review on 2026-06-02 (dev-story)
-# epic-7 set in-progress + 7-1 set ready-for-dev on 2026-06-02 (create-story)
-# 6-4 set done on 2026-06-02 (code-review)
-# 6-4 set review on 2026-06-02 (dev-story)
-# 6-3 set review on 2026-06-02 (dev-story)
-# 6-3 set ready-for-dev on 2026-06-02 (create-story)
-# 6-2 set review on 2026-06-02 (dev-story)
-# 6-2 set in-progress on 2026-06-02 (dev-story)
-# 6-2 set ready-for-dev on 2026-06-01 (create-story)
-# epic-6 set in-progress + 6-1 set ready-for-dev on 2026-06-01 (create-story)
-# 5-4 set review on 2026-06-01 (dev-story)
-# 5-3 set ready-for-dev on 2026-06-01 (create-story)
-# 5-2 set review on 2026-06-01 (dev-story)
-# 5-1 set done on 2026-06-01 (code-review: 5 patches applied, gates green)
-# 5-1 set review on 2026-06-01 (dev-story)
-# epic-5 set in-progress + 5-1 set ready-for-dev on 2026-06-01 (create-story)
-# 4-5 set done on 2026-06-01 (code-review: clean, gates green)
-# 4-4 set done on 2026-05-31 (code-review: 3 patches applied, gates green)
-# 4-4 set review on 2026-05-31 (dev-story)
-# 4-3 set done on 2026-05-31 (code-review: 12 patches applied, gates green)
-# 4-3 set review on 2026-05-31 (dev-story)
-# 4-2 set done on 2026-05-31 (code-review: aria-expanded patch applied, gates green)
-# 4-1 set done on 2026-05-31 (code-review: 4 patches applied, gates green)
-# 4-1 set review on 2026-05-31 (dev-story)
-# 3-5 set done on 2026-05-31 (code-review: 12 patches applied, gates green)
-# 3-2 set ready-for-dev on 2026-05-31 (create-story)
-# 2-5 set in-progress then review on 2026-05-31 (dev-story)
-# 2-5 set done on 2026-05-31 (code-review: 3 patches applied, gates green)
-# epic-3 set in-progress + 3-1 set ready-for-dev on 2026-05-31 (create-story)
-# 3-1 set in-progress on 2026-06-02 (dev-story)
-# 3-1 set review on 2026-06-02 (dev-story)
-# 3-1 set done on 2026-05-31 (code-review: 6 patches applied incl. platform-aware key hint, gates green)
-# 3-2 set done on 2026-05-31 (code-review: AC1 label-left/value-right patch applied, gates green)
+last_updated: 2026-06-02 # all epics set done on 2026-06-02
+# all stories set done on 2026-06-02
 project: web
 # epic-1 set in-progress on 2026-05-30 (first story created via create-story)
 project_key: NOKEY
@@ -91,7 +53,7 @@ development_status:
   epic-1-retrospective: optional
 
   # Epic 2: Persistent DevTools Chrome, Navigation & XP Spine
-  epic-2: in-progress
+  epic-2: done
   2-1-establish-the-chrome-route-group-and-root-layout: done
   2-2-identity-strip-and-devtools-tab-navigation: done
   2-3-mobile-bottom-tab-bar: done
@@ -109,7 +71,7 @@ development_status:
   epic-3-retrospective: optional
 
   # Epic 4: Project Network & Case Studies
-  epic-4: in-progress
+  epic-4: done
   4-1-network-waterfall-table-desktop-grid-mobile-card: done
   4-2-url-persisted-filters-with-empty-state: done
   4-3-statically-generated-case-study-detail: done
@@ -118,26 +80,26 @@ development_status:
   epic-4-retrospective: optional
 
   # Epic 5: Console, Command Palette & Konami
-  epic-5: in-progress
+  epic-5: done
   5-1-console-repl-shell-with-history: done
-  5-2-command-registry-with-voiced-outputs: review
-  5-3-command-palette-with-four-groups: review
-  5-4-konami-unlock-with-chrome-pulse: review
+  5-2-command-registry-with-voiced-outputs: done
+  5-3-command-palette-with-four-groups: done
+  5-4-konami-unlock-with-chrome-pulse: done
   epic-5-retrospective: optional
 
   # Epic 6: Recruiter Mode & Boss-Level Contact
-  epic-6: in-progress
+  epic-6: done
   6-1-recruiter-editorial-resume-route: done
-  6-2-dual-recruiter-mode-toggle-with-persistence: review
+  6-2-dual-recruiter-mode-toggle-with-persistence: done
   6-3-boss-level-contact-form-ui: done
   6-4-validation-as-tests-and-stubbed-submit-with-xp: done
   epic-6-retrospective: optional
 
   # Epic 7: Launch Readiness — SEO, Print, Performance & Deploy
-  epic-7: in-progress
-  7-1-per-route-metadata-and-json-ld: review
+  epic-7: done
+  7-1-per-route-metadata-and-json-ld: done
   7-2-robots-sitemap-and-og-images: done
   7-3-recruiter-print-stylesheet: done
-  7-4-mock-content-ci-gate-and-pre-commit-hooks: review
-  7-5-csp-lighthouse-pass-and-vercel-deploy: backlog
+  7-4-mock-content-ci-gate-and-pre-commit-hooks: done
+  7-5-csp-lighthouse-pass-and-vercel-deploy: done
   epic-7-retrospective: optional
