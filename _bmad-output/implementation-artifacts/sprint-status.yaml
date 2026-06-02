@@ -35,7 +35,10 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 
 generated: 2026-05-30
-last_updated: 2026-06-02 # 7-1 set review on 2026-06-02 (dev-story)
+last_updated: 2026-06-02 # 7-2 set done on 2026-06-02 (code-review)
+# 7-2 set done on 2026-06-02 (code-review)
+# 7-2 set ready-for-dev on 2026-06-02 (create-story)
+# 7-1 set review on 2026-06-02 (dev-story)
 # epic-7 set in-progress + 7-1 set ready-for-dev on 2026-06-02 (create-story)
 # 6-4 set done on 2026-06-02 (code-review)
 # 6-4 set review on 2026-06-02 (dev-story)
@@ -129,7 +132,7 @@ development_status:
   # Epic 7: Launch Readiness — SEO, Print, Performance & Deploy
   epic-7: in-progress
   7-1-per-route-metadata-and-json-ld: review
-  7-2-robots-sitemap-and-og-images: backlog
+  7-2-robots-sitemap-and-og-images: done
   7-3-recruiter-print-stylesheet: backlog
   7-4-mock-content-ci-gate-and-pre-commit-hooks: backlog
   7-5-csp-lighthouse-pass-and-vercel-deploy: backlog
