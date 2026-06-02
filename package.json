@@ -11,7 +11,12 @@
     "format": "prettier --write \"**/*.{ts,tsx}\"",
     "typecheck": "tsc --noEmit",
     "test": "vitest",
-    "test:run": "vitest run"
+    "test:run": "vitest run",
+    "gate:content": "vitest run --config vitest.gate.config.ts",
+    "postinstall": "simple-git-hooks"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "yarn typecheck && yarn lint && yarn test:run && yarn format"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.4.0",
@@ -52,6 +57,7 @@
     "postcss": "^8",
     "prettier": "^3.8.1",
     "prettier-plugin-tailwindcss": "^0.7.2",
+    "simple-git-hooks": "^2.13.1",
     "tailwindcss": "^4.2.1",
     "typescript": "^5.9.3",
     "vitest": "^4.1.7"
