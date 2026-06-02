@@ -91,7 +91,7 @@ export function RecruiterResume() {
       </section>
 
       {/* Download CTA */}
-      <section className="flex flex-col items-start gap-4">
+      <section className="flex flex-col items-start gap-4 print:hidden">
         <Button asChild>
           <a href="/hossam-marey-resume.pdf" download>
             Download Resume

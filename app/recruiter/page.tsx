@@ -3,6 +3,8 @@ import type { Metadata } from "next"
 import { RecruiterResume } from "@/components/recruiter-resume"
 import { RecruiterExit } from "@/components/recruiter-exit"
 
+import "./print.css"
+
 export const metadata: Metadata = {
   title: { absolute: "Hossam Marey — Senior Front-End Developer" },
   description:
@@ -18,8 +20,8 @@ export const metadata: Metadata = {
 
 export default function RecruiterPage() {
   return (
-    <main className="mx-auto max-w-3xl px-4 py-16">
-      <div className="mb-8">
+    <main className="mx-auto max-w-3xl px-4 py-16 print:py-0">
+      <div className="mb-8 print:hidden">
         <RecruiterExit />
       </div>
       <RecruiterResume />

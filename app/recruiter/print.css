@@ -1,0 +1,67 @@
+@media print {
+  :root {
+    /* The only light surface in the app — print-only, dark-only on screen per Resolved Decision #1 */
+    --background: #fff;
+    --foreground: #000;
+    --card: #fff;
+    --card-foreground: #000;
+    --popover: #fff;
+    --popover-foreground: #000;
+    --muted: #fff;
+    --muted-foreground: #333;
+    --secondary: #fff;
+    --accent: #fff;
+    --accent-foreground: #000;
+    --border: rgb(0 0 0 / 20%);
+    --input: rgb(0 0 0 / 20%);
+    --primary: #000;
+    --primary-foreground: #fff;
+    --ring: transparent;
+    color-scheme: light;
+  }
+
+  body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+
+  @page {
+    margin: 14mm;
+  }
+
+  h1 {
+    font-size: 24pt;
+  }
+
+  h2 {
+    font-size: 16pt;
+  }
+
+  h3 {
+    font-size: 12pt;
+  }
+
+  article {
+    gap: 1.5rem;
+  }
+
+  section {
+    break-inside: avoid;
+  }
+
+  [data-slot="card"],
+  header,
+  footer {
+    break-inside: avoid;
+  }
+
+  h1,
+  h2,
+  h3 {
+    break-after: avoid;
+  }
+
+  [data-sonner-toaster] {
+    display: none !important;
+  }
+}
