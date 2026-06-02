@@ -17,6 +17,7 @@ import { isTypingTarget } from "@/lib/keyboard"
 import { registerPaletteOpener } from "@/lib/command-palette/bus"
 import { EXPERIMENTAL_ENABLED, profile, projects } from "@/lib/content"
 import { useUnlocks } from "@/hooks/use-unlocks"
+import { useRecruiterMode } from "@/hooks/use-recruiter-mode"
 import { cn } from "@/lib/utils"
 
 export function CommandPalette() {
@@ -24,6 +25,7 @@ export function CommandPalette() {
   const router = useRouter()
   const animate = useShouldAnimate()
   const { isUnlocked } = useUnlocks()
+  const { setRecruiterMode } = useRecruiterMode()
 
   useEffect(() => {
     return registerPaletteOpener(() => setOpen(true))
@@ -73,6 +75,7 @@ export function CommandPalette() {
 
   const handleToggleRecruiterMode = () => {
     setOpen(false)
+    setRecruiterMode(true)
     router.push("/recruiter")
   }
 

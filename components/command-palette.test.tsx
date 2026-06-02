@@ -22,10 +22,20 @@ vi.mock("@/hooks/use-should-animate", () => ({
 
 const mockIsUnlocked = vi.hoisted(() => vi.fn((_name: string) => false))
 
+const mockSetRecruiterMode = vi.hoisted(() => vi.fn())
+
 vi.mock("@/hooks/use-unlocks", () => ({
   useUnlocks: () => ({
     unlocks: [],
     isUnlocked: mockIsUnlocked,
+  }),
+}))
+
+vi.mock("@/hooks/use-recruiter-mode", () => ({
+  useRecruiterMode: () => ({
+    isRecruiterMode: false,
+    mounted: true,
+    setRecruiterMode: mockSetRecruiterMode,
   }),
 }))
 
@@ -148,6 +158,7 @@ const anchorClickSpy = vi
 describe("CommandPalette", () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    mockSetRecruiterMode.mockClear()
   })
 
   it("opens via ⌘K", () => {
@@ -223,6 +234,7 @@ describe("CommandPalette", () => {
     render(<CommandPalette />)
     fireEvent.keyDown(window, { key: "k", metaKey: true })
     await user.click(screen.getByText("Toggle Recruiter Mode"))
+    expect(mockSetRecruiterMode).toHaveBeenCalledWith(true)
     expect(push).toHaveBeenCalledWith("/recruiter")
   })
 

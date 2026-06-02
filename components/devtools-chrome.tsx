@@ -10,7 +10,9 @@ import { XP_EVENT } from "@/lib/xp/bus"
 import type { XPEventDetail } from "@/lib/xp/bus"
 import { XPBar } from "@/components/xp-bar"
 import { XPToast } from "@/components/xp-toast"
+import { useRouter } from "next/navigation"
 import { useXP } from "@/hooks/use-xp"
+import { useRecruiterMode } from "@/hooks/use-recruiter-mode"
 import { Code, Globe, Terminal, Activity, FileText } from "lucide-react"
 import type { LucideIcon } from "lucide-react"
 
@@ -45,10 +47,17 @@ const TOAST_DURATION_MS = 1200
 
 export function DevToolsChrome() {
   const pathname = usePathname()
+  const router = useRouter()
   const { xp } = useXP()
+  const { setRecruiterMode } = useRecruiterMode()
   const [toast, setToast] = useState<ActiveToast | null>(null)
   const displayName = profile.name?.trim() || "Hossam Marey"
   const displayRole = profile.role?.trim() || "Senior Front-End Developer"
+
+  const handleRecruiterMode = () => {
+    setRecruiterMode(true)
+    router.push("/recruiter")
+  }
 
   useEffect(() => {
     function onXp(event: Event) {
@@ -82,7 +91,13 @@ export function DevToolsChrome() {
           </span>
         </div>
         <div className="relative ms-auto flex items-center gap-3">
-          {/* Recruiter Mode chip — Epic 6 */}
+          <button
+            onClick={handleRecruiterMode}
+            className="hidden border border-lime px-2 py-1 font-mono text-xs tracking-wider text-foreground uppercase transition-colors hover:bg-lime/10 focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none sm:inline-flex"
+            aria-label="Toggle Recruiter Mode"
+          >
+            Recruiter Mode
+          </button>
           <XPBar xp={xp} />
           <AnimatePresence>
             {toast && (

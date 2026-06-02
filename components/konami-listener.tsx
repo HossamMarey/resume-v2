@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
+import { usePathname } from "next/navigation"
 
 import { ChromePulse } from "@/components/chrome-pulse"
 import { advanceKonami, isKonamiComplete, isTypingTarget } from "@/lib/keyboard"
@@ -14,6 +15,12 @@ export function KonamiListener() {
   const [pulse, setPulse] = useState(false)
   const progressRef = useRef(0)
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const pathname = usePathname()
+  const pathnameRef = useRef(pathname)
+
+  useEffect(() => {
+    pathnameRef.current = pathname
+  })
 
   useEffect(() => {
     function resetTimer() {
@@ -26,6 +33,10 @@ export function KonamiListener() {
     }
 
     function onKeyDown(event: KeyboardEvent) {
+      if (pathnameRef.current === "/recruiter") {
+        return
+      }
+
       if (event.defaultPrevented || event.repeat) {
         return
       }

@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
 import { CommandPalette } from "@/components/command-palette"
 import { DevToolsChrome, MobileBottomNav } from "@/components/devtools-chrome"
+import { RecruiterRedirect } from "@/components/recruiter-redirect"
 import { emitXP } from "@/lib/xp/bus"
 import { useShouldAnimate } from "@/hooks/use-should-animate"
 import { useEffect, useState } from "react"
@@ -57,6 +58,7 @@ export default function ChromeLayout({
         Skip to content
       </a>
       <DevToolsChrome />
+      <RecruiterRedirect />
       <main
         id="main-content"
         className="flex-1 pb-[calc(4rem+env(safe-area-inset-bottom))] sm:pb-0"

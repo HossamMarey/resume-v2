@@ -7,6 +7,7 @@ const mockAddUnlock = vi.hoisted(() => vi.fn())
 const mockEmitXP = vi.hoisted(() => vi.fn())
 const mockUseShouldAnimate = vi.hoisted(() => vi.fn(() => true))
 const mockExperimentalEnabled = vi.hoisted(() => ({ value: true }))
+const mockPathname = vi.hoisted(() => vi.fn(() => "/"))
 
 vi.mock("@/lib/unlocks/bus", () => ({
   addUnlock: mockAddUnlock,
@@ -24,6 +25,10 @@ vi.mock("@/lib/content", () => ({
   get EXPERIMENTAL_ENABLED() {
     return mockExperimentalEnabled.value
   },
+}))
+
+vi.mock("next/navigation", () => ({
+  usePathname: mockPathname,
 }))
 
 function fireSequence(keys: string[]) {
@@ -49,6 +54,7 @@ afterEach(() => {
   vi.clearAllMocks()
   mockUseShouldAnimate.mockReturnValue(true)
   mockExperimentalEnabled.value = true
+  mockPathname.mockReturnValue("/")
 })
 
 describe("KonamiListener", () => {
@@ -123,6 +129,15 @@ describe("KonamiListener", () => {
 
   it("does nothing when content is disabled", () => {
     mockExperimentalEnabled.value = false
+    render(<KonamiListener />)
+    fireSequence(KONAMI_SEQUENCE)
+
+    expect(mockAddUnlock).not.toHaveBeenCalled()
+    expect(mockEmitXP).not.toHaveBeenCalled()
+  })
+
+  it("is inert on /recruiter", () => {
+    mockPathname.mockReturnValue("/recruiter")
     render(<KonamiListener />)
     fireSequence(KONAMI_SEQUENCE)
 
