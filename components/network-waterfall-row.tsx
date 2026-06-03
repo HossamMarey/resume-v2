@@ -1,6 +1,6 @@
 "use client"
 
-import { BookOpen, Code, ExternalLink, FolderGit, Palette } from "lucide-react"
+import { BookOpen, Code, ExternalLink, FolderGit, Palette, MoveRight } from "lucide-react"
 import Link from "next/link"
 
 import { useImageTrailHandlers } from "@/components/network-image-trail"
@@ -29,33 +29,33 @@ function ProjectNameLink({
   project,
   className,
 }: NetworkWaterfallRowProps & { className?: string }) {
-  const base = cn("truncate text-foreground hover:underline", className)
+  const base = cn("truncate text-foreground hover:underline flex  items-center gap-1", className)
 
-  if (project.featured) {
-    return (
-      <Link href={`/work/${project.slug}`} className={base}>
-        {project.name}
-      </Link>
-    )
-  }
-
-  const links = projectLinkList(project.links)
-  const previewLink = links.find((l) => l.kind === "preview")
-  const href = previewLink?.href || links[0]?.href
-  if (href) {
-    return (
-      <a href={href} target="_blank" rel="noopener noreferrer" className={base}>
-        {project.name}
-        <span className="sr-only"> (opens in new tab)</span>
-      </a>
-    )
-  }
 
   return (
-    <span className={cn("truncate text-foreground", className)}>
-      {project.name}
-    </span>
+    <Link href={`/work/${project.slug}`} className={base} aria-label={`${project.name} (opens in new tab)`}>
+      {project.name} <MoveRight className="size-4 opacity-50" />
+    </Link>
   )
+
+
+  // const links = projectLinkList(project.links)
+  // const previewLink = links.find((l) => l.kind === "preview")
+  // const href = previewLink?.href || links[0]?.href
+  // if (href) {
+  //   return (
+  //     <a href={href} target="_blank" rel="noopener noreferrer" className={base}>
+  //       {project.name}
+  //       <span className="sr-only"> (opens in new tab)</span>
+  //     </a>
+  //   )
+  // }
+
+  // return (
+  //   <span className={cn("truncate text-foreground", className)}>
+  //     {project.name}
+  //   </span>
+  // )
 }
 
 export function NetworkWaterfallRow({ project }: NetworkWaterfallRowProps) {
@@ -67,11 +67,11 @@ export function NetworkWaterfallRow({ project }: NetworkWaterfallRowProps) {
   const trailProps =
     trail && project.images.length > 0
       ? {
-          onMouseEnter: () => trail.onRowEnter(project.images),
-          onMouseMove: (e: React.MouseEvent) =>
-            trail.onRowMove(project.images, e),
-          onMouseLeave: () => trail.onRowLeave(),
-        }
+        onMouseEnter: () => trail.onRowEnter(project.images),
+        onMouseMove: (e: React.MouseEvent) =>
+          trail.onRowMove(project.images, e),
+        onMouseLeave: () => trail.onRowLeave(),
+      }
       : {}
 
   return (

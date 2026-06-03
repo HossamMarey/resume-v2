@@ -89,7 +89,7 @@ export default async function CaseStudyPage({
   const { slug } = await params
   const project = projects.find((p) => p.slug === slug)
 
-  if (!project || !project.featured) {
+  if (!project) {
     notFound()
   }
 

@@ -80,8 +80,6 @@ describe("CaseStudyHero", () => {
     const { container } = render(
       <CaseStudyHero project={project} image={project.images[0]} />
     )
-    expect(
-      container.querySelector('[aria-hidden="true"]')
-    ).toBeInTheDocument()
+    expect(container.querySelector('[aria-hidden="true"]')).toBeInTheDocument()
   })
 })

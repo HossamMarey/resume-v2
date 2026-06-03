@@ -40,7 +40,7 @@ export function CaseStudyHero({ project, image }: CaseStudyHeroProps) {
           </p>
         </div>
 
-        <div className="bg-grid relative aspect-[4/3] overflow-hidden rounded-sm border border-hairline bg-surface">
+        <div className="relative aspect-[4/3] overflow-hidden rounded-sm border border-hairline bg-surface bg-grid">
           {image ? (
             <Image
               fill
