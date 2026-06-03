@@ -31,11 +31,15 @@ describe("CaseStudyHeader", () => {
     vi.unstubAllEnvs()
   })
 
-  it("renders one h1 with the project name", () => {
+  it("does not render an h1 (the title lives in the hero)", () => {
     render(<CaseStudyHeader project={cleanProject} />)
-    const headings = screen.getAllByRole("heading", { level: 1 })
-    expect(headings).toHaveLength(1)
-    expect(headings[0]).toHaveTextContent("Buguard")
+    expect(screen.queryByRole("heading", { level: 1 })).not.toBeInTheDocument()
+  })
+
+  it("renders the request status line with the project path", () => {
+    render(<CaseStudyHeader project={cleanProject} />)
+    expect(screen.getByText("200 OK")).toBeInTheDocument()
+    expect(screen.getByText(/\/work\/buguard/)).toBeInTheDocument()
   })
 
   it("renders a breadcrumb link to /work", () => {

@@ -24,25 +24,26 @@ interface NetworkRequestDetailProps {
   project: Project
 }
 
+function SectionHeader({ index, label }: { index: string; label: string }) {
+  return (
+    <div className="mb-3 flex items-baseline gap-3">
+      <span className="font-mono text-2xl text-lime tabular-nums">{index}</span>
+      <h2 className="font-mono text-sm tracking-wider text-muted-foreground uppercase">
+        {label}
+      </h2>
+    </div>
+  )
+}
+
 export function NetworkRequestDetail({ project }: NetworkRequestDetailProps) {
   const links = projectLinkList(project.links)
 
   return (
-    <article>
-      {project.description && (
-        <section className="mb-8">
-          <p className="text-sm leading-relaxed text-foreground">
-            {project.description}
-          </p>
-        </section>
-      )}
-
-      <section className="mb-8">
-        <h2 className="mb-2 font-mono text-sm tracking-wider text-muted-foreground uppercase">
-          Problem
-        </h2>
+    <article className="space-y-10 border-t border-hairline pt-10">
+      <section>
+        <SectionHeader index="01" label="Problem" />
         {project.problem ? (
-          <p className="text-sm leading-relaxed text-foreground">
+          <p className="max-w-prose text-sm leading-relaxed text-foreground">
             {project.problem}
           </p>
         ) : (
@@ -52,12 +53,10 @@ export function NetworkRequestDetail({ project }: NetworkRequestDetailProps) {
         )}
       </section>
 
-      <section className="mb-8">
-        <h2 className="mb-2 font-mono text-sm tracking-wider text-muted-foreground uppercase">
-          Role
-        </h2>
+      <section>
+        <SectionHeader index="02" label="Role" />
         {project.role ? (
-          <p className="text-sm leading-relaxed text-foreground">
+          <p className="max-w-prose text-sm leading-relaxed text-foreground">
             {project.role}
           </p>
         ) : (
@@ -67,10 +66,8 @@ export function NetworkRequestDetail({ project }: NetworkRequestDetailProps) {
         )}
       </section>
 
-      <section className="mb-8">
-        <h2 className="mb-3 font-mono text-sm tracking-wider text-muted-foreground uppercase">
-          Stack
-        </h2>
+      <section>
+        <SectionHeader index="03" label="Stack" />
         {project.stack.length > 0 ? (
           <div className="flex flex-wrap gap-2">
             {project.stack.map((tech) => (
@@ -86,10 +83,8 @@ export function NetworkRequestDetail({ project }: NetworkRequestDetailProps) {
         )}
       </section>
 
-      <section className="mb-8">
-        <h2 className="mb-3 font-mono text-sm tracking-wider text-muted-foreground uppercase">
-          Decisions
-        </h2>
+      <section>
+        <SectionHeader index="04" label="Decisions" />
         {project.decisions.length > 0 ? (
           <ComputedStylesPanel>
             {project.decisions.map((decision, i) => (
@@ -107,10 +102,8 @@ export function NetworkRequestDetail({ project }: NetworkRequestDetailProps) {
         )}
       </section>
 
-      <section className="mb-8">
-        <h2 className="mb-3 font-mono text-sm tracking-wider text-muted-foreground uppercase">
-          Outcomes
-        </h2>
+      <section>
+        <SectionHeader index="05" label="Outcomes" />
         {project.outcomes.length > 0 ? (
           <ComputedStylesPanel>
             {project.outcomes.map((outcome, i) => (
@@ -128,10 +121,8 @@ export function NetworkRequestDetail({ project }: NetworkRequestDetailProps) {
         )}
       </section>
 
-      <section className="mb-8">
-        <h2 className="mb-3 font-mono text-sm tracking-wider text-muted-foreground uppercase">
-          Links
-        </h2>
+      <section>
+        <SectionHeader index="06" label="Links" />
         {links.length > 0 ? (
           <div className="flex flex-wrap gap-3">
             {links.map((link) => {

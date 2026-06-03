@@ -3,6 +3,7 @@ import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 
 import { CaseStudyHeader } from "@/components/case-study-header"
+import { CaseStudyHero } from "@/components/case-study-hero"
 import { CaseStudyPager } from "@/components/case-study-pager"
 import { JsonLd } from "@/components/json-ld"
 import { ProjectOpenXp } from "@/components/project-open-xp"
@@ -133,14 +134,17 @@ export default async function CaseStudyPage({
       <JsonLd data={breadcrumbJsonLd} />
       <ProjectOpenXp slug={project.slug} />
       <CaseStudyHeader project={project} />
-      <div className="mb-8">
-        <ProjectMediaGallery
-          images={project.images}
-          videos={project.videos}
-          projectName={project.name}
-        />
-      </div>
+      <CaseStudyHero project={project} image={project.images[0]} />
       <NetworkRequestDetail project={project} />
+      {(project.images.length > 1 || project.videos.length > 0) && (
+        <div className="mt-10">
+          <ProjectMediaGallery
+            images={project.images.slice(1)}
+            videos={project.videos}
+            projectName={project.name}
+          />
+        </div>
+      )}
       <CaseStudyPager slug={project.slug} />
     </section>
   )

@@ -25,27 +25,37 @@ export function CaseStudyPager({ slug }: CaseStudyPagerProps) {
   return (
     <nav
       aria-label="Case study pager"
-      className="mt-8 flex items-center justify-between border-t border-hairline pt-6"
+      className="mt-12 grid grid-cols-2 gap-4 border-t border-hairline pt-6"
     >
       <Link
         href={`/work/${prev.slug}`}
         aria-label={`Previous case study: ${prev.name}`}
-        className="text-sm text-muted-foreground hover:text-foreground focus-visible:ring-1 focus-visible:ring-ring"
+        className="group flex flex-col gap-1 focus-visible:ring-1 focus-visible:ring-ring"
       >
-        <span aria-hidden="true" className="me-1">
-          ←
+        <span className="font-mono text-xs tracking-wider text-muted-foreground uppercase">
+          <span aria-hidden="true" className="me-1">
+            ←
+          </span>
+          Prev
         </span>
-        {prev.name}
+        <span className="font-title text-lg text-foreground transition-colors group-hover:text-lime">
+          {prev.name}
+        </span>
       </Link>
 
       <Link
         href={`/work/${next.slug}`}
         aria-label={`Next case study: ${next.name}`}
-        className="text-sm text-muted-foreground hover:text-foreground focus-visible:ring-1 focus-visible:ring-ring"
+        className="group flex flex-col items-end gap-1 text-end focus-visible:ring-1 focus-visible:ring-ring"
       >
-        {next.name}
-        <span aria-hidden="true" className="ms-1">
-          →
+        <span className="font-mono text-xs tracking-wider text-muted-foreground uppercase">
+          Next
+          <span aria-hidden="true" className="ms-1">
+            →
+          </span>
+        </span>
+        <span className="font-title text-lg text-foreground transition-colors group-hover:text-lime">
+          {next.name}
         </span>
       </Link>
     </nav>

@@ -25,7 +25,7 @@ const featuredProject: Project = {
 }
 
 describe("NetworkRequestDetail", () => {
-  it("renders description, problem, role, stack, decisions, outcomes, links sections", () => {
+  it("renders problem, role, stack, decisions, outcomes, links section headers", () => {
     render(<NetworkRequestDetail project={featuredProject} />)
     const h2s = screen
       .getAllByRole("heading", { level: 2 })
@@ -40,11 +40,11 @@ describe("NetworkRequestDetail", () => {
     ])
   })
 
-  it("renders the description as a lead paragraph", () => {
+  it("does not render the description (it lives in the hero)", () => {
     render(<NetworkRequestDetail project={featuredProject} />)
     expect(
-      screen.getByText("A cybersecurity platform description.")
-    ).toBeInTheDocument()
+      screen.queryByText("A cybersecurity platform description.")
+    ).not.toBeInTheDocument()
   })
 
   it("does not contain an h1 heading", () => {
