@@ -7,13 +7,15 @@ import { useShouldAnimate } from "@/hooks/use-should-animate"
 import { cn } from "@/lib/utils"
 
 import type { Project } from "@/lib/content/projects"
+import { ProjectMediaGallery } from "./project-media-gallery"
 
 interface CaseStudyHeroProps {
   project: Project
-  image?: string
+  images?: string[]
+  videos?: string[]
 }
 
-export function CaseStudyHero({ project, image }: CaseStudyHeroProps) {
+export function CaseStudyHero({ project, images, videos }: CaseStudyHeroProps) {
   const shouldAnimate = useShouldAnimate()
   const meta = [project.org, project.type].filter(Boolean).join(" · ")
   const marqueeItems = Array.from({ length: 8 }, () => project.name)
@@ -41,19 +43,26 @@ export function CaseStudyHero({ project, image }: CaseStudyHeroProps) {
         </div>
 
         <div className="relative aspect-[4/3] overflow-hidden rounded-sm border border-hairline bg-surface bg-grid">
-          {image ? (
-            <Image
-              fill
-              sizes="(min-width: 768px) 40vw, 100vw"
-              src={image}
-              alt={`${project.name} featured screenshot`}
-              className="object-cover"
-              priority
-              onError={(e) => {
-                const img = e.currentTarget as HTMLImageElement
-                img.style.display = "none"
-              }}
+          {!!images?.length ? (
+            <ProjectMediaGallery
+              images={images || []}
+              videos={videos || []}
+              projectName={project.name}
+              className="h-full aspect-[4/3]  "
+              autoLoop
             />
+            // <Image
+            //   fill
+            //   sizes="(min-width: 768px) 40vw, 100vw"
+            //   src={image}
+            //   alt={`${project.name} featured screenshot`}
+            //   className="object-cover"
+            //   priority
+            //   onError={(e) => {
+            //     const img = e.currentTarget as HTMLImageElement
+            //     img.style.display = "none"
+            //   }}
+            // />
           ) : (
             <div className="flex h-full flex-col items-start justify-end p-5">
               <span className="font-mono text-xs tracking-wider text-muted-foreground uppercase">

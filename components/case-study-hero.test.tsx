@@ -15,6 +15,9 @@ vi.mock("framer-motion", () => ({
       children?: React.ReactNode
     }) => <div {...props}>{children}</div>,
   },
+  AnimatePresence: ({ children }: { children?: React.ReactNode }) => (
+    <>{children}</>
+  ),
 }))
 
 vi.mock("next/image", () => ({
@@ -52,21 +55,21 @@ const project: Project = {
 
 describe("CaseStudyHero", () => {
   it("renders one h1 with the project name", () => {
-    render(<CaseStudyHero project={project} image={project.images[0]} />)
+    render(<CaseStudyHero project={project} images={project.images} />)
     const headings = screen.getAllByRole("heading", { level: 1 })
     expect(headings).toHaveLength(1)
     expect(headings[0]).toHaveTextContent("Buguard")
   })
 
   it("renders the description as a lede", () => {
-    render(<CaseStudyHero project={project} image={project.images[0]} />)
+    render(<CaseStudyHero project={project} images={project.images} />)
     expect(screen.getByText("A cybersecurity platform.")).toBeInTheDocument()
   })
 
-  it("renders the featured image with alt text when provided", () => {
-    render(<CaseStudyHero project={project} image={project.images[0]} />)
+  it("renders the media gallery when images are provided", () => {
+    render(<CaseStudyHero project={project} images={project.images} />)
     expect(
-      screen.getByAltText("Buguard featured screenshot")
+      screen.getByAltText("Buguard screenshot 1")
     ).toBeInTheDocument()
   })
 
@@ -78,7 +81,7 @@ describe("CaseStudyHero", () => {
 
   it("marks the marquee band as decorative (aria-hidden)", () => {
     const { container } = render(
-      <CaseStudyHero project={project} image={project.images[0]} />
+      <CaseStudyHero project={project} images={project.images} />
     )
     expect(container.querySelector('[aria-hidden="true"]')).toBeInTheDocument()
   })

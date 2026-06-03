@@ -79,8 +79,6 @@ export function projectLinkList(
   return result
 }
 
-
-
 const featuredProjects: z.input<typeof ProjectSchema>[] = [
   {
     slug: "buguard",
@@ -100,8 +98,8 @@ const featuredProjects: z.input<typeof ProjectSchema>[] = [
       "typescript",
       "react-pdf",
     ],
-    images: ["https://hossammarey.com/images/projects/buguard.jpg"],
-    videos: [],
+    images: ["/images/projects/buguard-1.jpg"],
+    videos: ["/videos/buguard.mp4"],
     links: {
       preview: "https://buguard.io/",
     },
@@ -121,9 +119,9 @@ const featuredProjects: z.input<typeof ProjectSchema>[] = [
   },
   {
     slug: "dark-atlas",
-    name: "Dark Atlas",
+    name: "Dark Atlas Products",
     description:
-      "Dark web monitoring platform that scans for leaked credentials and sensitive data to help businesses catch breaches early.",
+      "A suite of cybersecurity products under the Dark Atlas brand, including a dark web monitoring platform, threat intelligence dashboards, and brand protection services.",
     org: "Buguard, LLC",
     type: "web",
     stack: [
@@ -137,8 +135,8 @@ const featuredProjects: z.input<typeof ProjectSchema>[] = [
       "typescript",
       "react-pdf",
     ],
-    images: ["https://hossammarey.com/images/projects/dark-atlas.jpg"],
-    videos: [],
+    images: ["/images/projects/darkatlas-1.jpg", "/images/projects/darkweb.png", "/images/projects/threat.png", "/images/projects/asm.png", "/images/projects/brand.png",],
+    videos: ["/videos/threat.mp4"],
     links: {
       preview: "https://darkatlas.io/",
     },
@@ -175,8 +173,8 @@ const featuredProjects: z.input<typeof ProjectSchema>[] = [
       "react-query",
       "typescript",
     ],
-    images: ["https://hossammarey.com/images/projects/masheed-gate.png"],
-    videos: [],
+    images: ["/images/projects/masheed-gate.png"],
+    videos: ["/videos/masheed-gate-new-website.mp4"],
     links: {
       preview: "https://www.masheedgate.com/",
     },
@@ -196,42 +194,45 @@ const featuredProjects: z.input<typeof ProjectSchema>[] = [
     featured: true,
   },
   {
-    slug: "eazy-to",
-    name: "Eazy.to",
+    slug: "me-link",
+    name: "Me-Link",
     description:
-      "URL shortener with built-in campaign tracking and customer data collection. A Bitly alternative with more marketing tools.",
+      "Smart QR Menu & Link-in-Bio for Restaurants & Cafés. “One Link for Menu, Orders, Reviews & Location",
     org: "Side Project",
     type: "web",
     stack: [
       "html",
       "css",
       "tailwindCss",
-      "ant.design",
+      "shadcn ui",
       "react",
       "next.js",
       "node.js",
       "express.js",
       "mongodb",
     ],
-    images: ["https://hossammarey.com/images/projects/eazyto.jpg"],
-    videos: [],
+    images: ["/images/projects/melink.jpg"],
+    videos: ["/videos/melink-2.mp4", "/videos/melink-1.mp4"],
     links: {
-      preview: "https://eazy.to",
+      preview: "https://me-l.ink/",
     },
     problem:
-      "Bitly covers the basics, but I wanted campaign tracking and customer data collection in one tool. Nothing out there did exactly that without enterprise pricing.",
+      "Restaurants need an easy way to share their menus online, get customer feedback, and manage reviews. Most restaurants don’t have a mobile-friendly menu or a simple tool to collect reviews and customer information.",
     role: "Full-Stack Developer. Built everything: frontend, API, and database.",
     decisions: [
-      "Used Next.js with API routes to keep frontend and backend in one codebase.",
-      "Stored link and analytics data in MongoDB since the schema was going to change often during development.",
       "Built a custom analytics dashboard with Ant Design components to visualize campaign performance.",
+      "Added shadcn ui to get a consistent design system without writing everything custom.",
+      "Implemented a QR code generator that creates unique QR codes for each restaurant.",
+      "Added review collection functionality that allows customers to leave reviews and ratings for the restaurant.",
+      "Implemented a location sharing feature that allows customers to get directions to the restaurant.",
     ],
     outcomes: [
-      "Shipped at eazy.to with working campaign tracking.",
-      "Got real users on it and used the data to validate the concept.",
+      "Shipped at me-l.ink ",
+      " Got real restaurant owners to use it and get ",
     ],
     featured: false,
   },
+
   {
     slug: "whatsapp-pro",
     name: "Whatsapp Pro",
@@ -240,8 +241,8 @@ const featuredProjects: z.input<typeof ProjectSchema>[] = [
     org: "Grand Community",
     type: "web",
     stack: ["html", "css", "tailwindCss", "ant.design", "vue", "vue-query"],
-    images: ["https://hossammarey.com/images/projects/wa.png"],
-    videos: [],
+    images: ["/images/projects/wa.png"],
+    videos: ["/videos/whatsup-pro.mp4"],
     links: {},
     problem:
       "The agency was managing influencer conversations across personal phones and accounts. They needed one internal tool where the team could handle all WhatsApp communications.",
@@ -263,8 +264,8 @@ const featuredProjects: z.input<typeof ProjectSchema>[] = [
     org: "Grand Community",
     type: "web",
     stack: ["html", "css", "vuetify", "vue", "vue-query", "nuxt"],
-    images: ["https://hossammarey.com/images/projects/gc-dash.png"],
-    videos: [],
+    images: ["/images/projects/gc-dash.png"],
+    videos: ["/videos/gc_dashboard.mp4"],
     links: {},
     problem:
       "Brands needed a single place to search for influencers, manage ongoing campaigns, and communicate with partners. The agency was doing most of this manually.",
@@ -276,6 +277,43 @@ const featuredProjects: z.input<typeof ProjectSchema>[] = [
     outcomes: [
       "Shipped a working influencer management dashboard that replaced the manual workflow.",
       "Helped grow the frontend team and set up code patterns the new developers could follow.",
+    ],
+    featured: false,
+  },
+  {
+    slug: "eazy-to",
+    name: "Eazy.to",
+    description:
+      "URL shortener with built-in campaign tracking and customer data collection. A Bitly alternative with more marketing tools.",
+    org: "Side Project",
+    type: "web",
+    stack: [
+      "html",
+      "css",
+      "tailwindCss",
+      "ant.design",
+      "react",
+      "next.js",
+      "node.js",
+      "express.js",
+      "mongodb",
+    ],
+    images: ["/images/projects/eazyto.jpg"],
+    videos: ["/videos/eazyTo.mp4"],
+    links: {
+      preview: "https://eazy.to",
+    },
+    problem:
+      "Bitly covers the basics, but I wanted campaign tracking and customer data collection in one tool. Nothing out there did exactly that without enterprise pricing.",
+    role: "Full-Stack Developer. Built everything: frontend, API, and database.",
+    decisions: [
+      "Used Next.js with API routes to keep frontend and backend in one codebase.",
+      "Stored link and analytics data in MongoDB since the schema was going to change often during development.",
+      "Built a custom analytics dashboard with Ant Design components to visualize campaign performance.",
+    ],
+    outcomes: [
+      "Shipped at eazy.to with working campaign tracking.",
+      "Got real users on it and used the data to validate the concept.",
     ],
     featured: false,
   },
@@ -295,8 +333,8 @@ const featuredProjects: z.input<typeof ProjectSchema>[] = [
       "react-query",
       "chart.js",
     ],
-    images: ["https://hossammarey.com/images/projects/commute.png"],
-    videos: [],
+    images: ["/images/projects/commute.png"],
+    videos: ["/videos/commutrics.mp4"],
     links: {},
     problem:
       "Companies had no way to see how their employees were commuting. They wanted to understand patterns, spot inefficiencies, and eventually cut costs.",
@@ -317,11 +355,19 @@ const featuredProjects: z.input<typeof ProjectSchema>[] = [
       "E-learning platform for creating, selling, and managing both online and in-person courses.",
     org: "Inovola",
     type: "web",
-    stack: ["html", "css", "tailwindCss", "ant.design", "vue", "nuxt", "firebase"],
-    images: ["https://hossammarey.com/images/projects/builderz.jpg"],
-    videos: [],
+    stack: [
+      "html",
+      "css",
+      "tailwindCss",
+      "ant.design",
+      "vue",
+      "nuxt",
+      "firebase",
+    ],
+    images: ["/images/projects/builderz.jpg"],
+    videos: ["/videos/builderz.mp4"],
     links: {
-      preview: "https://brz-test.herokuapp.com/",
+      // preview: "https://brz-test.herokuapp.com/",
     },
     problem:
       "An ed-tech company needed a platform where instructors could create courses (online or offline) and students could buy and access them. Nothing they'd tried fit their workflow.",
@@ -354,8 +400,8 @@ const featuredProjects: z.input<typeof ProjectSchema>[] = [
       "express.js",
       "mongodb",
     ],
-    images: ["https://hossammarey.com/images/projects/trend.jpg"],
-    videos: [],
+    images: ["/images/projects/trend.jpg"],
+    videos: ["/videos/trendcoupons.mp4"],
     links: {
       preview: "https://www.trend.coupons/",
     },
@@ -381,7 +427,7 @@ const featuredProjects: z.input<typeof ProjectSchema>[] = [
     org: "Alsakn (Freelance)",
     type: "web",
     stack: ["html", "css", "react", "next.js", "strapi cms", "ant.design"],
-    images: ["https://hossammarey.com/images/projects/alsakn.jpg"],
+    images: ["/images/projects/alsakn.jpg"],
     videos: [],
     links: {
       preview: "https://alsakn.com",
@@ -406,8 +452,8 @@ const featuredProjects: z.input<typeof ProjectSchema>[] = [
     org: "BEAcademy",
     type: "web",
     stack: ["html", "css", "sass", "javascript", "tailwindCss", "jQuery"],
-    images: ["https://hossammarey.com/images/projects/academy.jpg"],
-    videos: [],
+    images: ["/images/projects/academy.jpg"],
+    videos: ["/videos/be-academy.mp4"],
     links: {
       preview: "https://beacademy.netlify.app/",
     },
@@ -418,9 +464,7 @@ const featuredProjects: z.input<typeof ProjectSchema>[] = [
       "Went with vanilla JavaScript and jQuery to keep it lightweight. A full framework would have been overkill for this.",
       "Used SASS to keep the stylesheets organized as the project grew.",
     ],
-    outcomes: [
-      "Deployed at beacademy.netlify.app.",
-    ],
+    outcomes: ["Deployed at beacademy.netlify.app."],
     featured: false,
   },
   {
@@ -431,12 +475,11 @@ const featuredProjects: z.input<typeof ProjectSchema>[] = [
     org: "Saudi WRC Sports Federation",
     type: "web",
     stack: ["html", "css", "sass", "javascript", "bootstrap", "jQuery"],
-    images: ["https://hossammarey.com/images/projects/tahakoom.jpg"],
+    images: ["/images/projects/tahakoom.jpg"],
     videos: [],
     links: {
       preview: "http://tahakoom.gov.sa/",
-      design:
-        "https://www.behance.net/gallery/93230949/tahakoom-UI-web-Design",
+      design: "https://www.behance.net/gallery/93230949/tahakoom-UI-web-Design",
     },
     problem:
       "The federation needed an official .gov.sa website to publish their activities, competition schedules, and organizational information.",
@@ -451,31 +494,7 @@ const featuredProjects: z.input<typeof ProjectSchema>[] = [
     ],
     featured: false,
   },
-  {
-    slug: "genwin-app",
-    name: "Genwin App",
-    description:
-      "Donation and fundraising platform with onboarding flows for marketing campaigns.",
-    org: "Genwin",
-    type: "web",
-    stack: ["html", "css", "sass", "vue", "nuxt"],
-    images: ["https://hossammarey.com/images/projects/genwin.jpg"],
-    videos: [],
-    links: {
-      preview: "https://newwc.genwin.app/login",
-    },
-    problem:
-      "Genwin was running donation campaigns but had no proper onboarding flow to guide users through the process. Conversion was lower than it should have been.",
-    role: "Front-End Developer. Part of the frontend team, built campaign and onboarding views.",
-    decisions: [
-      "Used Nuxt.js for SSR so campaign landing pages could be found through search.",
-      "Kept styling in SASS modules to stay organized across multiple campaign variants.",
-    ],
-    outcomes: [
-      "Shipped working onboarding flows for donation campaigns.",
-    ],
-    featured: false,
-  },
+
   {
     slug: "wro-competitions",
     name: "WRO Competitions",
@@ -484,12 +503,11 @@ const featuredProjects: z.input<typeof ProjectSchema>[] = [
     org: "WRO Saudi",
     type: "web",
     stack: ["html", "css", "sass", "javascript", "bootstrap", "jQuery"],
-    images: ["https://hossammarey.com/images/projects/wro.jpg"],
+    images: ["/images/projects/wro.jpg"],
     videos: [],
     links: {
       preview: "https://www.wrosaudi.com/",
-      design:
-        "https://www.behance.net/gallery/93200737/WroSaud-Ui-Design",
+      design: "https://www.behance.net/gallery/93200737/WroSaud-Ui-Design",
     },
     problem:
       "The Saudi WRO needed a website to publish competition details, schedules, and STEAM education content for students and parents.",
@@ -504,114 +522,10 @@ const featuredProjects: z.input<typeof ProjectSchema>[] = [
     ],
     featured: false,
   },
-  {
-    slug: "shortly",
-    name: "Shortly",
-    description:
-      "Landing page built as a teaching example for a CSS Udemy course. Pure HTML and CSS, no frameworks.",
-    org: "Personal / Course Project",
-    type: "web",
-    stack: ["html", "css"],
-    images: ["https://hossammarey.com/images/projects/shortly.jpg"],
-    videos: [],
-    links: {
-      preview:
-        "https://css-course-projects.netlify.app/shortly/index.html",
-      code: "https://github.com/HossamMarey/css-course-projects",
-    },
-    problem:
-      "I needed a real-world landing page for my CSS course that showed students responsive design and layout techniques without any framework hiding the CSS.",
-    role: "Developer and Instructor. Created the project for my Udemy CSS course.",
-    decisions: [
-      "Kept it to pure HTML and CSS so students could see exactly what was happening without framework abstraction.",
-      "Focused on Flexbox and Grid layouts since those are what students will actually use on the job.",
-    ],
-    outcomes: [
-      "Live at Netlify as a course example.",
-      "Source code on GitHub for students to study and fork.",
-    ],
-    featured: false,
-  },
-  {
-    slug: "foodery-mobile-view",
-    name: "Foodery Mobile View",
-    description:
-      "Mobile web view for a food delivery app, designed to match the native app experience in a browser.",
-    org: "Personal Project",
-    type: "web",
-    stack: ["html", "css", "sass", "bootstrap", "vue"],
-    images: ["https://hossammarey.com/images/projects/foodery.jpg"],
-    videos: [],
-    links: {
-      preview: "https://foodery-mobile.netlify.app/",
-    },
-    problem:
-      "The food delivery app needed a web version for mobile browsers that felt as close to the native app as possible.",
-    role: "Front-End Developer. Built the entire mobile web view.",
-    decisions: [
-      "Used Vue.js so the UI interactions would match the native app's feel.",
-      "Built mobile-first with Bootstrap and SASS.",
-    ],
-    outcomes: [
-      "Live at foodery-mobile.netlify.app.",
-    ],
-    featured: false,
-  },
-  {
-    slug: "slacky",
-    name: "Slacky",
-    description:
-      "Slack clone with real-time messaging and channel management, built with React and Firebase.",
-    org: "Personal Project",
-    type: "web",
-    stack: ["html", "css", "sass", "bootstrap", "React", "Firebase"],
-    images: ["https://hossammarey.com/images/projects/slacky.jpg"],
-    videos: [],
-    links: {
-      preview: "https://slacky.netlify.app/",
-      repo: "https://github.com/HossamMarey/react-slack-clone",
-    },
-    problem:
-      "Wanted to build something non-trivial with React and Firebase to learn real-time architecture in practice.",
-    role: "Full-Stack Developer. Built it all from scratch.",
-    decisions: [
-      "Used Firebase Realtime Database for instant message syncing. No need to set up WebSocket infrastructure.",
-      "Handled auth through Firebase Auth to skip building a backend auth system.",
-    ],
-    outcomes: [
-      "Working Slack clone live at slacky.netlify.app.",
-      "Code is open source on GitHub.",
-    ],
-    featured: false,
-  },
-  {
-    slug: "alakeel",
-    name: "Alakeel",
-    description:
-      "Restaurant landing page built as a teaching example for a CSS Udemy course, covering typography, layout, and visual hierarchy.",
-    org: "Personal / Course Project",
-    type: "web",
-    stack: ["html", "css"],
-    images: ["https://hossammarey.com/images/projects/alakeel.jpg"],
-    videos: [],
-    links: {
-      preview:
-        "https://css-course-projects.netlify.app/resturant/index.html",
-      code: "https://github.com/HossamMarey/css-course-projects",
-    },
-    problem:
-      "Needed a restaurant-themed landing page for the CSS course that would teach typography and visual hierarchy through a realistic example.",
-    role: "Developer and Instructor. Created the project for the course curriculum.",
-    decisions: [
-      "Pure HTML and CSS only, to keep students focused on styling fundamentals.",
-      "Used CSS custom properties and Flexbox throughout.",
-    ],
-    outcomes: [
-      "Published as a live course example.",
-      "Source code available on GitHub.",
-    ],
-    featured: false,
-  },
+
+
+
+
   {
     slug: "motamd",
     name: "Motamd",
@@ -620,7 +534,7 @@ const featuredProjects: z.input<typeof ProjectSchema>[] = [
     org: "Motamd",
     type: "web",
     stack: ["html", "css", "vue"],
-    images: ["https://hossammarey.com/images/projects/motamd.jpg"],
+    images: ["/images/projects/motamd.jpg"],
     videos: [],
     links: {
       preview: "http://motamd.org/",
@@ -631,101 +545,13 @@ const featuredProjects: z.input<typeof ProjectSchema>[] = [
     decisions: [
       "Used Vue.js since the platform is heavily form-based, and Vue's reactivity model made the multi-step forms straightforward.",
     ],
-    outcomes: [
-      "Live at motamd.org.",
-    ],
+    outcomes: ["Live at motamd.org."],
     featured: false,
   },
-  {
-    slug: "tvflix",
-    name: "TVFLIX",
-    description:
-      "TV show browser built with React as a teaching project for a Udemy course. Pulls data from a public API.",
-    org: "Personal / Course Project",
-    type: "web",
-    stack: ["html", "css", "bootstrap", "react"],
-    images: ["https://hossammarey.com/images/projects/tvflix.jpg"],
-    videos: [],
-    links: {
-      preview: "https://show-react.netlify.app/",
-      repo: "https://github.com/HossamMarey/tv-shows",
-    },
-    problem:
-      "I needed a project for my React course that would show students how to fetch data from an API, manage state, and structure components in a real app.",
-    role: "Developer and Instructor. Built it as a course teaching example.",
-    decisions: [
-      "Connected to a public TV shows API so students could see real data fetching, not mock data.",
-      "Used Bootstrap for layout to keep the focus on React concepts, not CSS.",
-    ],
-    outcomes: [
-      "Live at show-react.netlify.app.",
-      "Code on GitHub for students to reference.",
-    ],
-    featured: false,
-  },
-  {
-    slug: "discord-clone",
-    name: "Discord Clone",
-    description:
-      "Pixel-accurate Discord landing page recreation, built with pure HTML and CSS as a course project.",
-    org: "Personal / Course Project",
-    type: "web",
-    stack: ["html", "css"],
-    images: ["https://hossammarey.com/images/projects/discord.jpg"],
-    videos: [],
-    links: {
-      preview:
-        "https://css-course-projects.netlify.app/discord-clone/index.html",
-      code: "https://github.com/HossamMarey/css-course-projects",
-    },
-    problem:
-      "Wanted a challenging CSS exercise for the course where students would replicate a complex, multi-section layout from a real product.",
-    role: "Developer and Instructor. Built the clone for the course.",
-    decisions: [
-      "Pure HTML and CSS only. The whole point was to challenge students to match a complex UI without any framework help.",
-    ],
-    outcomes: [
-      "Live on Netlify as a course example.",
-      "Source code on GitHub.",
-    ],
-    featured: false,
-  },
-  {
-    slug: "awnbank",
-    name: "AwnBank",
-    description:
-      "E-commerce website for AwnBank Store. Handled both the UI/UX design and the frontend build.",
-    org: "AwnBank",
-    type: "web",
-    stack: ["html", "css", "sass", "bootstrap", "javascript", "jQuery"],
-    images: ["https://hossammarey.com/images/projects/awnbank.jpg"],
-    videos: [],
-    links: {
-      preview: "http://awnbank.com/",
-      design:
-        "https://www.behance.net/gallery/93227291/AwnBank-Ecommerce-ui-design",
-    },
-    problem:
-      "AwnBank needed an online store with a custom design. They didn't want a template; they wanted something built specifically for their brand.",
-    role: "Front-End Developer and UI/UX Designer. Designed and built the whole thing.",
-    decisions: [
-      "Designed the full UI/UX in Adobe XD before writing any code, so the client could approve the look before development started.",
-      "Used jQuery and vanilla JS for interactivity. A framework would have been more tooling than this project needed.",
-      "Organized styles with SASS to keep the stylesheet manageable as pages were added.",
-    ],
-    outcomes: [
-      "Live at awnbank.com.",
-      "Published the design case study on Behance.",
-    ],
-    featured: false,
-  },
-];
 
-
-
-const rawProjects: z.input<typeof ProjectSchema>[] = [
-  ...featuredProjects,
 ]
+
+const rawProjects: z.input<typeof ProjectSchema>[] = [...featuredProjects]
 
 export const projects: readonly Project[] = Object.freeze(
   ProjectsCollectionSchema.parse(rawProjects)

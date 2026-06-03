@@ -1,6 +1,13 @@
 "use client"
 
-import { BookOpen, Code, ExternalLink, FolderGit, Palette, MoveRight } from "lucide-react"
+import {
+  BookOpen,
+  Code,
+  ExternalLink,
+  FolderGit,
+  Palette,
+  MoveRight,
+} from "lucide-react"
 import Link from "next/link"
 
 import { useImageTrailHandlers } from "@/components/network-image-trail"
@@ -29,15 +36,20 @@ function ProjectNameLink({
   project,
   className,
 }: NetworkWaterfallRowProps & { className?: string }) {
-  const base = cn("truncate text-foreground hover:underline flex  items-center gap-1", className)
-
+  const base = cn(
+    "flex items-center gap-1 truncate text-foreground hover:underline",
+    className
+  )
 
   return (
-    <Link href={`/work/${project.slug}`} className={base} aria-label={`${project.name} (opens in new tab)`}>
+    <Link
+      href={`/work/${project.slug}`}
+      className={base}
+      aria-label={`${project.name} (opens in new tab)`}
+    >
       {project.name} <MoveRight className="size-4 opacity-50" />
     </Link>
   )
-
 
   // const links = projectLinkList(project.links)
   // const previewLink = links.find((l) => l.kind === "preview")
@@ -67,11 +79,11 @@ export function NetworkWaterfallRow({ project }: NetworkWaterfallRowProps) {
   const trailProps =
     trail && project.images.length > 0
       ? {
-        onMouseEnter: () => trail.onRowEnter(project.images),
-        onMouseMove: (e: React.MouseEvent) =>
-          trail.onRowMove(project.images, e),
-        onMouseLeave: () => trail.onRowLeave(),
-      }
+          onMouseEnter: () => trail.onRowEnter(project.images),
+          onMouseMove: (e: React.MouseEvent) =>
+            trail.onRowMove(project.images, e),
+          onMouseLeave: () => trail.onRowLeave(),
+        }
       : {}
 
   return (

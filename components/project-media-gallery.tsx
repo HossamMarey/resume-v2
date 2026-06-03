@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { AnimatePresence, motion } from "framer-motion"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import Image from "next/image"
@@ -12,18 +12,27 @@ interface ProjectMediaGalleryProps {
   images: string[]
   videos: string[]
   projectName: string
+  className?: string
+  autoLoop?: boolean
+  duration?: number
+  pauseOnHover?: boolean
 }
 
 export function ProjectMediaGallery({
   images,
   videos,
   projectName,
+  className = '',
+  autoLoop = false,
+  duration = 5000,
+  pauseOnHover = true,
 }: ProjectMediaGalleryProps) {
   const shouldAnimate = useShouldAnimate()
   const slides = [...images, ...videos]
   const total = slides.length
 
   const [activeIndex, setActiveIndex] = useState(0)
+  const [isPaused, setIsPaused] = useState(false)
 
   const goTo = useCallback(
     (index: number) => {
@@ -48,6 +57,13 @@ export function ProjectMediaGallery({
     [goNext, goPrev]
   )
 
+  // Auto-slide when autoLoop is enabled, pause on hover
+  useEffect(() => {
+    if (!autoLoop || total <= 1 || (pauseOnHover && isPaused)) return
+    const id = setInterval(goNext, duration)
+    return () => clearInterval(id)
+  }, [autoLoop, total, goNext, duration, pauseOnHover, isPaused])
+
   if (total === 0) return null
 
   const currentSlide = slides[activeIndex]
@@ -59,10 +75,12 @@ export function ProjectMediaGallery({
       aria-roledescription="carousel"
       aria-label={`${projectName} media`}
       onKeyDown={handleKeyDown}
+      onMouseEnter={() => pauseOnHover && setIsPaused(true)}
+      onMouseLeave={() => pauseOnHover && setIsPaused(false)}
       tabIndex={0}
       className="focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none"
     >
-      <div className="relative aspect-video max-h-[80vh] w-full overflow-hidden rounded-sm bg-surface-2/30">
+      <div className={cn("relative aspect-video max-h-[80vh] w-full overflow-hidden rounded-sm bg-surface-2/30", className)}>
         <AnimatePresence mode="wait">
           <motion.div
             key={activeIndex}
