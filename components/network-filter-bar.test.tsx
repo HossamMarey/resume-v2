@@ -1,5 +1,3 @@
-import React from "react"
-
 import { render, screen } from "@testing-library/react"
 import userEvent from "@testing-library/user-event"
 
@@ -11,15 +9,13 @@ import type {
 } from "@/components/network-filter-bar"
 
 const defaultAvailable: AvailableFilters = {
-  method: ["GET", "POST", "PUT"],
-  status: ["shipped", "ongoing"],
-  year: ["2024", "2023"],
+  type: ["web", "app", "lib"],
+  stack: ["react", "vue"],
 }
 
 const noFilters: ActiveFilters = {
-  method: [],
-  status: [],
-  year: [],
+  type: [],
+  stack: [],
 }
 
 describe("NetworkFilterBar", () => {
@@ -32,16 +28,14 @@ describe("NetworkFilterBar", () => {
         onClear={vi.fn()}
       />
     )
-    expect(screen.getByRole("button", { name: /method/i })).toBeInTheDocument()
-    expect(screen.getByRole("button", { name: /status/i })).toBeInTheDocument()
-    expect(screen.getByRole("button", { name: /year/i })).toBeInTheDocument()
+    expect(screen.getByRole("button", { name: /type/i })).toBeInTheDocument()
+    expect(screen.getByRole("button", { name: /stack/i })).toBeInTheDocument()
   })
 
   it("shows active count on chips when filters are selected", () => {
     const active: ActiveFilters = {
-      method: ["GET", "POST"],
-      status: [],
-      year: [],
+      type: ["web", "app"],
+      stack: [],
     }
     render(
       <NetworkFilterBar
@@ -51,9 +45,9 @@ describe("NetworkFilterBar", () => {
         onClear={vi.fn()}
       />
     )
-    const methodBtn = screen.getByRole("button", { name: /method/i })
-    expect(methodBtn).toHaveTextContent("Method")
-    expect(methodBtn).toHaveTextContent("2")
+    const typeBtn = screen.getByRole("button", { name: /type/i })
+    expect(typeBtn).toHaveTextContent("Type")
+    expect(typeBtn).toHaveTextContent("2")
   })
 
   it("opens a popover with checkboxes on chip click", async () => {
@@ -66,10 +60,10 @@ describe("NetworkFilterBar", () => {
         onClear={vi.fn()}
       />
     )
-    await user.click(screen.getByRole("button", { name: /method/i }))
-    expect(screen.getByLabelText("GET")).toBeInTheDocument()
-    expect(screen.getByLabelText("POST")).toBeInTheDocument()
-    expect(screen.getByLabelText("PUT")).toBeInTheDocument()
+    await user.click(screen.getByRole("button", { name: /type/i }))
+    expect(screen.getByLabelText("web")).toBeInTheDocument()
+    expect(screen.getByLabelText("app")).toBeInTheDocument()
+    expect(screen.getByLabelText("lib")).toBeInTheDocument()
   })
 
   it("calls onToggle when a checkbox is toggled", async () => {
@@ -83,16 +77,15 @@ describe("NetworkFilterBar", () => {
         onClear={vi.fn()}
       />
     )
-    await user.click(screen.getByRole("button", { name: /status/i }))
-    await user.click(screen.getByLabelText("shipped"))
-    expect(onToggle).toHaveBeenCalledWith("status", "shipped")
+    await user.click(screen.getByRole("button", { name: /stack/i }))
+    await user.click(screen.getByLabelText("react"))
+    expect(onToggle).toHaveBeenCalledWith("stack", "react")
   })
 
   it('shows "Clear all" button when filters are active', () => {
     const active: ActiveFilters = {
-      method: ["GET"],
-      status: [],
-      year: [],
+      type: ["web"],
+      stack: [],
     }
     render(
       <NetworkFilterBar
@@ -125,9 +118,8 @@ describe("NetworkFilterBar", () => {
     const onClear = vi.fn()
     const user = userEvent.setup()
     const active: ActiveFilters = {
-      method: ["GET"],
-      status: [],
-      year: [],
+      type: ["web"],
+      stack: [],
     }
     render(
       <NetworkFilterBar

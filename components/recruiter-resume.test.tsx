@@ -22,7 +22,7 @@ describe("RecruiterResume", () => {
     render(<RecruiterResume />)
 
     for (const project of featuredProjects) {
-      expect(screen.getByText(project.name)).toBeInTheDocument()
+      expect(screen.getAllByText(project.name).length).toBeGreaterThanOrEqual(1)
     }
 
     // Each featured project should render at least one outcome

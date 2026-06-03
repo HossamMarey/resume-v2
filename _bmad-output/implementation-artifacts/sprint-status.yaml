@@ -35,7 +35,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 
 generated: 2026-05-30
-last_updated: 2026-06-02 # all epics set done on 2026-06-02
+last_updated: 2026-06-03 # story 4-6 set to done (code review complete)
 # all stories set done on 2026-06-02
 project: web
 # epic-1 set in-progress on 2026-05-30 (first story created via create-story)
@@ -77,6 +77,7 @@ development_status:
   4-3-statically-generated-case-study-detail: done
   4-4-layout-shared-row-detail-transition-and-prev-next-pager: done
   4-5-grant-project-open-xp: done
+  4-6-flexible-project-schema-and-media-gallery: done
   epic-4-retrospective: optional
 
   # Epic 5: Console, Command Palette & Konami

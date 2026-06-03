@@ -1,9 +1,8 @@
 export { ProfileSchema, profile, type Profile } from "./profile"
 
 export {
-  ProjectMethod,
-  ProjectStatus,
   ProjectSchema,
+  projectLinkList,
   projects,
   type Project,
 } from "./projects"

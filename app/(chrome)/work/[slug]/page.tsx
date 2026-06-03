@@ -6,6 +6,7 @@ import { CaseStudyHeader } from "@/components/case-study-header"
 import { CaseStudyPager } from "@/components/case-study-pager"
 import { JsonLd } from "@/components/json-ld"
 import { ProjectOpenXp } from "@/components/project-open-xp"
+import { hasPlaceholder } from "@/lib/content/has-placeholder"
 import { projects } from "@/lib/content/projects"
 import { absoluteTitleForProject, firstSentence, siteUrl } from "@/lib/site"
 
@@ -22,6 +23,20 @@ const NetworkRequestDetail = dynamic(
         <div className="h-4 w-1/3 rounded bg-muted" />
         <div className="h-8 w-1/2 rounded bg-muted" />
         <div className="h-32 rounded bg-muted" />
+      </div>
+    ),
+  }
+)
+
+const ProjectMediaGallery = dynamic(
+  () =>
+    import("@/components/project-media-gallery").then(
+      (m) => m.ProjectMediaGallery
+    ),
+  {
+    loading: () => (
+      <div className="animate-pulse">
+        <div className="aspect-video w-full rounded-sm bg-muted" />
       </div>
     ),
   }
@@ -51,7 +66,7 @@ export async function generateMetadata({
     }
   }
   const title = absoluteTitleForProject(project.name)
-  const description = firstSentence(project.problem)
+  const description = firstSentence(project.problem || project.description)
   return {
     title: { absolute: title },
     description,
@@ -78,7 +93,7 @@ export default async function CaseStudyPage({
   }
 
   if (
-    project.meta.mock &&
+    hasPlaceholder(project) &&
     process.env.NODE_ENV !== "production" &&
     !warnedSlugs.has(project.slug)
   ) {
@@ -114,10 +129,17 @@ export default async function CaseStudyPage({
   }
 
   return (
-    <section className="p-4">
+    <section className="container mx-auto p-4">
       <JsonLd data={breadcrumbJsonLd} />
       <ProjectOpenXp slug={project.slug} />
       <CaseStudyHeader project={project} />
+      <div className="mb-8">
+        <ProjectMediaGallery
+          images={project.images}
+          videos={project.videos}
+          projectName={project.name}
+        />
+      </div>
       <NetworkRequestDetail project={project} />
       <CaseStudyPager slug={project.slug} />
     </section>

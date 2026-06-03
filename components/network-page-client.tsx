@@ -21,28 +21,26 @@ interface NetworkPageClientProps {
 function deriveAvailableFilters(
   projects: readonly Project[]
 ): AvailableFilters {
-  const methods = new Set<string>()
-  const statuses = new Set<string>()
-  const years = new Set<string>()
+  const types = new Set<string>()
+  const stacks = new Set<string>()
 
   for (const p of projects) {
-    methods.add(p.method)
-    statuses.add(p.status)
-    years.add(String(p.year))
+    if (p.type) types.add(p.type)
+    for (const s of p.stack) {
+      stacks.add(s)
+    }
   }
 
   return {
-    method: Array.from(methods).sort(),
-    status: Array.from(statuses).sort(),
-    year: Array.from(years).sort((a, b) => Number(b) - Number(a)),
+    type: Array.from(types).sort(),
+    stack: Array.from(stacks).sort(),
   }
 }
 
 function parseActiveFilters(searchParams: URLSearchParams): ActiveFilters {
   return {
-    method: searchParams.getAll("method"),
-    status: searchParams.getAll("status"),
-    year: searchParams.getAll("year"),
+    type: searchParams.getAll("type").filter(Boolean),
+    stack: searchParams.getAll("stack").filter(Boolean),
   }
 }
 
@@ -51,13 +49,11 @@ function applyFilters(
   filters: ActiveFilters
 ): Project[] {
   return projects.filter((p) => {
-    const methodMatch =
-      filters.method.length === 0 || filters.method.includes(p.method)
-    const statusMatch =
-      filters.status.length === 0 || filters.status.includes(p.status)
-    const yearMatch =
-      filters.year.length === 0 || filters.year.includes(String(p.year))
-    return methodMatch && statusMatch && yearMatch
+    const typeMatch = filters.type.length === 0 || filters.type.includes(p.type)
+    const stackMatch =
+      filters.stack.length === 0 ||
+      filters.stack.some((s) => p.stack.includes(s))
+    return typeMatch && stackMatch
   })
 }
 
@@ -83,23 +79,21 @@ export function NetworkPageClient({ projects }: NetworkPageClientProps) {
 
   const handleToggle = useCallback(
     (category: FilterCategory, value: string) => {
-      const params = new URLSearchParams()
+      const params = new URLSearchParams(searchParams.toString())
       const current = activeFilters[category]
       const next = current.includes(value)
         ? current.filter((v) => v !== value)
         : [...current, value]
 
-      for (const cat of ["method", "status", "year"] as const) {
-        const values = cat === category ? next : activeFilters[cat]
-        for (const v of values) {
-          params.append(cat, v)
-        }
+      params.delete(category)
+      for (const v of next) {
+        if (v) params.append(category, v)
       }
 
       const qs = params.toString()
       router.replace(qs ? `${pathname}?${qs}` : pathname)
     },
-    [activeFilters, router, pathname]
+    [activeFilters, router, pathname, searchParams]
   )
 
   const handleClear = useCallback(() => {

@@ -46,9 +46,15 @@ export function RecruiterResume() {
               <CardHeader>
                 <CardTitle>{project.name}</CardTitle>
                 <CardDescription className="flex flex-wrap gap-2">
-                  <Badge variant="outline">{project.method}</Badge>
-                  <Badge variant="outline">{project.status}</Badge>
-                  <Badge variant="outline">{project.year}</Badge>
+                  {project.org && (
+                    <Badge variant="outline">{project.org}</Badge>
+                  )}
+                  <Badge variant="outline">{project.type}</Badge>
+                  {project.stack.slice(0, 3).map((tech) => (
+                    <Badge key={tech} variant="outline">
+                      {tech}
+                    </Badge>
+                  ))}
                 </CardDescription>
               </CardHeader>
               <CardContent className="flex flex-col gap-3">

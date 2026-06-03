@@ -1,13 +1,14 @@
 import { projects, experience } from "@/lib/content"
+import { hasPlaceholder } from "@/lib/content/has-placeholder"
 
-test("no featured project is still mock", () => {
+test("no featured project has placeholder content", () => {
   const offenders = projects
-    .filter((p) => p.featured && p.meta.mock)
+    .filter((p) => p.featured && hasPlaceholder(p))
     .map((p) => p.slug)
 
   expect(
     offenders,
-    `featured projects still mock: ${offenders.join(", ")}`
+    `featured projects still have placeholders: ${offenders.join(", ")}`
   ).toEqual([])
 })
 

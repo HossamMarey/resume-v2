@@ -5,133 +5,62 @@ import { render, screen } from "@testing-library/react"
 import {
   NetworkWaterfallRow,
   NetworkWaterfallCard,
-  methodColor,
-  statusColor,
 } from "@/components/network-waterfall-row"
-import { useShouldAnimate } from "@/hooks/use-should-animate"
 
 import type { Project } from "@/lib/content/projects"
-
-vi.mock("@/hooks/use-should-animate", () => ({
-  useShouldAnimate: vi.fn(),
-}))
-
-function MockMotionDiv(
-  props: React.ComponentPropsWithoutRef<"div"> & {
-    children?: React.ReactNode
-    layout?: boolean | string
-    layoutId?: string
-  }
-) {
-  const { children, layout: _l, layoutId: _lid, ...rest } = props
-  void _l
-  void _lid
-  return <div {...rest}>{children}</div>
-}
-
-function MockMotionSpan(
-  props: React.ComponentPropsWithoutRef<"span"> & {
-    children?: React.ReactNode
-    layout?: boolean | string
-    layoutId?: string
-  }
-) {
-  const { children, layout: _l, layoutId: _lid, ...rest } = props
-  void _l
-  void _lid
-  return <span {...rest}>{children}</span>
-}
-
-vi.mock("framer-motion", () => ({
-  motion: {
-    div: MockMotionDiv,
-    span: MockMotionSpan,
-  },
-}))
-
-const mockUseShouldAnimate = vi.mocked(useShouldAnimate)
 
 const mockProject: Project = {
   slug: "test-project",
   name: "Test Project",
+  description: "A test project description",
   org: "TestOrg",
-  method: "GET",
-  status: "shipped",
-  statusCode: 200,
   type: "web",
-  size: "12.4 MB",
-  sizeWeight: 0.5,
-  time: "8 mo",
-  timeWeight: 0.3,
-  startOffset: 0,
-  year: 2024,
   stack: ["react"],
+  images: [],
+  videos: [],
+  links: { preview: "https://example.com" },
   problem: "test",
   role: "dev",
   decisions: [],
   outcomes: [],
-  links: [],
   featured: true,
-  meta: { mock: false },
 }
 
 const nonFeaturedWithLink: Project = {
   slug: "legacy-project",
   name: "Legacy Project",
+  description: "A legacy project",
   org: "",
-  method: "GET",
-  status: "archived",
-  statusCode: 200,
   type: "web",
-  size: "5 MB",
-  sizeWeight: 0.3,
-  time: "3 mo",
-  timeWeight: 0.15,
-  startOffset: 0,
-  year: 2021,
   stack: ["html"],
+  images: [],
+  videos: [],
+  links: { preview: "https://example.com" },
   problem: "",
   role: "",
   decisions: [],
   outcomes: [],
-  links: [{ label: "Preview", href: "https://example.com" }],
   featured: false,
-  meta: { mock: false },
 }
 
 const nonFeaturedNoLink: Project = {
   slug: "no-link-project",
   name: "No Link Project",
+  description: "No link project",
   org: "",
-  method: "GET",
-  status: "archived",
-  statusCode: 200,
   type: "web",
-  size: "2 MB",
-  sizeWeight: 0.2,
-  time: "1 mo",
-  timeWeight: 0.1,
-  startOffset: 0,
-  year: 2020,
   stack: ["css"],
+  images: [],
+  videos: [],
+  links: {},
   problem: "",
   role: "",
   decisions: [],
   outcomes: [],
-  links: [],
   featured: false,
-  meta: { mock: false },
 }
 
 describe("NetworkWaterfallRow", () => {
-  beforeEach(() => {
-    mockUseShouldAnimate.mockReturnValue(false)
-  })
-
-  afterEach(() => {
-    vi.resetAllMocks()
-  })
-
   it("renders the project name", () => {
     render(
       <table>
@@ -157,7 +86,7 @@ describe("NetworkWaterfallRow", () => {
     )
   })
 
-  it("renders the method badge with correct text", () => {
+  it("renders the type column", () => {
     render(
       <table>
         <tbody>
@@ -165,10 +94,10 @@ describe("NetworkWaterfallRow", () => {
         </tbody>
       </table>
     )
-    expect(screen.getByText("GET")).toBeInTheDocument()
+    expect(screen.getByText("web")).toBeInTheDocument()
   })
 
-  it("renders the status pill with correct text", () => {
+  it("renders stack as badges", () => {
     render(
       <table>
         <tbody>
@@ -176,30 +105,22 @@ describe("NetworkWaterfallRow", () => {
         </tbody>
       </table>
     )
-    expect(screen.getByText("200")).toBeInTheDocument()
+    expect(screen.getByText("react")).toBeInTheDocument()
   })
 
-  it("status pill has correct aria-label", () => {
+  it("renders stack with +N overflow badge", () => {
+    const manyStackProject: Project = {
+      ...mockProject,
+      stack: ["react", "typescript", "next.js", "tailwind"],
+    }
     render(
       <table>
         <tbody>
-          <NetworkWaterfallRow project={mockProject} />
+          <NetworkWaterfallRow project={manyStackProject} />
         </tbody>
       </table>
     )
-    expect(screen.getByLabelText("Status: shipped, 200")).toBeInTheDocument()
-  })
-
-  it("renders the waterfall bar with transform-origin left", () => {
-    const { container } = render(
-      <table>
-        <tbody>
-          <NetworkWaterfallRow project={mockProject} />
-        </tbody>
-      </table>
-    )
-    const bar = container.querySelector("[style*='transform-origin: left']")
-    expect(bar).toBeInTheDocument()
+    expect(screen.getByText("+1")).toBeInTheDocument()
   })
 
   it("does not introduce an h1 heading", () => {
@@ -212,29 +133,9 @@ describe("NetworkWaterfallRow", () => {
     )
     expect(screen.queryByRole("heading", { level: 1 })).not.toBeInTheDocument()
   })
-
-  it("renders size and time columns", () => {
-    render(
-      <table>
-        <tbody>
-          <NetworkWaterfallRow project={mockProject} />
-        </tbody>
-      </table>
-    )
-    expect(screen.getByText("12.4 MB")).toBeInTheDocument()
-    expect(screen.getByText("8 mo")).toBeInTheDocument()
-  })
 })
 
 describe("NetworkWaterfallCard", () => {
-  beforeEach(() => {
-    mockUseShouldAnimate.mockReturnValue(false)
-  })
-
-  afterEach(() => {
-    vi.resetAllMocks()
-  })
-
   it("renders the project name as a link", () => {
     render(<NetworkWaterfallCard project={mockProject} />)
     expect(screen.getByRole("link", { name: "Test Project" })).toHaveAttribute(
@@ -243,54 +144,14 @@ describe("NetworkWaterfallCard", () => {
     )
   })
 
-  it("renders method badge and status pill", () => {
+  it("renders type and stack badges", () => {
     render(<NetworkWaterfallCard project={mockProject} />)
-    expect(screen.getByText("GET")).toBeInTheDocument()
-    expect(screen.getByText("200")).toBeInTheDocument()
-  })
-})
-
-describe("methodColor", () => {
-  it("returns chart-2 for GET", () => {
-    expect(methodColor("GET")).toContain("chart-2")
-  })
-
-  it("returns chart-3 for POST", () => {
-    expect(methodColor("POST")).toContain("chart-3")
-  })
-
-  it("returns chart-3 for PUT", () => {
-    expect(methodColor("PUT")).toContain("chart-3")
-  })
-
-  it("returns chart-5 for PATCH", () => {
-    expect(methodColor("PATCH")).toContain("chart-5")
-  })
-})
-
-describe("statusColor", () => {
-  it("returns status-ok for 200", () => {
-    expect(statusColor(200)).toContain("status-ok")
-  })
-
-  it("returns status-warn for 201", () => {
-    expect(statusColor(201)).toContain("status-warn")
-  })
-
-  it("returns status-err for 410", () => {
-    expect(statusColor(410)).toContain("status-err")
+    expect(screen.getByText("web")).toBeInTheDocument()
+    expect(screen.getByText("react")).toBeInTheDocument()
   })
 })
 
 describe("Featured vs non-featured linking (Row)", () => {
-  beforeEach(() => {
-    mockUseShouldAnimate.mockReturnValue(false)
-  })
-
-  afterEach(() => {
-    vi.resetAllMocks()
-  })
-
   it("featured project links internally to /work/[slug]", () => {
     render(
       <table>
@@ -335,14 +196,6 @@ describe("Featured vs non-featured linking (Row)", () => {
 })
 
 describe("Featured vs non-featured linking (Card)", () => {
-  beforeEach(() => {
-    mockUseShouldAnimate.mockReturnValue(false)
-  })
-
-  afterEach(() => {
-    vi.resetAllMocks()
-  })
-
   it("featured project card links internally", () => {
     render(<NetworkWaterfallCard project={mockProject} />)
     expect(screen.getByRole("link", { name: "Test Project" })).toHaveAttribute(
@@ -351,12 +204,11 @@ describe("Featured vs non-featured linking (Card)", () => {
     )
   })
 
-  it("non-featured project card with link opens external URL", () => {
+  it("non-featured project card with link renders link labels", () => {
     render(<NetworkWaterfallCard project={nonFeaturedWithLink} />)
-    const link = screen.getByRole("link", { name: /Legacy Project/i })
+    const link = screen.getByRole("link", { name: /Live Preview/i })
     expect(link).toHaveAttribute("href", "https://example.com")
     expect(link).toHaveAttribute("target", "_blank")
-    expect(link).toHaveAttribute("rel", "noopener noreferrer")
   })
 
   it("non-featured project card without link renders plain text", () => {

@@ -7,32 +7,25 @@ import type { Project } from "@/lib/content/projects"
 const featuredProject: Project = {
   slug: "buguard",
   name: "Buguard",
+  description: "A cybersecurity platform description.",
   org: "Buguard, LLC",
-  method: "GET",
-  status: "shipped",
-  statusCode: 200,
   type: "web",
-  size: "Enterprise",
-  sizeWeight: 0.9,
-  time: "12 mo",
-  timeWeight: 0.8,
-  startOffset: 0,
-  year: 2022,
   stack: ["react", "typescript"],
+  images: [],
+  videos: [],
+  links: {
+    preview: "https://example.com",
+    code: "https://github.com/example",
+  },
   problem: "A cybersecurity platform challenge.",
   role: "Lead front-end developer.",
   decisions: ["Chose Next.js for SSR", "Used React Query for state"],
   outcomes: ["Improved load time by 40%"],
-  links: [
-    { label: "Preview", href: "https://example.com" },
-    { label: "Code", href: "https://github.com/example" },
-  ],
   featured: true,
-  meta: { mock: false },
 }
 
 describe("NetworkRequestDetail", () => {
-  it("renders sections in order: Problem, Role, Stack, Decisions, Outcomes, Links", () => {
+  it("renders description, problem, role, stack, decisions, outcomes, links sections", () => {
     render(<NetworkRequestDetail project={featuredProject} />)
     const h2s = screen
       .getAllByRole("heading", { level: 2 })
@@ -45,6 +38,13 @@ describe("NetworkRequestDetail", () => {
       "Outcomes",
       "Links",
     ])
+  })
+
+  it("renders the description as a lead paragraph", () => {
+    render(<NetworkRequestDetail project={featuredProject} />)
+    expect(
+      screen.getByText("A cybersecurity platform description.")
+    ).toBeInTheDocument()
   })
 
   it("does not contain an h1 heading", () => {
@@ -71,27 +71,33 @@ describe("NetworkRequestDetail", () => {
     expect(screen.getByText("Improved load time by 40%")).toBeInTheDocument()
   })
 
-  it("renders external links with correct attributes", () => {
+  it("renders links as buttons with correct attributes", () => {
     render(<NetworkRequestDetail project={featuredProject} />)
-    const previewLink = screen.getByRole("link", { name: /Preview/i })
+    const previewLink = screen.getByRole("link", { name: /Live Preview/i })
     expect(previewLink).toHaveAttribute("target", "_blank")
     expect(previewLink).toHaveAttribute("rel", "noopener noreferrer")
   })
 
-  it("filters out null/empty links", () => {
-    const projectWithEmptyLink: Project = {
+  it("omits absent link keys", () => {
+    const projectWithPartialLinks: Project = {
       ...featuredProject,
-      links: [
-        { label: "Preview", href: "https://example.com" },
-        { label: "Empty", href: "" },
-        { label: "Valid", href: "https://github.com/example" },
-      ],
+      links: { preview: "https://example.com" },
     }
-    render(<NetworkRequestDetail project={projectWithEmptyLink} />)
+    render(<NetworkRequestDetail project={projectWithPartialLinks} />)
     expect(
-      screen.queryByRole("link", { name: /Empty/i })
+      screen.getByRole("link", { name: /Live Preview/i })
+    ).toBeInTheDocument()
+    expect(
+      screen.queryByRole("link", { name: /Source Code/i })
     ).not.toBeInTheDocument()
-    expect(screen.getByRole("link", { name: /Preview/i })).toBeInTheDocument()
-    expect(screen.getByRole("link", { name: /Valid/i })).toBeInTheDocument()
+  })
+
+  it("shows empty state when no links", () => {
+    const projectNoLinks: Project = {
+      ...featuredProject,
+      links: {},
+    }
+    render(<NetworkRequestDetail project={projectNoLinks} />)
+    expect(screen.getByText("No links provided.")).toBeInTheDocument()
   })
 })

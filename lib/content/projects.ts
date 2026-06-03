@@ -1,40 +1,35 @@
 import { z } from "zod"
 
-export const ProjectMethod = z.enum(["GET", "POST", "PUT", "PATCH"])
-export const ProjectStatus = z.enum(["shipped", "ongoing", "archived"])
-
-export const ProjectSchema = z.object({
-  slug: z.string().regex(/^[a-z0-9-]+$/),
-  name: z.string().min(1),
-  org: z.string(),
-  method: ProjectMethod,
-  status: ProjectStatus,
-  statusCode: z.number().int(),
-  type: z.string().min(1),
-  size: z.string().min(1),
-  sizeWeight: z.number().min(0).max(1),
-  time: z.string().min(1),
-  timeWeight: z.number().min(0).max(1),
-  startOffset: z.number().min(0).max(1),
-  year: z.number().int(),
-  stack: z.array(z.string().min(1)),
-  problem: z.string(),
-  role: z.string(),
-  decisions: z.array(z.string().min(1)),
-  outcomes: z.array(z.string().min(1)),
-  links: z.array(
-    z.object({
-      label: z.string().min(1),
-      href: z.string().url(),
-    })
-  ),
-  featured: z.boolean(),
-  meta: z.object({ mock: z.boolean() }),
-})
+export const ProjectSchema = z
+  .object({
+    slug: z.string().regex(/^[a-z0-9-]+$/),
+    name: z.string().min(1),
+    description: z.string().min(1),
+    org: z.string().default(""),
+    type: z.string().min(1).default("web"),
+    stack: z.array(z.string().min(1)).default([]),
+    images: z.array(z.string().min(1)).default([]),
+    videos: z.array(z.string().min(1)).default([]),
+    links: z
+      .object({
+        preview: z.string().url().optional(),
+        code: z.string().url().optional(),
+        design: z.string().url().optional(),
+        repo: z.string().url().optional(),
+        docs: z.string().url().optional(),
+      })
+      .default({}),
+    problem: z.string().default(""),
+    role: z.string().default(""),
+    decisions: z.array(z.string().min(1)).default([]),
+    outcomes: z.array(z.string().min(1)).default([]),
+    featured: z.boolean().default(false),
+  })
+  .required({ slug: true, name: true, description: true })
 
 export type Project = z.infer<typeof ProjectSchema>
 
-const ProjectsCollectionSchema = z
+export const ProjectsCollectionSchema = z
   .array(ProjectSchema)
   .superRefine((items, ctx) => {
     const seen = new Map<string, number>()
@@ -51,31 +46,44 @@ const ProjectsCollectionSchema = z
     })
   })
 
+const LINK_LABELS: Record<string, string> = {
+  preview: "Live Preview",
+  code: "Source Code",
+  design: "Design",
+  repo: "Repository",
+  docs: "Documentation",
+}
+
+const LINK_ORDER: (keyof Project["links"])[] = [
+  "preview",
+  "code",
+  "design",
+  "repo",
+  "docs",
+]
+
+export function projectLinkList(
+  links: Project["links"]
+): { label: string; href: string; kind: keyof Project["links"] }[] {
+  const result: {
+    label: string
+    href: string
+    kind: keyof Project["links"]
+  }[] = []
+  for (const kind of LINK_ORDER) {
+    const href = links[kind]
+    if (href) {
+      result.push({ label: LINK_LABELS[kind], href, kind })
+    }
+  }
+  return result
+}
+
 function toSlug(value: string): string {
   return value
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "")
-}
-
-type LegacyLink = { label: string; href: string | null }
-
-function toLinks(
-  preview: string | null,
-  code: string | null,
-  design: string | null
-): Project["links"] {
-  const candidates: LegacyLink[] = [
-    { label: "Preview", href: preview },
-    { label: "Code", href: code },
-    { label: "Design", href: design },
-  ]
-  return candidates
-    .filter(
-      (l): l is { label: string; href: string } =>
-        typeof l.href === "string" && l.href.startsWith("http")
-    )
-    .map(({ label, href }) => ({ label, href }))
 }
 
 type LegacyEntry = {
@@ -89,47 +97,55 @@ type LegacyEntry = {
   }
 }
 
-function transform(entry: LegacyEntry): Project {
-  return {
-    slug: toSlug(entry.title),
-    name: entry.title,
-    org: "",
-    method: "GET",
-    status: "archived",
-    statusCode: 200,
-    type: "web",
-    size: "Side Project",
-    sizeWeight: 0.3,
-    time: "1 mo",
-    timeWeight: 0.1,
-    startOffset: 0,
-    year: 2022,
-    stack: entry.tags,
-    problem: entry.description,
-    role: "",
-    decisions: [],
-    outcomes: [],
-    links: toLinks(entry.links.preview, entry.links.code, entry.links.design),
-    featured: false,
-    meta: { mock: true },
+function isValidUrl(value: string | null): value is string {
+  if (typeof value !== "string") return false
+  try {
+    const url = new URL(value)
+    return url.protocol === "https:" || url.protocol === "http:"
+  } catch {
+    return false
   }
 }
 
-const featuredProjects: Project[] = [
+function transform(entry: LegacyEntry): Omit<
+  Project,
+  "slug" | "name" | "description"
+> & {
+  slug: string
+  name: string
+  description: string
+} {
+  const links: { preview?: string; code?: string; design?: string } = {}
+  if (isValidUrl(entry.links.preview)) links.preview = entry.links.preview
+  if (isValidUrl(entry.links.code)) links.code = entry.links.code
+  if (isValidUrl(entry.links.design)) links.design = entry.links.design
+
+  return {
+    slug: toSlug(entry.title),
+    name: entry.title,
+    description: entry.description,
+    org: "",
+    type: "web",
+    stack: entry.tags,
+    images: [],
+    videos: [],
+    links,
+    problem: "",
+    role: "",
+    decisions: [],
+    outcomes: [],
+    featured: false,
+  }
+}
+
+const featuredProjects: z.input<typeof ProjectSchema>[] = [
   {
     slug: "buguard",
-    name: "Buguard",
+    name: "Buguard landingpage",
+    description:
+      "A cybersecurity platform providing unified threat intelligence and monitoring across multiple regions for a multinational firm.",
     org: "Buguard, LLC",
-    method: "GET",
-    status: "shipped",
-    statusCode: 200,
     type: "web",
-    size: "Enterprise",
-    sizeWeight: 0.9,
-    time: "12 mo",
-    timeWeight: 0.8,
-    startOffset: 0,
-    year: 2022,
     stack: [
       "html",
       "css",
@@ -141,6 +157,14 @@ const featuredProjects: Project[] = [
       "typescript",
       "react-pdf",
     ],
+    images: [
+      "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=1200&h=675&fit=crop",
+      "https://images.unsplash.com/photo-1563013544-824ae1f70498?w=1200&h=675&fit=crop",
+    ],
+    videos: [],
+    links: {
+      preview: "https://buguard.io/",
+    },
     problem:
       "[PLACEHOLDER — awaiting authored content] Multinational cybersecurity firm needing a unified platform across regions.",
     role: "[PLACEHOLDER — awaiting authored content] Lead front-end developer.",
@@ -148,24 +172,15 @@ const featuredProjects: Project[] = [
       "[PLACEHOLDER] Architecture decision to be authored by Hossam.",
     ],
     outcomes: ["[PLACEHOLDER] Key outcome to be authored by Hossam."],
-    links: [{ label: "Preview", href: "https://buguard.io/" }],
     featured: true,
-    meta: { mock: true },
   },
   {
     slug: "dark-atlas",
     name: "Dark Atlas",
+    description:
+      "Proactive dark web monitoring platform to help businesses prevent data breaches and protect sensitive information.",
     org: "Dark Atlas",
-    method: "GET",
-    status: "shipped",
-    statusCode: 200,
     type: "web",
-    size: "Enterprise",
-    sizeWeight: 0.85,
-    time: "10 mo",
-    timeWeight: 0.7,
-    startOffset: 0.1,
-    year: 2023,
     stack: [
       "html",
       "css",
@@ -177,6 +192,11 @@ const featuredProjects: Project[] = [
       "typescript",
       "react-pdf",
     ],
+    images: [],
+    videos: [],
+    links: {
+      preview: "https://darkatlas.io/",
+    },
     problem:
       "[PLACEHOLDER — awaiting authored content] Proactive dark web monitoring platform to help businesses prevent data breaches.",
     role: "[PLACEHOLDER — awaiting authored content] Lead front-end developer.",
@@ -184,24 +204,15 @@ const featuredProjects: Project[] = [
       "[PLACEHOLDER] Architecture decision to be authored by Hossam.",
     ],
     outcomes: ["[PLACEHOLDER] Key outcome to be authored by Hossam."],
-    links: [{ label: "Preview", href: "https://darkatlas.io/" }],
     featured: true,
-    meta: { mock: true },
   },
   {
     slug: "masheed-gate",
     name: "Masheed Gate",
+    description:
+      "E-commerce platform for selling construction materials with a comprehensive catalog and order management system.",
     org: "Masheed Gate",
-    method: "POST",
-    status: "shipped",
-    statusCode: 200,
     type: "web",
-    size: "Enterprise",
-    sizeWeight: 0.8,
-    time: "8 mo",
-    timeWeight: 0.6,
-    startOffset: 0.15,
-    year: 2023,
     stack: [
       "html",
       "css",
@@ -214,6 +225,11 @@ const featuredProjects: Project[] = [
       "react-query",
       "typescript",
     ],
+    images: [],
+    videos: [],
+    links: {
+      preview: "https://www.masheedgate.com/",
+    },
     problem:
       "[PLACEHOLDER — awaiting authored content] E-commerce platform for selling construction materials.",
     role: "[PLACEHOLDER — awaiting authored content] Lead front-end developer.",
@@ -221,9 +237,7 @@ const featuredProjects: Project[] = [
       "[PLACEHOLDER] Architecture decision to be authored by Hossam.",
     ],
     outcomes: ["[PLACEHOLDER] Key outcome to be authored by Hossam."],
-    links: [{ label: "Preview", href: "https://www.masheedgate.com/" }],
     featured: true,
-    meta: { mock: true },
   },
 ]
 
@@ -445,7 +459,7 @@ const legacyProjects: LegacyEntry[] = [
   },
 ]
 
-const rawProjects: Project[] = [
+const rawProjects: z.input<typeof ProjectSchema>[] = [
   ...featuredProjects,
   ...legacyProjects.map(transform),
 ]

@@ -8,6 +8,7 @@ const prodCsp = [
   "frame-ancestors 'self'",
   "object-src 'none'",
   "img-src 'self' data: https:",
+  "media-src 'self' https: blob:",
   "font-src 'self' data:",
   "style-src 'self' 'unsafe-inline'",
   "script-src 'self' 'unsafe-inline'",
@@ -21,6 +22,7 @@ const devCsp = [
   "frame-ancestors 'self'",
   "object-src 'none'",
   "img-src 'self' data: https:",
+  "media-src 'self' https: blob:",
   "font-src 'self' data:",
   "style-src 'self' 'unsafe-inline'",
   "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
@@ -28,6 +30,15 @@ const devCsp = [
 ].join("; ")
 
 const nextConfig = {
+  images: {
+    // New image hosts must be added here for next/image to allow them.
+    remotePatterns: [
+      { protocol: "https", hostname: "images.unsplash.com" },
+      { protocol: "https", hostname: "plus.unsplash.com" },
+      { protocol: "https", hostname: "hossammarey.com" },
+      { protocol: "https", hostname: "www.hossammarey.com" },
+    ],
+  },
   async headers() {
     return [
       {

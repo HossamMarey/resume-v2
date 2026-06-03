@@ -161,9 +161,9 @@ const registry: CommandEntry[] = [
   },
   {
     name: "projects",
-    summary: "list projects (flags: --shipped, --tag <x>)",
+    summary: "list projects (flags: --featured, --tag <x>)",
     run(args) {
-      const shippedFlag = args.includes("--shipped")
+      const featuredFlag = args.includes("--featured")
       const tagIdx = args.indexOf("--tag")
       const tagValue = tagIdx !== -1 ? args[tagIdx + 1] : undefined
       const tagFilter =
@@ -174,14 +174,14 @@ const registry: CommandEntry[] = [
       if (tagIdx !== -1 && !tagFilter) {
         return ok([
           line("output", "flag --tag requires a value"),
-          line("output", "usage: projects [--shipped] [--tag <stack-item>]"),
+          line("output", "usage: projects [--featured] [--tag <stack-item>]"),
         ])
       }
 
       let filtered = [...projects]
 
-      if (shippedFlag) {
-        filtered = filtered.filter((p) => p.status === "shipped")
+      if (featuredFlag) {
+        filtered = filtered.filter((p) => p.featured)
       }
 
       if (tagFilter) {
@@ -193,8 +193,8 @@ const registry: CommandEntry[] = [
       if (filtered.length === 0) {
         const filterDesc = tagFilter
           ? `--tag ${args[tagIdx + 1]}`
-          : shippedFlag
-            ? "--shipped"
+          : featuredFlag
+            ? "--featured"
             : ""
         return ok([line("output", `no requests match: ${filterDesc}`)])
       }
@@ -202,7 +202,7 @@ const registry: CommandEntry[] = [
       const lines = filtered.map((p, i) =>
         line(
           "output",
-          `${i + 1}. [${p.method}] ${p.name} (${p.status}) — ${p.year}`
+          `${i + 1}. ${p.name} — ${p.type}${p.stack.length ? ` · ${p.stack.slice(0, 3).join(", ")}` : ""}`
         )
       )
       return ok(lines)
@@ -299,14 +299,14 @@ export function runCommand(raw: string, unlocks: string[] = []): ReplResult {
   }
 
   if (entry.name === "projects") {
-    const knownFlags = new Set(["--shipped", "--tag"])
+    const knownFlags = new Set(["--featured", "--tag"])
     const unknownFlag = args.find(
       (a) => a.startsWith("--") && !knownFlags.has(a)
     )
     if (unknownFlag) {
       return ok([
         line("output", `unknown flag: ${unknownFlag}`),
-        line("output", "usage: projects [--shipped] [--tag <stack-item>]"),
+        line("output", "usage: projects [--featured] [--tag <stack-item>]"),
       ])
     }
   }

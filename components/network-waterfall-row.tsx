@@ -1,37 +1,23 @@
 "use client"
 
-import { motion } from "framer-motion"
+import { BookOpen, Code, ExternalLink, FolderGit, Palette } from "lucide-react"
 import Link from "next/link"
 
 import { Badge } from "@/components/ui/badge"
-import { useShouldAnimate } from "@/hooks/use-should-animate"
+import { projectLinkList } from "@/lib/content/projects"
 import { cn } from "@/lib/utils"
 
 import type { Project } from "@/lib/content/projects"
 
-export function methodColor(method: Project["method"]): string {
-  switch (method) {
-    case "GET":
-      return "bg-[var(--chart-2)]"
-    case "POST":
-    case "PUT":
-      return "bg-[var(--chart-3)]"
-    case "PATCH":
-      return "bg-[var(--chart-5)]"
-  }
-}
-
-export function statusColor(statusCode: Project["statusCode"]): string {
-  switch (statusCode) {
-    case 200:
-      return "bg-[var(--status-ok)]"
-    case 201:
-      return "bg-[var(--status-warn)]"
-    case 410:
-      return "bg-[var(--status-err)]"
-    default:
-      return "bg-muted"
-  }
+const LINK_ICONS: Record<
+  string,
+  React.ComponentType<{ className?: string }>
+> = {
+  preview: ExternalLink,
+  code: Code,
+  design: Palette,
+  repo: FolderGit,
+  docs: BookOpen,
 }
 
 interface NetworkWaterfallRowProps {
@@ -52,12 +38,9 @@ function ProjectNameLink({
     )
   }
 
-  const previewLink = project.links.find(
-    (l) =>
-      l.label.toLowerCase().includes("preview") ||
-      l.label.toLowerCase().includes("live")
-  )
-  const href = previewLink?.href || project.links[0]?.href
+  const links = projectLinkList(project.links)
+  const previewLink = links.find((l) => l.kind === "preview")
+  const href = previewLink?.href || links[0]?.href
   if (href) {
     return (
       <a href={href} target="_blank" rel="noopener noreferrer" className={base}>
@@ -75,22 +58,12 @@ function ProjectNameLink({
 }
 
 export function NetworkWaterfallRow({ project }: NetworkWaterfallRowProps) {
-  const shouldAnimate = useShouldAnimate()
+  const links = projectLinkList(project.links)
+  const visibleStack = project.stack.slice(0, 3)
+  const extraStack = project.stack.length - visibleStack.length
 
   return (
     <tr className="transition-colors hover:bg-surface-2/50">
-      <td className="px-2 py-1.5">
-        <Badge
-          variant="outline"
-          className={cn(
-            "border-0 font-mono text-[10px] text-background",
-            methodColor(project.method)
-          )}
-          aria-hidden="true"
-        >
-          {project.method}
-        </Badge>
-      </td>
       <td className="px-2 py-1.5">
         <ProjectNameLink project={project} />
       </td>
@@ -98,48 +71,40 @@ export function NetworkWaterfallRow({ project }: NetworkWaterfallRowProps) {
         {project.type}
       </td>
       <td className="px-2 py-1.5">
-        <Badge
-          variant="outline"
-          className={cn(
-            "border-0 font-mono text-[10px] text-background",
-            statusColor(project.statusCode)
+        <div className="flex flex-wrap gap-1">
+          {visibleStack.map((tech) => (
+            <Badge
+              key={tech}
+              variant="outline"
+              className="font-mono text-[10px]"
+            >
+              {tech}
+            </Badge>
+          ))}
+          {extraStack > 0 && (
+            <Badge variant="outline" className="font-mono text-[10px]">
+              +{extraStack}
+            </Badge>
           )}
-          aria-label={`Status: ${project.status}, ${project.statusCode}`}
-        >
-          {project.statusCode}
-        </Badge>
-      </td>
-      <td className="px-2 py-1.5 font-mono text-xs text-muted-foreground">
-        {project.size}
-      </td>
-      <td className="px-2 py-1.5 font-mono text-xs text-muted-foreground">
-        {project.time}
+        </div>
       </td>
       <td className="px-2 py-1.5">
-        <div className="relative h-2 w-full rounded-sm bg-surface-2/30">
-          <motion.div
-            className={cn(
-              "absolute inset-y-0 start-0 h-full rounded-sm",
-              methodColor(project.method)
-            )}
-            style={{ transformOrigin: "left" }}
-            initial={
-              shouldAnimate
-                ? { scaleX: 0, x: `${project.startOffset * 100}%` }
-                : {
-                    scaleX: project.timeWeight,
-                    x: `${project.startOffset * 100}%`,
-                  }
-            }
-            animate={{
-              scaleX: project.timeWeight,
-              x: `${project.startOffset * 100}%`,
-            }}
-            transition={{
-              duration: shouldAnimate ? 0.6 : 0.001,
-              ease: "easeOut",
-            }}
-          />
+        <div className="flex items-center gap-2">
+          {links.map((link) => {
+            const Icon = LINK_ICONS[link.kind]
+            return (
+              <a
+                key={link.kind}
+                href={link.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`${link.label} (opens in new tab)`}
+                className="text-muted-foreground hover:text-foreground focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none"
+              >
+                {Icon ? <Icon className="size-4" /> : link.label}
+              </a>
+            )
+          })}
         </div>
       </td>
     </tr>
@@ -147,58 +112,46 @@ export function NetworkWaterfallRow({ project }: NetworkWaterfallRowProps) {
 }
 
 export function NetworkWaterfallCard({ project }: NetworkWaterfallRowProps) {
-  const shouldAnimate = useShouldAnimate()
+  const links = projectLinkList(project.links)
+  const visibleStack = project.stack.slice(0, 3)
+  const extraStack = project.stack.length - visibleStack.length
 
   return (
     <div className="border-b border-hairline py-3">
       <div className="mb-2 flex items-center gap-2">
-        <Badge
-          variant="outline"
-          className={cn(
-            "shrink-0 border-0 font-mono text-[10px] text-background",
-            methodColor(project.method)
-          )}
-          aria-hidden="true"
-        >
-          {project.method}
-        </Badge>
         <ProjectNameLink project={project} className="flex-1 text-sm" />
-        <Badge
-          variant="outline"
-          className={cn(
-            "shrink-0 border-0 font-mono text-[10px] text-background",
-            statusColor(project.statusCode)
-          )}
-          aria-label={`Status: ${project.status}, ${project.statusCode}`}
-        >
-          {project.statusCode}
-        </Badge>
+        <span className="shrink-0 font-mono text-[10px] text-muted-foreground">
+          {project.type}
+        </span>
       </div>
-      <div className="relative h-2 w-full rounded-sm bg-surface-2/30">
-        <motion.div
-          className={cn(
-            "absolute inset-y-0 start-0 h-full rounded-sm",
-            methodColor(project.method)
-          )}
-          style={{ transformOrigin: "left" }}
-          initial={
-            shouldAnimate
-              ? { scaleX: 0, x: `${project.startOffset * 100}%` }
-              : {
-                  scaleX: project.timeWeight,
-                  x: `${project.startOffset * 100}%`,
-                }
-          }
-          animate={{
-            scaleX: project.timeWeight,
-            x: `${project.startOffset * 100}%`,
-          }}
-          transition={{
-            duration: shouldAnimate ? 0.6 : 0.001,
-            ease: "easeOut",
-          }}
-        />
+      <div className="mb-2 flex flex-wrap gap-1">
+        {visibleStack.map((tech) => (
+          <Badge key={tech} variant="outline" className="font-mono text-[10px]">
+            {tech}
+          </Badge>
+        ))}
+        {extraStack > 0 && (
+          <Badge variant="outline" className="font-mono text-[10px]">
+            +{extraStack}
+          </Badge>
+        )}
       </div>
+      {links.length > 0 && (
+        <div className="flex items-center gap-3">
+          {links.map((link) => (
+            <a
+              key={link.kind}
+              href={link.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm text-lime underline decoration-lime/40 underline-offset-4 hover:decoration-lime"
+            >
+              {link.label}
+              <span className="sr-only"> (opens in new tab)</span>
+            </a>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

@@ -5,15 +5,7 @@ import {
 
 import type { Project } from "@/lib/content/projects"
 
-const HEADERS = [
-  "METHOD",
-  "NAME",
-  "TYPE",
-  "STATUS",
-  "SIZE",
-  "TIME",
-  "WATERFALL",
-] as const
+const HEADERS = ["NAME", "TYPE", "STACK", "LINKS"] as const
 
 interface NetworkWaterfallTableProps {
   projects: readonly Project[]

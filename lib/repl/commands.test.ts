@@ -70,19 +70,20 @@ describe("runCommand", () => {
   })
 
   describe("projects", () => {
-    it("returns numbered list with method, name, status, year", () => {
+    it("returns numbered list with name, type, and optional stack", () => {
       const result = runCommand("projects")
       expect(result.status).toBe("ok")
       expect(result.lines.length).toBeGreaterThan(0)
-      expect(result.lines[0].text).toMatch(/^\d+\. \[\w+\] .+ \(\w+\) — \d{4}$/)
+      expect(result.lines[0].text).toMatch(/^\d+\. .+ — \w+/)
     })
 
-    it("filters to shipped with --shipped", () => {
-      const result = runCommand("projects --shipped")
+    it("filters to featured with --featured", () => {
+      const result = runCommand("projects --featured")
       expect(result.status).toBe("ok")
-      const text = result.lines.map((l) => l.text).join("\n")
-      expect(text).not.toContain("(archived)")
-      expect(text).not.toContain("(ongoing)")
+      expect(result.lines.length).toBeGreaterThan(0)
+      expect(result.lines.length).toBeLessThan(
+        runCommand("projects").lines.length
+      )
     })
 
     it("filters by tag case-insensitively", () => {

@@ -5,7 +5,6 @@ import userEvent from "@testing-library/user-event"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 
 import { NetworkPageClient } from "@/components/network-page-client"
-import { useShouldAnimate } from "@/hooks/use-should-animate"
 
 import type { Project } from "@/lib/content/projects"
 
@@ -18,21 +17,6 @@ vi.mock("next/navigation", () => ({
   usePathname: vi.fn(),
 }))
 
-vi.mock("@/hooks/use-should-animate", () => ({
-  useShouldAnimate: vi.fn(),
-}))
-
-vi.mock("framer-motion", () => ({
-  motion: {
-    div: ({
-      children,
-      ...props
-    }: React.ComponentPropsWithoutRef<"div"> & {
-      children?: React.ReactNode
-    }) => <div {...props}>{children}</div>,
-  },
-}))
-
 const mockUseSearchParams = vi.mocked(useSearchParams)
 const mockUseRouter = vi.mocked(useRouter)
 const mockUsePathname = vi.mocked(usePathname)
@@ -41,71 +25,50 @@ const mockProjects: Project[] = [
   {
     slug: "alpha",
     name: "Alpha",
+    description: "Alpha project",
     org: "",
-    method: "GET",
-    status: "shipped",
-    statusCode: 200,
     type: "web",
-    size: "10 MB",
-    sizeWeight: 0.4,
-    time: "6 mo",
-    timeWeight: 0.25,
-    startOffset: 0,
-    year: 2024,
     stack: ["react"],
+    images: [],
+    videos: [],
+    links: {},
     problem: "",
     role: "",
     decisions: [],
     outcomes: [],
-    links: [],
     featured: true,
-    meta: { mock: false },
   },
   {
     slug: "beta",
     name: "Beta",
+    description: "Beta project",
     org: "",
-    method: "POST",
-    status: "ongoing",
-    statusCode: 201,
     type: "app",
-    size: "5 MB",
-    sizeWeight: 0.2,
-    time: "3 mo",
-    timeWeight: 0.15,
-    startOffset: 0.1,
-    year: 2025,
     stack: ["vue"],
+    images: [],
+    videos: [],
+    links: {},
     problem: "",
     role: "",
     decisions: [],
     outcomes: [],
-    links: [],
     featured: true,
-    meta: { mock: false },
   },
   {
     slug: "gamma",
     name: "Gamma",
+    description: "Gamma project",
     org: "",
-    method: "GET",
-    status: "ongoing",
-    statusCode: 200,
     type: "lib",
-    size: "2 MB",
-    sizeWeight: 0.1,
-    time: "1 mo",
-    timeWeight: 0.05,
-    startOffset: 0.2,
-    year: 2024,
     stack: ["typescript"],
+    images: [],
+    videos: [],
+    links: {},
     problem: "",
     role: "",
     decisions: [],
     outcomes: [],
-    links: [],
     featured: true,
-    meta: { mock: false },
   },
 ]
 
@@ -139,7 +102,6 @@ function setupNavigationMocks(params: Record<string, string[]> = {}) {
 
 describe("NetworkPageClient", () => {
   beforeEach(() => {
-    vi.mocked(useShouldAnimate).mockReturnValue(false)
     setupNavigationMocks()
   })
 
@@ -153,8 +115,8 @@ describe("NetworkPageClient", () => {
     expect(links.length).toBeGreaterThanOrEqual(mockProjects.length)
   })
 
-  it("filters projects by method", () => {
-    setupNavigationMocks({ method: ["POST"] })
+  it("filters projects by type", () => {
+    setupNavigationMocks({ type: ["app"] })
     render(<NetworkPageClient projects={mockProjects} />)
     expect(
       screen.getAllByRole("link", { name: "Beta" }).length
@@ -165,7 +127,7 @@ describe("NetworkPageClient", () => {
 
   it("shows empty state when no projects match", () => {
     setupNavigationMocks({
-      method: ["PATCH"],
+      type: ["nonexistent"],
     })
     render(<NetworkPageClient projects={mockProjects} />)
     expect(
@@ -178,7 +140,7 @@ describe("NetworkPageClient", () => {
 
   it("restores all rows when Clear filters is clicked", async () => {
     const user = userEvent.setup()
-    setupNavigationMocks({ method: ["PATCH"] })
+    setupNavigationMocks({ type: ["nonexistent"] })
     render(<NetworkPageClient projects={mockProjects} />)
 
     expect(
@@ -193,14 +155,14 @@ describe("NetworkPageClient", () => {
     setupNavigationMocks()
     render(<NetworkPageClient projects={mockProjects} />)
 
-    await user.click(screen.getByRole("button", { name: /method/i }))
-    await user.click(screen.getByLabelText("POST"))
+    await user.click(screen.getByRole("button", { name: /type/i }))
+    await user.click(screen.getByLabelText("app"))
 
-    expect(mockReplace).toHaveBeenCalledWith("/work?method=POST")
+    expect(mockReplace).toHaveBeenCalledWith("/work?type=app")
   })
 
   it("supports multi-select within a category", () => {
-    setupNavigationMocks({ method: ["GET", "POST"] })
+    setupNavigationMocks({ type: ["web", "app"] })
     render(<NetworkPageClient projects={mockProjects} />)
     expect(
       screen.getAllByRole("link", { name: "Alpha" }).length
@@ -208,18 +170,16 @@ describe("NetworkPageClient", () => {
     expect(
       screen.getAllByRole("link", { name: "Beta" }).length
     ).toBeGreaterThanOrEqual(1)
-    expect(
-      screen.getAllByRole("link", { name: "Gamma" }).length
-    ).toBeGreaterThanOrEqual(1)
+    expect(screen.queryAllByRole("link", { name: "Gamma" })).toHaveLength(0)
   })
 
   it("applies AND across categories", () => {
-    setupNavigationMocks({ method: ["GET"], status: ["ongoing"] })
+    setupNavigationMocks({ type: ["web"], stack: ["react"] })
     render(<NetworkPageClient projects={mockProjects} />)
     expect(
-      screen.getAllByRole("link", { name: "Gamma" }).length
+      screen.getAllByRole("link", { name: "Alpha" }).length
     ).toBeGreaterThanOrEqual(1)
-    expect(screen.queryAllByRole("link", { name: "Alpha" })).toHaveLength(0)
     expect(screen.queryAllByRole("link", { name: "Beta" })).toHaveLength(0)
+    expect(screen.queryAllByRole("link", { name: "Gamma" })).toHaveLength(0)
   })
 })

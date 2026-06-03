@@ -415,3 +415,39 @@ Surfaced by quick-dev review loops. Each entry: source spec, finding, suggested 
 
 - **`Person.sameAs` JSON-LD now includes non-profile hrefs.** `app/(chrome)/page.tsx` builds `sameAs` from `profile.socials.map(s => s.href)`, which now contains `mailto:hosmarey@gmail.com` and the `wa.me` click-to-chat link. `sameAs` is meant for profile/identity URLs (LinkedIn, GitHub, Behance, YouTube). Suggested: filter `sameAs` to `http(s)` profile links and surface the email via a dedicated `Person.email` field instead. Minor SEO/structured-data polish.
 - **`GeneralInfo` could use a `<dl>` for stronger semantics.** The label→value facts in `components/general-info.tsx` are rendered as paired `<span>`s; a `<dl>`/`<dt>`/`<dd>` structure would convey the term/definition relationship to assistive tech. Mirrors the visual `ComputedStylesPanel` idiom either way — purely a semantic enhancement.
+
+---
+
+## Deferred from: code review of 4-6-flexible-project-schema-and-media-gallery (2026-06-03)
+
+### 46. Duplicate React keys possible in stack badges
+
+**Where:** `components/network-waterfall-row.tsx`, `components/recruiter-resume.tsx` — `key={tech}`. If `stack` array contains duplicate strings, React emits key-collision warnings. Zod schema does not enforce uniqueness.
+
+**Why deferred:** Pre-existing pattern across codebase; not introduced by this story.
+
+**Suggested fix:** Add `.refine((arr) => new Set(arr).size === arr.size)` to Zod schema or use index-based keys.
+
+### 47. Unbounded dynamic import without error boundary
+
+**Where:** `app/(chrome)/work/[slug]/page.tsx` — `ProjectMediaGallery` is dynamically imported but not wrapped in an error boundary. If chunk fails to load, error bubbles up and crashes the case-study page.
+
+**Why deferred:** Pre-existing pattern; other dynamic imports (`NetworkRequestDetail`) also lack error boundaries.
+
+**Suggested fix:** Wrap dynamic imports in an error boundary or add `error.tsx` to `(chrome)` group (item #10).
+
+### 48. Zod schema accepts whitespace-only strings
+
+**Where:** `lib/content/projects.ts:5-27` — `z.string().min(1)` accepts strings like `"   "` (only whitespace). Invisible content passes validation and renders as empty space.
+
+**Why deferred:** Pre-existing Zod pattern across all content schemas; not introduced by this story.
+
+**Suggested fix:** Add `.trim().min(1)` to string fields site-wide.
+
+### 49. Checkbox IDs could contain special characters
+
+**Where:** `components/network-filter-bar.tsx:86` — `const id = \`${category}-${value}\`` creates unusual IDs if filter value contains spaces or special chars.
+
+**Why deferred:** Pre-existing pattern; current data (lowercase slugs) is safe. Not introduced by this story.
+
+**Suggested fix:** Sanitize IDs with a slugify utility or use index-based IDs.
