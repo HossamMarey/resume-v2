@@ -10,7 +10,7 @@ vi.mock("@/hooks/use-should-animate", () => ({
 }))
 
 describe("FilePreviewPane", () => {
-  it("renders an embed with correct src for resume item", () => {
+  it("renders an iframe with correct src for resume item", () => {
     const item: SourceTreeItem = {
       id: "resume",
       label: "resume.pdf",
@@ -18,10 +18,10 @@ describe("FilePreviewPane", () => {
     }
     const { container } = render(<FilePreviewPane item={item} />)
 
-    const embed = container.querySelector("embed")
-    expect(embed).toBeInTheDocument()
-    expect(embed).toHaveAttribute("src", "/hossam-marey-resume.pdf")
-    expect(embed).toHaveAttribute("type", "application/pdf")
+    const iframe = container.querySelector("iframe")
+    expect(iframe).toBeInTheDocument()
+    expect(iframe).toHaveAttribute("src", "/hossam-marey-resume.pdf")
+    expect(iframe).toHaveAttribute("title", "Hossam Marey resume PDF")
   })
 
   it("renders a download link for resume item", () => {

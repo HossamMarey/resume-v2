@@ -32,9 +32,8 @@ export function FilePreviewPane({ item }: FilePreviewPaneProps) {
             Download resume.pdf
             <span className="sr-only"> (opens in new tab)</span>
           </a>
-          <embed
+          <iframe
             src="/hossam-marey-resume.pdf"
-            type="application/pdf"
             title="Hossam Marey resume PDF"
             className="h-[80vh] min-h-[300px] w-full rounded border border-hairline"
           />

@@ -5,7 +5,7 @@ const prodCsp = [
   "default-src 'self'",
   "base-uri 'self'",
   "form-action 'self'",
-  "frame-ancestors 'none'",
+  "frame-ancestors 'self'",
   "object-src 'none'",
   "img-src 'self' data: https:",
   "font-src 'self' data:",
@@ -18,7 +18,7 @@ const devCsp = [
   "default-src 'self'",
   "base-uri 'self'",
   "form-action 'self'",
-  "frame-ancestors 'none'",
+  "frame-ancestors 'self'",
   "object-src 'none'",
   "img-src 'self' data: https:",
   "font-src 'self' data:",
@@ -47,7 +47,7 @@ const nextConfig = {
           },
           {
             key: "X-Frame-Options",
-            value: "DENY",
+            value: "SAMEORIGIN",
           },
           {
             key: "Permissions-Policy",
