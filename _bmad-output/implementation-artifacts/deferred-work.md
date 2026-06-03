@@ -410,3 +410,8 @@ Surfaced by quick-dev review loops. Each entry: source spec, finding, suggested 
 
 - Toast messages expose personal email `hosmarey@gmail.com` — pre-existing, intentional fallback for users whose submission fails. Not introduced by this change.
 - `new Set()` on every `handleChange` — correct React state pattern, negligible perf impact for 4-field form.
+
+## Deferred from: spec-elements-page-hero-socials-info (2026-06-03, loop 1 review)
+
+- **`Person.sameAs` JSON-LD now includes non-profile hrefs.** `app/(chrome)/page.tsx` builds `sameAs` from `profile.socials.map(s => s.href)`, which now contains `mailto:hosmarey@gmail.com` and the `wa.me` click-to-chat link. `sameAs` is meant for profile/identity URLs (LinkedIn, GitHub, Behance, YouTube). Suggested: filter `sameAs` to `http(s)` profile links and surface the email via a dedicated `Person.email` field instead. Minor SEO/structured-data polish.
+- **`GeneralInfo` could use a `<dl>` for stronger semantics.** The label→value facts in `components/general-info.tsx` are rendered as paired `<span>`s; a `<dl>`/`<dt>`/`<dd>` structure would convey the term/definition relationship to assistive tech. Mirrors the visual `ComputedStylesPanel` idiom either way — purely a semantic enhancement.

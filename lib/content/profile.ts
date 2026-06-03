@@ -1,5 +1,17 @@
 import { z } from "zod"
 
+const hrefSchema = z.string().refine(
+  (v) => {
+    try {
+      new URL(v)
+      return true
+    } catch {
+      return false
+    }
+  },
+  { message: "invalid href" }
+)
+
 export const ProfileSchema = z.object({
   name: z.string().min(1),
   role: z.string().min(1),
@@ -10,14 +22,21 @@ export const ProfileSchema = z.object({
   socials: z.array(
     z.object({
       label: z.string().min(1),
-      href: z.string().url(),
+      href: hrefSchema,
+      icon: z.enum([
+        "github",
+        "linkedin",
+        "behance",
+        "youtube",
+        "whatsapp",
+        "email",
+      ]),
     })
   ),
-  principles: z.array(
+  personalInfo: z.array(
     z.object({
-      key: z.string().min(1),
-      title: z.string().min(1),
-      body: z.string().min(1),
+      label: z.string().min(1),
+      value: z.string().min(1),
     })
   ),
   metrics: z.array(
@@ -30,37 +49,54 @@ export const ProfileSchema = z.object({
 })
 
 export type Profile = z.infer<typeof ProfileSchema>
+export type Social = Profile["socials"][number]
 
 const rawProfile: Profile = {
   name: "Hossam Marey",
   role: "Senior Front-End Developer",
   location: "Egypt",
   email: "",
-  tagline:
-    "I build fast, accessible interfaces for data-heavy products — then teach how it was done.",
+  tagline: `Senior Frontend Engineer in scalable, security-focused products. Led monorepo architecture; expert in React, Next.js, and TypeScript with full-stack delivery and team leadership.`,
   years: 8,
-  socials: [{ label: "GitHub", href: "https://github.com/HossamMarey" }],
-  principles: [
+  socials: [
     {
-      key: "restraint-over-novelty",
-      title: "Restraint over novelty",
-      body: "The best interface is the one that never asks the user to learn something new. I resist adding motion, chrome, or abstraction until the problem genuinely demands it.",
+      label: "WhatsApp",
+      href: "https://wa.me/201207721288",
+      icon: "whatsapp",
     },
     {
-      key: "precision-over-speed",
-      title: "Precision over speed",
-      body: "Fast code that is wrong is slower than correct code written once. Types, tests, and semantic markup are not overhead — they are the tools that let me move confidently at scale.",
+      label: "LinkedIn",
+      href: "https://www.linkedin.com/in/hossam-marey/",
+      icon: "linkedin",
     },
     {
-      key: "accessibility-by-default",
-      title: "Accessibility by default",
-      body: "WCAG AA is a floor, not a ceiling. Keyboard navigation, screen-reader labels, and reduced-motion respect are built in from the first commit, not patched in later.",
+      label: "Behance",
+      href: "https://behance.net/HossamMarey",
+      icon: "behance",
     },
     {
-      key: "systems-over-one-offs",
-      title: "Systems over one-offs",
-      body: "Every component is a precedent. I design for the next ten features, not the current ticket, so the codebase grows narrower, not wider, over time.",
+      label: "GitHub",
+      href: "https://github.com/HossamMarey",
+      icon: "github",
     },
+    {
+      label: "YouTube",
+      href: "https://www.youtube.com/codv-academy",
+      icon: "youtube",
+    },
+    {
+      label: "Email",
+      href: "mailto:hosmarey@gmail.com",
+      icon: "email",
+    },
+  ],
+  personalInfo: [
+    { label: "Nationality", value: "Egyptian" },
+    { label: "DOB", value: "11/1992" },
+    { label: "Address", value: "Mansoura (ready to relocate)" },
+    { label: "Freelance", value: "Available" },
+    { label: "Status", value: "Buguard (full time)" },
+    { label: "Last Update", value: "June. 2026" },
   ],
   metrics: [
     { label: "Years shipped", value: "8", suffix: "+" },

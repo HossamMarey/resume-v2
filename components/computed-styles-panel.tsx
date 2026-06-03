@@ -9,8 +9,8 @@ interface ComputedStylesPanelProps extends ComponentProps<"div"> {
 /**
  * The universal DevTools "Computed" panel idiom (UX-DR1): a `bg-hairline` grid
  * with `gap-px`, whose `bg-surface` cells reveal inset hairline dividers. Pure
- * presentational — used by principles, case-study Decisions/Outcomes, the
- * Sources preview, and REPL output blocks.
+ * presentational — used by the General Info block, case-study
+ * Decisions/Outcomes, the Sources preview, and REPL output blocks.
  */
 export function ComputedStylesPanel({
   direction = "vertical",

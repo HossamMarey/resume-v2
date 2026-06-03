@@ -1,5 +1,7 @@
 import fc from "fast-check"
 
+import { profile } from "@/lib/content/profile"
+
 import {
   levenshtein,
   listCommands,
@@ -57,7 +59,7 @@ describe("runCommand", () => {
       expect(text).toContain("Senior Front-End Developer")
       expect(text).toContain("8+")
       expect(text).toContain("Egypt")
-      expect(text).toContain("I build fast, accessible interfaces")
+      expect(text).toContain(profile.tagline)
     })
 
     it("never renders an empty email line", () => {

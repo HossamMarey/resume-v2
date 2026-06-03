@@ -69,11 +69,19 @@ describe("RecruiterResume", () => {
     }
   })
 
-  it("does not render a mailto link when profile.email is empty", () => {
+  it("renders email from socials only, not a duplicate from empty profile.email", () => {
     render(<RecruiterResume />)
     expect(profile.email).toBe("")
-    expect(
-      screen.queryByRole("link", { name: /email|mail/i })
-    ).not.toBeInTheDocument()
+
+    const emailSocial = profile.socials.find((s) =>
+      s.href.startsWith("mailto:")
+    )
+    expect(emailSocial).toBeDefined()
+
+    const mailtoLinks = screen
+      .getAllByRole("link")
+      .filter((el) => el.getAttribute("href")?.startsWith("mailto:"))
+    expect(mailtoLinks).toHaveLength(1)
+    expect(mailtoLinks[0]).toHaveAttribute("href", emailSocial!.href)
   })
 })

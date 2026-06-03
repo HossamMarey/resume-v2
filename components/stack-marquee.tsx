@@ -14,13 +14,10 @@ export function StackMarquee({ skills }: StackMarqueeProps) {
   const headingId = useId()
 
   return (
-    <section
-      aria-labelledby={headingId}
-      className="px-4 py-16 sm:px-8 lg:px-12"
-    >
+    <section aria-labelledby={headingId} className="px-4 py-4 sm:px-8 lg:px-12">
       <h2
         id={headingId}
-        className="mb-6 font-mono text-sm tracking-wider text-muted-foreground uppercase"
+        className="mb-6 hidden font-mono text-sm tracking-wider text-muted-foreground uppercase"
       >
         Stack
       </h2>

@@ -1,8 +1,9 @@
 import type { Metadata } from "next"
 
+import { GeneralInfo } from "@/components/general-info"
 import { InspectMeCta } from "@/components/inspect-me-cta"
 import { JsonLd } from "@/components/json-ld"
-import { PrinciplesPanel } from "@/components/principles-panel"
+import { SocialLinks } from "@/components/social-links"
 import { StackMarquee } from "@/components/stack-marquee"
 import { primarySkills } from "@/lib/content/skills"
 import { profile } from "@/lib/content/profile"
@@ -11,13 +12,13 @@ import { siteUrl } from "@/lib/site"
 export const metadata: Metadata = {
   title: "Elements",
   description:
-    "Elements panel — the front page of devtools://hossam. Identity, principles, and stack.",
+    "Elements panel — the front page of devtools://hossam. Identity, stack, and general info.",
   alternates: { canonical: "/" },
   openGraph: {
     url: "/",
     title: "Elements — devtools://hossam",
     description:
-      "Elements panel — the front page of devtools://hossam. Identity, principles, and stack.",
+      "Elements panel — the front page of devtools://hossam. Identity, stack, and general info.",
   },
 }
 
@@ -46,7 +47,7 @@ export default function ElementsPage() {
     <>
       <JsonLd data={personJsonLd} />
       <JsonLd data={websiteJsonLd} />
-      <section className="relative flex min-h-[calc(100vh-4rem)] flex-col items-start justify-center px-4 py-16 sm:px-8 lg:px-12">
+      <section className="relative flex min-h-[500px] flex-col items-start justify-center px-4 py-10 sm:px-8 lg:px-12 lg:py-[10vh]">
         {/* Decorative texture layer — aria-hidden as decorative */}
         <div
           aria-hidden="true"
@@ -58,7 +59,7 @@ export default function ElementsPage() {
         />
 
         {/* Content sits above texture via stacking context */}
-        <div className="relative z-10 flex max-w-3xl flex-col gap-6">
+        <div className="relative z-10 flex w-full max-w-4xl flex-col gap-6">
           <h1 className="font-title text-[clamp(2rem,10vw,6rem)] leading-[0.95] font-semibold tracking-tight">
             {profile.name}
           </h1>
@@ -67,17 +68,19 @@ export default function ElementsPage() {
             {profile.role}
           </p>
 
-          <p className="max-w-xl text-lg leading-relaxed text-muted-foreground">
+          <p className="max-w-4xl text-lg leading-relaxed text-muted-foreground">
             {profile.tagline}
           </p>
 
           <InspectMeCta />
+
+          <SocialLinks />
         </div>
       </section>
 
-      <PrinciplesPanel principles={profile.principles} />
-
       <StackMarquee skills={primarySkills} />
+
+      <GeneralInfo />
     </>
   )
 }
