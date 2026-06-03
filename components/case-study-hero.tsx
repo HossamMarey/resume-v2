@@ -48,9 +48,10 @@ export function CaseStudyHero({ project, images, videos }: CaseStudyHeroProps) {
               images={images || []}
               videos={videos || []}
               projectName={project.name}
-              className="h-full aspect-[4/3]  "
+              className="aspect-[4/3] h-full"
               autoLoop
             />
+          ) : (
             // <Image
             //   fill
             //   sizes="(min-width: 768px) 40vw, 100vw"
@@ -63,7 +64,6 @@ export function CaseStudyHero({ project, images, videos }: CaseStudyHeroProps) {
             //     img.style.display = "none"
             //   }}
             // />
-          ) : (
             <div className="flex h-full flex-col items-start justify-end p-5">
               <span className="font-mono text-xs tracking-wider text-muted-foreground uppercase">
                 {project.type}

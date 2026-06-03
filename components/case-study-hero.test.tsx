@@ -68,9 +68,7 @@ describe("CaseStudyHero", () => {
 
   it("renders the media gallery when images are provided", () => {
     render(<CaseStudyHero project={project} images={project.images} />)
-    expect(
-      screen.getByAltText("Buguard screenshot 1")
-    ).toBeInTheDocument()
+    expect(screen.getByAltText("Buguard screenshot 1")).toBeInTheDocument()
   })
 
   it("renders a typographic fallback when no image is provided", () => {

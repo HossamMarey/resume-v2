@@ -22,7 +22,7 @@ export function ProjectMediaGallery({
   images,
   videos,
   projectName,
-  className = '',
+  className = "",
   autoLoop = false,
   duration = 5000,
   pauseOnHover = true,
@@ -80,7 +80,12 @@ export function ProjectMediaGallery({
       tabIndex={0}
       className="focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-none"
     >
-      <div className={cn("relative aspect-video max-h-[80vh] w-full overflow-hidden rounded-sm bg-surface-2/30", className)}>
+      <div
+        className={cn(
+          "relative aspect-video max-h-[80vh] w-full overflow-hidden rounded-sm bg-surface-2/30",
+          className
+        )}
+      >
         <AnimatePresence mode="wait">
           <motion.div
             key={activeIndex}

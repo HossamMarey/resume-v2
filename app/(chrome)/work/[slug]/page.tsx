@@ -134,7 +134,11 @@ export default async function CaseStudyPage({
       <JsonLd data={breadcrumbJsonLd} />
       <ProjectOpenXp slug={project.slug} />
       <CaseStudyHeader project={project} />
-      <CaseStudyHero project={project} images={project.images} videos={project.videos} />
+      <CaseStudyHero
+        project={project}
+        images={project.images}
+        videos={project.videos}
+      />
       <NetworkRequestDetail project={project} />
       {(project.images.length > 1 || project.videos.length > 0) && (
         <div className="mt-10">

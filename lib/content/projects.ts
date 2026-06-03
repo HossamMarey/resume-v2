@@ -135,7 +135,13 @@ const featuredProjects: z.input<typeof ProjectSchema>[] = [
       "typescript",
       "react-pdf",
     ],
-    images: ["/images/projects/darkatlas-1.jpg", "/images/projects/darkweb.png", "/images/projects/threat.png", "/images/projects/asm.png", "/images/projects/brand.png",],
+    images: [
+      "/images/projects/darkatlas-1.jpg",
+      "/images/projects/darkweb.png",
+      "/images/projects/threat.png",
+      "/images/projects/asm.png",
+      "/images/projects/brand.png",
+    ],
     videos: ["/videos/threat.mp4"],
     links: {
       preview: "https://darkatlas.io/",
@@ -523,9 +529,6 @@ const featuredProjects: z.input<typeof ProjectSchema>[] = [
     featured: false,
   },
 
-
-
-
   {
     slug: "motamd",
     name: "Motamd",
@@ -548,7 +551,6 @@ const featuredProjects: z.input<typeof ProjectSchema>[] = [
     outcomes: ["Live at motamd.org."],
     featured: false,
   },
-
 ]
 
 const rawProjects: z.input<typeof ProjectSchema>[] = [...featuredProjects]
