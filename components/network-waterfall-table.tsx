@@ -1,21 +1,25 @@
+import { NetworkImageTrail } from "@/components/network-image-trail"
 import {
   NetworkWaterfallCard,
   NetworkWaterfallRow,
 } from "@/components/network-waterfall-row"
 
+import type { ImageTrailVariant } from "@/components/network-image-trail"
 import type { Project } from "@/lib/content/projects"
 
 const HEADERS = ["NAME", "TYPE", "STACK", "LINKS"] as const
 
 interface NetworkWaterfallTableProps {
   projects: readonly Project[]
+  variant?: ImageTrailVariant
 }
 
 export function NetworkWaterfallTable({
   projects,
+  variant = 1,
 }: NetworkWaterfallTableProps) {
   return (
-    <>
+    <NetworkImageTrail variant={variant}>
       <table className="hidden w-full sm:table">
         <thead>
           <tr className="border-b border-hairline">
@@ -41,6 +45,6 @@ export function NetworkWaterfallTable({
           <NetworkWaterfallCard key={p.slug} project={p} />
         ))}
       </div>
-    </>
+    </NetworkImageTrail>
   )
 }

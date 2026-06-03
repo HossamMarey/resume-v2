@@ -451,3 +451,23 @@ Surfaced by quick-dev review loops. Each entry: source spec, finding, suggested 
 **Why deferred:** Pre-existing pattern; current data (lowercase slugs) is safe. Not introduced by this story.
 
 **Suggested fix:** Sanitize IDs with a slugify utility or use index-based IDs.
+
+---
+
+## From spec-network-table-image-trail (2026-06-03, loop 1 review)
+
+### 1. Remote image host not in `remotePatterns` throws instead of `onError` fallback
+
+**Where:** `components/network-image-trail.tsx` (and pre-existing in `components/project-media-gallery.tsx`) — both render `project.images` via `next/image`. The `ProjectSchema.images` field accepts any non-empty string, but `next.config.mjs` only whitelists `images.unsplash.com` / `plus.unsplash.com` / `hossammarey.com`. A project image from an unconfigured host makes `next/image` throw at request time ("hostname is not configured"); the `onError` handler does NOT catch this.
+
+**Why deferred:** Pre-existing exposure shared with the media gallery — not introduced by the trail. The right fix is a content/config contract (validate authored image hosts against `remotePatterns`, or add a CI gate), which is broader than this feature.
+
+**Suggested fix:** Add a mock-content/CI gate that asserts every authored `project.images` host is present in `next.config.mjs` `remotePatterns`; or switch trail images to `unoptimized` with a host allowlist check.
+
+### 2. Touch input on ≥640px tablets can spawn a stray trail image
+
+**Where:** `components/network-waterfall-row.tsx` — the `<tr>` uses `onMouseEnter/Move/Leave`. On touch tablets ≥640px (where the desktop `<table>` is visible), a tap synthesizes mouse events; the "first move spawns immediately" rule can emit one stray trail image at the touch point.
+
+**Why deferred:** Minor cosmetic artifact (a single image fades out); a clean fix requires migrating to pointer events and gating on `e.pointerType === "mouse"`, a larger refactor than the bug warrants right now.
+
+**Suggested fix:** Switch row handlers to `onPointerEnter/Move/Leave` and ignore non-`mouse` pointer types in the trail engine.

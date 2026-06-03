@@ -12,7 +12,10 @@ import type {
   AvailableFilters,
   FilterCategory,
 } from "@/components/network-filter-bar"
+import type { ImageTrailVariant } from "@/components/network-image-trail"
 import type { Project } from "@/lib/content/projects"
+
+const NETWORK_TRAIL_VARIANT: ImageTrailVariant = 1
 
 interface NetworkPageClientProps {
   projects: readonly Project[]
@@ -109,7 +112,10 @@ export function NetworkPageClient({ projects }: NetworkPageClientProps) {
         onClear={handleClear}
       />
       {filtered.length > 0 ? (
-        <NetworkWaterfallTable projects={filtered} />
+        <NetworkWaterfallTable
+          projects={filtered}
+          variant={NETWORK_TRAIL_VARIANT}
+        />
       ) : (
         <div className="flex flex-col items-center justify-center gap-3 py-16">
           <p className="font-mono text-sm text-muted-foreground">

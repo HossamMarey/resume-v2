@@ -3,6 +3,7 @@
 import { BookOpen, Code, ExternalLink, FolderGit, Palette } from "lucide-react"
 import Link from "next/link"
 
+import { useImageTrailHandlers } from "@/components/network-image-trail"
 import { Badge } from "@/components/ui/badge"
 import { projectLinkList } from "@/lib/content/projects"
 import { cn } from "@/lib/utils"
@@ -62,8 +63,19 @@ export function NetworkWaterfallRow({ project }: NetworkWaterfallRowProps) {
   const visibleStack = project.stack.slice(0, 3)
   const extraStack = project.stack.length - visibleStack.length
 
+  const trail = useImageTrailHandlers()
+  const trailProps =
+    trail && project.images.length > 0
+      ? {
+          onMouseEnter: () => trail.onRowEnter(project.images),
+          onMouseMove: (e: React.MouseEvent) =>
+            trail.onRowMove(project.images, e),
+          onMouseLeave: () => trail.onRowLeave(),
+        }
+      : {}
+
   return (
-    <tr className="transition-colors hover:bg-surface-2/50">
+    <tr className="transition-colors hover:bg-surface-2/50" {...trailProps}>
       <td className="px-2 py-1.5">
         <ProjectNameLink project={project} />
       </td>
