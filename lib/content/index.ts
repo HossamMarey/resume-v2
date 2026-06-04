@@ -13,6 +13,7 @@ export {
   LocationType,
   RoleSchema,
   ExperienceSchema,
+  ExperienceCollectionSchema,
   experience,
   type Role,
   type Experience,

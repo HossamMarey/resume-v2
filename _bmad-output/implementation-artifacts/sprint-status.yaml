@@ -35,8 +35,8 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 
 generated: 2026-05-30
-last_updated: 2026-06-04 # epic-8 created; story 8-1 set to ready-for-dev (create-story)
-# all stories set done on 2026-06-02
+last_updated: 2026-06-04 # story 8-2 completed; set to review (dev-story)
+# story 8-1 set done on 2026-06-04 (code review complete, all patches applied)
 project: web
 # epic-1 set in-progress on 2026-05-30 (first story created via create-story)
 project_key: NOKEY
@@ -107,5 +107,6 @@ development_status:
 
   # Epic 8: Experience Timeline (post-launch)
   epic-8: in-progress
-  8-1-linkedin-style-experience-page: review
+  8-1-linkedin-style-experience-page: done
+  8-2-reconcile-recruiter-console-and-palette: review
   epic-8-retrospective: optional

@@ -86,7 +86,7 @@ export function NetworkFilterBar({
               <div className="flex flex-col gap-2">
                 {values.map((value) => {
                   const checked = active.includes(value)
-                  const id = `${category}-${value}`
+                  const id = `${category}-${value.replace(/\s+/g, "-")}`
                   return (
                     <div key={value} className="flex items-center gap-2">
                       <input

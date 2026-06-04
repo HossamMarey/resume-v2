@@ -5,6 +5,10 @@ import {
   profile,
   projects,
 } from "@/lib/content"
+import {
+  formatExperienceDuration,
+  formatDateRange,
+} from "@/lib/utils/experienceDuration"
 
 export type ReplLineKind = "output" | "notice" | "error"
 
@@ -213,14 +217,32 @@ const registry: CommandEntry[] = [
     name: "experience",
     summary: "list work history (flags: --fulltime, --freelance)",
     run(args) {
+      const knownFlags = new Set(["--fulltime", "--freelance"])
+      const unknownFlag = args.find(
+        (a) => a.startsWith("--") && !knownFlags.has(a)
+      )
+      if (unknownFlag) {
+        return ok([
+          line("output", `unknown flag: ${unknownFlag}`),
+          line("output", "usage: experience [--fulltime] [--freelance]"),
+        ])
+      }
+
       const fulltimeFlag = args.includes("--fulltime")
       const freelanceFlag = args.includes("--freelance")
 
+      if (fulltimeFlag && freelanceFlag) {
+        return ok([
+          line("output", "cannot use both --fulltime and --freelance"),
+          line("output", "usage: experience [--fulltime] [--freelance]"),
+        ])
+      }
+
       let filtered = [...experience]
 
-      if (fulltimeFlag && !freelanceFlag) {
+      if (fulltimeFlag) {
         filtered = filtered.filter((e) => e.category === "fulltime")
-      } else if (freelanceFlag && !fulltimeFlag) {
+      } else if (freelanceFlag) {
         filtered = filtered.filter((e) => e.category === "freelance")
       }
 
@@ -232,11 +254,14 @@ const registry: CommandEntry[] = [
       for (const entry of filtered) {
         lines.push(line("output", `${entry.company} (${entry.category})`))
         for (const role of entry.roles) {
-          const duration =
-            role.endDate === "present"
-              ? `${role.startDate} – present`
-              : `${role.startDate} – ${role.endDate}`
-          lines.push(line("output", `  · ${role.name} — ${duration}`))
+          const duration = formatExperienceDuration(
+            role.startDate,
+            role.endDate
+          )
+          const dateRange = formatDateRange(role.startDate, role.endDate)
+          lines.push(
+            line("output", `  · ${role.name} — ${dateRange} · ${duration}`)
+          )
         }
       }
 

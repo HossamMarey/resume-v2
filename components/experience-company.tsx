@@ -1,5 +1,7 @@
+"use client"
 import Image from "next/image"
 import Link from "next/link"
+import { useState } from "react"
 
 import type { Experience, Role } from "@/lib/content/experience"
 import { ExperienceRoleDescription } from "@/components/experience-role-description"
@@ -21,27 +23,11 @@ const LOCATION_TYPE_LABELS: Record<Experience["locationType"], string> = {
   onsite: "On-site",
 }
 
-function CompanyLogo({
-  company,
-  companyLogo,
-}: {
-  company: string
-  companyLogo?: string
-}) {
-  if (companyLogo) {
-    return (
-      <Image
-        src={companyLogo}
-        alt={`${company} logo`}
-        width={48}
-        height={48}
-        className="rounded-sm object-contain"
-      />
-    )
-  }
-
+function InitialsPlaceholder({ company }: { company: string }) {
   const initials = company
-    .split(" ")
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean)
     .map((w) => w[0])
     .join("")
     .slice(0, 2)
@@ -56,21 +42,48 @@ function CompanyLogo({
   )
 }
 
+function CompanyLogo({
+  company,
+  companyLogo,
+}: {
+  company: string
+  companyLogo?: string
+}) {
+  const [error, setError] = useState(false)
+
+  if (companyLogo && !error) {
+    return (
+      <Image
+        src={companyLogo}
+        alt={`${company} logo`}
+        width={48}
+        height={48}
+        className="rounded-sm object-contain"
+        onError={() => setError(true)}
+      />
+    )
+  }
+
+  return <InitialsPlaceholder company={company} />
+}
+
 function RoleItem({ role }: { role: Role }) {
   const duration = formatExperienceDuration(role.startDate, role.endDate)
   const dateRange = formatDateRange(role.startDate, role.endDate)
 
   return (
-    <div className="flex gap-3">
+    <li className="flex gap-3">
       {/* Timeline rail */}
-      <div className="flex flex-col items-center">
+      <div className="flex flex-col items-center" aria-hidden="true">
         <div className="size-2 rounded-full bg-muted-foreground"></div>
         <div className="mt-1 w-px flex-1 bg-hairline" />
       </div>
 
       {/* Role content */}
       <div className="pb-6">
-        <h3 className="text-sm font-semibold text-foreground">{role.name}</h3>
+        <h3 className="text-sm font-semibold break-words text-foreground">
+          {role.name}
+        </h3>
         <p className="mt-0.5 font-mono text-xs text-muted-foreground">
           {dateRange} · {duration}
         </p>
@@ -78,7 +91,7 @@ function RoleItem({ role }: { role: Role }) {
           <ExperienceRoleDescription description={role.description} />
         )}
       </div>
-    </div>
+    </li>
   )
 }
 
@@ -109,7 +122,7 @@ export function ExperienceCompany({ entry }: ExperienceCompanyProps) {
         <div className="min-w-0 flex-1">
           {/* Company header */}
           <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
-            <h2 className="text-base font-semibold text-foreground">
+            <h2 className="text-base font-semibold break-words text-foreground">
               {entry.company}
             </h2>
             {entry.org && (
@@ -133,11 +146,11 @@ export function ExperienceCompany({ entry }: ExperienceCompanyProps) {
           )}
 
           {/* Roles timeline */}
-          <div className="mt-3">
+          <ol className="mt-3">
             {entry.roles.map((role, idx) => (
               <RoleItem key={idx} role={role} />
             ))}
-          </div>
+          </ol>
         </div>
       </div>
     </article>

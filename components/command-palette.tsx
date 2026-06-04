@@ -116,6 +116,21 @@ export function CommandPalette() {
             Elements
           </CommandItem>
           <CommandItem
+            value="Experience"
+            keywords={[
+              "work",
+              "history",
+              "career",
+              "jobs",
+              "timeline",
+              "linkedin",
+              "resume",
+            ]}
+            onSelect={() => handleNavigate("/experience")}
+          >
+            Experience
+          </CommandItem>
+          <CommandItem
             value="Network"
             keywords={["work", "projects"]}
             onSelect={() => handleNavigate("/work")}
@@ -130,31 +145,17 @@ export function CommandPalette() {
             Console
           </CommandItem>
           <CommandItem
-            value="Performance"
-            keywords={["perf", "metrics", "speed"]}
-            onSelect={() => handleNavigate("/perf")}
-          >
-            Performance
-          </CommandItem>
-          <CommandItem
             value="Sources"
             keywords={["files", "code", "tree"]}
             onSelect={() => handleNavigate("/sources")}
           >
             Sources
           </CommandItem>
-          <CommandItem
-            value="Experience"
-            keywords={["work", "history", "career", "jobs"]}
-            onSelect={() => handleNavigate("/experience")}
-          >
-            Experience
-          </CommandItem>
 
           <CommandItem
             value="Contact"
             keywords={["contact", "message", "email", "phone", "address"]}
-            onSelect={() => handleNavigate("/sources?tab=contact")}
+            onSelect={() => handleNavigate("/sources")}
           >
             Contact
           </CommandItem>

@@ -454,6 +454,26 @@ Surfaced by quick-dev review loops. Each entry: source spec, finding, suggested 
 
 ---
 
+## Deferred from: code review of 8-1-linkedin-style-experience-page (2026-06-04)
+
+### 50. Local timezone dependence in month-level calculations
+
+**Where:** `lib/utils/experienceDuration.ts` — `new Date()` for `"present"` uses local timezone; a user near the international date line could get off-by-one month on month boundaries.
+
+**Why deferred:** Spec does not require UTC handling; all dates are authored in the same timezone as the developer. Minor impact.
+
+**Suggested fix:** Use `date-fns/utc` or pass an explicit timezone if the site ever targets global audiences with precise duration requirements.
+
+### 51. Semantically inconsistent `type`/`category` combinations allowed
+
+**Where:** `lib/content/experience.ts` — Schema permits e.g. `type: "contract"` with `category: "fulltime"` with no cross-field validation.
+
+**Why deferred:** No business rule specified in the spec to forbid this combination. Current data is consistent. Can be tightened if needed.
+
+**Suggested fix:** Add a `.refine()` to `ExperienceSchema` that enforces valid combinations (e.g., `category === "fulltime"` implies `type === "fulltime"`, `category === "freelance"` implies `type !== "fulltime"`).
+
+---
+
 ## From spec-network-table-image-trail (2026-06-03, loop 1 review)
 
 ### 1. Remote image host not in `remotePatterns` throws instead of `onError` fallback

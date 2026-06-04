@@ -7,6 +7,10 @@ export function formatExperienceDuration(
   const start = parseYearMonth(startDate)
   const end = endDate === "present" ? new Date() : parseYearMonth(endDate)
 
+  if (start > end) {
+    return "1 mo"
+  }
+
   // Add one month to make it inclusive like LinkedIn
   const adjustedEnd = new Date(end.getFullYear(), end.getMonth() + 1)
 
@@ -35,6 +39,8 @@ export function formatExperienceDuration(
 export function formatCompanyDuration(
   roles: Array<{ startDate: string; endDate: string | "present" }>
 ): string {
+  if (roles.length === 0) return "1 mo"
+
   let earliestStart = parseYearMonth(roles[0].startDate)
   let latestEnd: Date =
     roles[0].endDate === "present"

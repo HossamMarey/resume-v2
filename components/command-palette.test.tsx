@@ -202,15 +202,17 @@ describe("CommandPalette", () => {
     expect(screen.getByText("Socials")).toBeInTheDocument()
   })
 
-  it("shows Navigate items", () => {
+  it("shows Navigate items in chrome tab order", () => {
     render(<CommandPalette />)
     fireEvent.keyDown(window, { key: "k", metaKey: true })
     expect(screen.getByText("Elements")).toBeInTheDocument()
+    expect(screen.getByText("Experience")).toBeInTheDocument()
     expect(screen.getByText("Network")).toBeInTheDocument()
     expect(screen.getByText("Console")).toBeInTheDocument()
-    expect(screen.getByText("Performance")).toBeInTheDocument()
     expect(screen.getByText("Sources")).toBeInTheDocument()
+    expect(screen.getByText("Contact")).toBeInTheDocument()
     expect(screen.getByText("Recruiter")).toBeInTheDocument()
+    expect(screen.queryByText("Performance")).not.toBeInTheDocument()
   })
 
   it("navigates to Console", async () => {

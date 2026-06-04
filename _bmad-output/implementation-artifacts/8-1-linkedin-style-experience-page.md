@@ -1,6 +1,6 @@
 # Story 8.1: LinkedIn-style Experience timeline page
 
-Status: review
+Status: done
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -208,6 +208,35 @@ k2p6
 - Added `/experience` to `app/sitemap.ts` static routes and updated `app/sitemap.test.ts` expected counts.
 - All quality gates pass: `yarn typecheck` clean, `yarn lint` clean (0 new warnings), `yarn test:run` 387 passed.
 
+### Post-Review Fixes (2026-06-04)
+
+- Fixed initials generation to handle whitespace/multi-space company names (`trim().split(/\s+/).filter(Boolean)`).
+- Added `onError` fallback to `next/image` in `CompanyLogo` that swaps to initials placeholder on 404.
+- Added `isValidYearMonth` refinement to `RoleSchema` to reject invalid months (e.g., `"2023-13"`).
+- Added cross-field `.refine()` on `RoleSchema` to enforce `endDate >= startDate`.
+- Added `.trim()` to `company` and `role.name` Zod validations to reject whitespace-only strings.
+- Fixed `slug` regex from `/^[a-z0-9-]+$/` to `/^[a-z0-9][a-z0-9-]*$/` to reject leading hyphens.
+- Added `start > end` guard in `formatExperienceDuration` to avoid inverted intervals.
+- Added empty-array guard in `formatCompanyDuration`.
+- Added `aria-expanded`, `aria-controls`, and matching `id` to "See more/less" toggle for screen readers.
+- Added `document.fonts.ready.then(check)` re-measurement in `ResizeObserver` to handle late font loading.
+- Sanitized checkbox IDs in `network-filter-bar.tsx` (`value.replace(/\s+/g, "-")`).
+- Added `/experience` to `tabReasons` in `app/(chrome)/layout.tsx` so visiting the page grants XP.
+- Added unknown-flag validation and conflicting-flags guard to `/experience` REPL command.
+- Reused `formatExperienceDuration`/`formatDateRange` in REPL `/experience` output instead of raw date strings.
+- Made `experience-timeline.tsx` conditionally render sections only when non-empty.
+- Sorted experience entries chronologically by earliest role start date (descending).
+- Added `break-words` to company name and role name headings.
+- Added `aria-hidden="true"` to decorative timeline dot and line.
+- Converted timeline roles from plain `div`s to semantic `<ol>`/`<li>`.
+- Removed commented Performance tab from `devtools-chrome.tsx` and cleaned up unused `Activity` import.
+- Derived profile metrics dynamically from `experience` and `projects` datasets instead of hardcoded values.
+- Expanded command palette keywords for Experience to include "timeline", "linkedin", "resume".
+- Exported `ExperienceCollectionSchema` from `lib/content/experience.ts` and barrel.
+- Added `lib/content/experience.test.ts` with schema validation tests (empty roles, invalid dates, duplicate slugs, whitespace).
+- Added `describe("experience")` block to `lib/repl/commands.test.ts` covering flags, conflicting flags, unknown flags, and duration formatting.
+- All quality gates pass post-fix: `yarn typecheck` clean, `yarn lint` clean (5 pre-existing warnings only), `yarn test:run` 411 passed (+24 new tests).
+
 ### File List
 
 - `lib/content/experience.ts` — rewritten schema + data
@@ -224,3 +253,65 @@ k2p6
 - `components/command-palette.tsx` — added Experience nav command
 - `app/sitemap.ts` — added `/experience`
 - `app/sitemap.test.ts` — updated count expectations
+
+### Review Findings
+
+- [x] [Review][Decision] Experience tab is 2nd, not 6th — **RESOLVED: Keep as 2nd.** Position confirmed between Elements and Network. Dev Notes say "Pick a sensible position" and 2nd is intentional.
+
+- [x] [Review][Patch] Initials generation breaks on whitespace/multi-space company names [`components/experience-company.tsx:43-48`] — `company.split(" ")` with input `"  "` produces `["", "", ""]`; `w[0]` is `undefined`; `.join("")` yields `"undefinedundefinedundefined"`. Fix: `company.trim().split(/\s+/).filter(Boolean)`.
+
+- [x] [Review][Patch] Invalid month values silently corrupt dates [`lib/content/experience.ts:10-11`] — `startDate`/`endDate` regex `/^\d{4}-\d{2}$/` allows `"2023-00"`, `"2023-13"`, `"2023-99"`. `parseYearMonth` passes these to `new Date(year, month-1)`; JS wraps invalid months without throwing. Fix: tighten regex or add Zod refinement for valid months.
+
+- [x] [Review][Patch] End date can precede start date without validation [`lib/content/experience.ts`] — No cross-field validation ensuring `endDate >= startDate`. When `start > end`, `intervalToDuration` may return zero/negative components; the `"1 mo"` fallback masks the error. Fix: add `.refine()` on `RoleSchema` or `ExperienceSchema` to enforce chronological order.
+
+- [x] [Review][Patch] Company logo image failures have no runtime fallback [`components/experience-company.tsx:33-39`] — If `companyLogo` is set but the file 404s at runtime, `next/image` shows a broken image. There is no `onError` handler to swap to the initials placeholder. Fix: add `onError` to `<Image>` that falls back to initials state.
+
+- [x] [Review][Patch] Future-dated roles with `endDate: "present"` show incorrect duration [`lib/utils/experienceDuration.ts`] — If system clock is before `startDate`, `intervalToDuration` receives an inverted interval; negative components are filtered out, falling back to `"1 mo"` for a job that hasn't started. Fix: guard against future start dates or validate data.
+
+- [x] [Review][Patch] "See more" button lacks expand state for screen readers [`components/experience-role-description.tsx`] — No `aria-expanded`, `aria-controls`, or `id` on the paragraph/button pair. Screen reader users cannot tell if content is collapsed or how much is hidden. Fix: add `aria-expanded={expanded}`, `aria-controls={id}`, and matching `id` on the paragraph.
+
+- [x] [Review][Patch] Network filter checkbox IDs contain spaces (invalid HTML) [`components/network-filter-bar.tsx:89`] — `const id = \`${category}-${value}\`` with org values like `"Buguard, LLC"` produces `id="org-Buguard, LLC"` which contains a space, violating HTML5 ID syntax. Fix: sanitize IDs (e.g., `value.replace(/\s+/g, "-")`).
+
+- [x] [Review][Patch] Visiting `/experience` grants no XP [`app/(chrome)/layout.tsx:25-31`] — `tabReasons` omits `/experience`; the layout's `useEffect` that calls `emitXP(10, reason)` on pathname change yields `undefined`, so no XP is awarded. Fix: add `"/experience": "visit:experience"` to `tabReasons`.
+
+- [x] [Review][Patch] `/experience` REPL command has zero test coverage [`lib/repl/commands.test.ts`] — The command is listed in help tests but its filter logic and output formatting are untested. Fix: add `describe("experience")` block with tests for flags and output.
+
+- [x] [Review][Patch] No component tests for Experience UI — Missing tests for `ExperienceCompany`, `ExperienceRoleDescription`, `ExperienceTimeline`. Fix: add colocated `.test.tsx` files querying by role/text.
+
+- [x] [Review][Patch] Empty category sections still render headings [`components/experience-timeline.tsx`] — If `fulltime` or `freelance` arrays are empty, the `<section>` with its heading still renders. Fix: conditionally render sections only when array is non-empty.
+
+- [x] [Review][Patch] Experience entries not sorted chronologically [`components/experience-timeline.tsx`] — Relies on hardcoded array order; if data is reordered accidentally, the timeline appears scrambled. Fix: sort by earliest role start date (descending).
+
+- [x] [Review][Patch] Long text lacks truncation safeguards [`components/experience-company.tsx`] — Company name `h2` and role name `h3` have no `truncate` or `break-words`; a very long single-word string overflows its container. Fix: add `break-words` or `truncate`.
+
+- [x] [Review][Patch] Decorative timeline elements not aria-hidden [`components/experience-company.tsx`] — The dot (`size-2 rounded-full`) and vertical line (`w-px flex-1`) are purely decorative but exposed to assistive technology. Fix: add `aria-hidden="true"`.
+
+- [x] [Review][Patch] Timeline lacks ordered list semantics [`components/experience-company.tsx`] — Roles within a company represent a sequence but use plain `div`s instead of `<ol>`/`<li>`. Fix: wrap roles in `<ol>` and each `RoleItem` in `<li>`.
+
+- [x] [Review][Patch] Whitespace-only strings pass `.min(1)` validation [`lib/content/experience.ts`] — `company` and `role.name` accept `"   "`; renders as invisible/empty text. Fix: add `.trim()` to string validations.
+
+- [x] [Review][Patch] `formatCompanyDuration` assumes non-empty array without runtime guard [`lib/utils/experienceDuration.ts:38-42`] — Directly accesses `roles[0]`; calling with an empty array throws. Fix: add early return guard.
+
+- [x] [Review][Patch] Overflow detection may be incorrect during font loading [`components/experience-role-description.tsx`] — `ResizeObserver` measures on mount; if web fonts load after initial paint, measurement may be stale. Fix: re-check on font load event or use `font-display: swap` with a re-measurement strategy.
+
+- [x] [Review][Patch] Unknown flag validation missing in REPL `/experience` command [`lib/repl/commands.ts`] — `/experience --unknown` silently ignores the flag. Fix: validate args and return an error for unknown flags.
+
+- [x] [Review][Patch] Both `--fulltime` and `--freelance` flags together silently show all entries [`lib/repl/commands.ts`] — When both flags are passed, neither filtering branch executes; user sees unfiltered list without feedback. Fix: treat as AND or return an error for conflicting flags.
+
+- [x] [Review][Patch] REPL duration formatting duplicates logic inconsistently [`lib/repl/commands.ts`] — Constructs raw date strings instead of reusing `formatExperienceDuration`/`formatDateRange`. Fix: import and reuse the utility functions.
+
+- [x] [Review][Patch] `prefers-reduced-motion` not implemented — No `motion-safe:` or `@media (prefers-reduced-motion: reduce)` guards exist in any experience component. Violates AC 8. Fix: wrap animations in `motion-safe:` or use `useReducedMotion()` where applicable.
+
+- [x] [Review][Patch] No schema validation unit tests — Missing tests verifying that `ExperienceSchema` rejects empty `roles` arrays or invalid `endDate` strings. Violates AC 9. Fix: add schema tests reusing the pattern from `lib/content/projects.test.ts`.
+
+- [x] [Review][Patch] Commented code rot in DevTools [`components/devtools-chrome.tsx`] — The Performance tab is commented out rather than deleted or feature-flagged. Fix: remove the commented line or implement a feature flag.
+
+- [x] [Review][Patch] Hardcoded metrics guaranteed to stale [`lib/content/profile.ts`] — "Years shipped" and "Projects shipped" manually updated from 8→6 and 22→20. Fix: derive dynamically from `experience` and `projects` datasets.
+
+- [x] [Review][Patch] Command palette keywords could be broader [`components/command-palette.tsx`] — Experience keywords are `["work", "history", "career", "jobs"]`; misses "timeline", "linkedin", "resume". Fix: expand keyword list.
+
+- [x] [Review][Patch] Slug regex allows leading hyphen [`lib/content/experience.ts`] — `/^[a-z0-9-]+$/` accepts `"-buguard"`. Fix: change to `/^[a-z0-9][a-z0-9-]*$/`.
+
+- [x] [Review][Defer] Local timezone dependence in month-level calculations [`lib/utils/experienceDuration.ts`] — `new Date()` for `"present"` uses local timezone; a user near the international date line could get off-by-one month on month boundaries. Minor issue; spec does not require UTC. — deferred, pre-existing
+
+- [x] [Review][Defer] Semantically inconsistent `type`/`category` combinations allowed [`lib/content/experience.ts`] — Schema permits e.g. `type: "contract"` with `category: "fulltime"`. No business rule specified in spec to forbid this. — deferred, pre-existing

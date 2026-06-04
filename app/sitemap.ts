@@ -6,7 +6,6 @@ import { siteUrl } from "@/lib/site"
 const staticRoutes = [
   "/",
   "/work",
-  "/perf",
   "/sources",
   "/console",
   "/recruiter",

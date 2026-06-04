@@ -7,7 +7,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { profile, projects, skillGroups } from "@/lib/content"
+import { experience, profile, projects, skillGroups } from "@/lib/content"
+import {
+  formatCompanyDuration,
+  formatDateRange,
+  formatExperienceDuration,
+} from "@/lib/utils/experienceDuration"
 
 export function RecruiterResume() {
   const featuredProjects = projects.filter((p) => p.featured)
@@ -70,6 +75,71 @@ export function RecruiterResume() {
               </CardContent>
             </Card>
           ))}
+        </div>
+      </section>
+
+      {/* Experience */}
+      <section className="flex flex-col gap-6">
+        <h2 className="font-title text-2xl font-semibold tracking-tight text-foreground">
+          Experience
+        </h2>
+        <div className="flex flex-col gap-8">
+          {(
+            [
+              { key: "fulltime", label: "Full-time" },
+              { key: "freelance", label: "Freelance" },
+            ] as const
+          ).map(({ key, label }) => {
+            const items = experience.filter((e) => e.category === key)
+            if (items.length === 0) return null
+            return (
+              <div key={key} className="flex flex-col gap-4">
+                <h3 className="text-sm font-medium tracking-wider text-muted-foreground uppercase">
+                  {label}
+                </h3>
+                <div className="flex flex-col gap-6">
+                  {items.map((entry) => (
+                    <div key={entry.slug} className="flex flex-col gap-2">
+                      <div className="flex flex-col gap-1">
+                        <span className="font-medium text-foreground">
+                          {entry.company}
+                        </span>
+                        <span className="font-mono text-xs text-muted-foreground">
+                          {entry.type}
+                          {" · "}
+                          {formatCompanyDuration(entry.roles)}
+                          {entry.location && entry.locationType
+                            ? ` · ${entry.location} · ${entry.locationType}`
+                            : entry.location
+                              ? ` · ${entry.location}`
+                              : entry.locationType
+                                ? ` · ${entry.locationType}`
+                                : ""}
+                        </span>
+                      </div>
+                      <ul className="flex flex-col gap-1">
+                        {entry.roles.map((role) => (
+                          <li
+                            key={role.name}
+                            className="text-sm text-foreground"
+                          >
+                            {role.name}
+                            {" · "}
+                            {formatDateRange(role.startDate, role.endDate)}
+                            {" · "}
+                            {formatExperienceDuration(
+                              role.startDate,
+                              role.endDate
+                            )}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )
+          })}
         </div>
       </section>
 

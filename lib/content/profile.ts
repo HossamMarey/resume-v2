@@ -1,5 +1,29 @@
 import { z } from "zod"
 
+import { experience } from "./experience"
+import { projects } from "./projects"
+
+function computeYearsShipped(): number {
+  let earliest = ""
+  for (const entry of experience) {
+    for (const role of entry.roles) {
+      if (!earliest || role.startDate < earliest) {
+        earliest = role.startDate
+      }
+    }
+  }
+  if (!earliest) return 0
+
+  const [year, month] = earliest.split("-").map(Number)
+  const start = new Date(year, month - 1)
+  const now = new Date()
+  let years = now.getFullYear() - start.getFullYear()
+  if (now.getMonth() < start.getMonth()) {
+    years--
+  }
+  return Math.max(0, years)
+}
+
 const hrefSchema = z.string().refine(
   (v) => {
     try {
@@ -51,13 +75,15 @@ export const ProfileSchema = z.object({
 export type Profile = z.infer<typeof ProfileSchema>
 export type Social = Profile["socials"][number]
 
+const yearsShipped = computeYearsShipped()
+
 const rawProfile: Profile = {
   name: "Hossam Marey",
   role: "Senior Front-End Developer",
   location: "Egypt",
   email: "",
   tagline: `Senior Frontend Engineer in scalable, security-focused products. Led monorepo architecture; expert in React, Next.js, and TypeScript with full-stack delivery and team leadership.`,
-  years: 8,
+  years: yearsShipped,
   socials: [
     {
       label: "WhatsApp",
@@ -99,8 +125,8 @@ const rawProfile: Profile = {
     { label: "Last Update", value: "June. 2026" },
   ],
   metrics: [
-    { label: "Years shipped", value: "6", suffix: "+" },
-    { label: "Projects shipped", value: "20" },
+    { label: "Years shipped", value: String(yearsShipped), suffix: "+" },
+    { label: "Projects shipped", value: String(projects.length) },
     { label: "Talks & articles", value: "3" },
     { label: "Mentees", value: "5" },
   ],

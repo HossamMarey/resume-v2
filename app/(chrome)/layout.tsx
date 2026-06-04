@@ -24,6 +24,7 @@ const pageVariants = {
 
 const tabReasons: Record<string, string> = {
   "/": "visit:elements",
+  "/experience": "visit:experience",
   "/work": "visit:network",
   "/console": "visit:console",
   "/perf": "visit:performance",

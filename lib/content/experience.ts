@@ -4,18 +4,43 @@ export const ExperienceType = z.enum(["fulltime", "parttime", "contract"])
 export const ExperienceCategory = z.enum(["fulltime", "freelance"])
 export const LocationType = z.enum(["remote", "hybrid", "onsite"])
 
-export const RoleSchema = z.object({
-  name: z.string().min(1),
-  description: z.string().optional(),
-  startDate: z.string().regex(/^\d{4}-\d{2}$/),
-  endDate: z.union([z.literal("present"), z.string().regex(/^\d{4}-\d{2}$/)]),
-})
+function isValidYearMonth(value: string): boolean {
+  const [year, month] = value.split("-").map(Number)
+  return month >= 1 && month <= 12 && year >= 1900
+}
+
+export const RoleSchema = z
+  .object({
+    name: z.string().trim().min(1),
+    description: z.string().optional(),
+    startDate: z
+      .string()
+      .regex(/^\d{4}-\d{2}$/)
+      .refine(isValidYearMonth, { message: "Invalid month" }),
+    endDate: z.union([
+      z.literal("present"),
+      z
+        .string()
+        .regex(/^\d{4}-\d{2}$/)
+        .refine(isValidYearMonth, { message: "Invalid month" }),
+    ]),
+  })
+  .refine(
+    (data) => {
+      if (data.endDate === "present") return true
+      return data.endDate >= data.startDate
+    },
+    {
+      message: "endDate must be on or after startDate",
+      path: ["endDate"],
+    }
+  )
 
 export type Role = z.infer<typeof RoleSchema>
 
 export const ExperienceSchema = z.object({
-  slug: z.string().regex(/^[a-z0-9-]+$/),
-  company: z.string().min(1),
+  slug: z.string().regex(/^[a-z0-9][a-z0-9-]*$/),
+  company: z.string().trim().min(1),
   companyLogo: z.string().optional(),
   type: ExperienceType,
   category: ExperienceCategory,
@@ -27,7 +52,7 @@ export const ExperienceSchema = z.object({
 
 export type Experience = z.infer<typeof ExperienceSchema>
 
-const ExperienceCollectionSchema = z
+export const ExperienceCollectionSchema = z
   .array(ExperienceSchema)
   .superRefine((items, ctx) => {
     const seen = new Map<string, number>()

@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react"
 
 import { RecruiterResume } from "@/components/recruiter-resume"
-import { profile, projects, skillGroups } from "@/lib/content"
+import { experience, profile, projects, skillGroups } from "@/lib/content"
 
 const featuredProjects = projects.filter((p) => p.featured)
 
@@ -83,5 +83,34 @@ describe("RecruiterResume", () => {
       .filter((el) => el.getAttribute("href")?.startsWith("mailto:"))
     expect(mailtoLinks).toHaveLength(1)
     expect(mailtoLinks[0]).toHaveAttribute("href", emailSocial!.href)
+  })
+
+  it("renders Experience section with at least one company and role", () => {
+    render(<RecruiterResume />)
+    expect(
+      screen.getByRole("heading", { name: "Experience" })
+    ).toBeInTheDocument()
+    expect(
+      screen.getAllByText(experience[0].company).length
+    ).toBeGreaterThanOrEqual(1)
+    expect(
+      screen.getByText(new RegExp(experience[0].roles[0].name))
+    ).toBeInTheDocument()
+  })
+
+  it("renders Full-time and Freelance subsection headings when data exists", () => {
+    render(<RecruiterResume />)
+    const hasFulltime = experience.some((e) => e.category === "fulltime")
+    const hasFreelance = experience.some((e) => e.category === "freelance")
+    if (hasFulltime) {
+      expect(
+        screen.getByRole("heading", { name: "Full-time" })
+      ).toBeInTheDocument()
+    }
+    if (hasFreelance) {
+      expect(
+        screen.getByRole("heading", { name: "Freelance" })
+      ).toBeInTheDocument()
+    }
   })
 })

@@ -20,11 +20,10 @@ describe("sitemap.ts", () => {
     }
   })
 
-  it("includes all 7 static routes", () => {
+  it("includes all 6 static routes", () => {
     const staticRoutes = [
       "/",
       "/work",
-      "/perf",
       "/sources",
       "/console",
       "/recruiter",
@@ -47,7 +46,7 @@ describe("sitemap.ts", () => {
   })
 
   it("has correct total count", () => {
-    expect(result.length).toBe(7 + featured.length)
+    expect(result.length).toBe(6 + featured.length)
   })
 
   it("does not set lastModified to new Date()", () => {

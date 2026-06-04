@@ -58,7 +58,7 @@ describe("runCommand", () => {
       const text = result.lines.map((l) => l.text).join("\n")
       expect(text).toContain("Hossam Marey")
       expect(text).toContain("Senior Front-End Developer")
-      expect(text).toContain("8+")
+      expect(text).toMatch(/\d+\+/)
       expect(text).toContain("Egypt")
       expect(text).toContain(profile.tagline)
     })
@@ -67,6 +67,58 @@ describe("runCommand", () => {
       const result = runCommand("whoami")
       const text = result.lines.map((l) => l.text).join("\n")
       expect(text).not.toContain("email:")
+    })
+  })
+
+  describe("experience", () => {
+    it("returns a list of work history entries", () => {
+      const result = runCommand("experience")
+      expect(result.status).toBe("ok")
+      expect(result.lines.length).toBeGreaterThan(0)
+      expect(result.lines[0].text).toContain("(")
+    })
+
+    it("filters to fulltime with --fulltime", () => {
+      const result = runCommand("experience --fulltime")
+      expect(result.status).toBe("ok")
+      expect(result.lines.length).toBeGreaterThan(0)
+      for (const line of result.lines) {
+        expect(line.text).not.toContain("freelance")
+      }
+    })
+
+    it("filters to freelance with --freelance", () => {
+      const result = runCommand("experience --freelance")
+      expect(result.status).toBe("ok")
+      expect(result.lines.length).toBeGreaterThan(0)
+      for (const line of result.lines) {
+        expect(line.text).not.toContain("fulltime")
+      }
+    })
+
+    it("returns error for conflicting flags", () => {
+      const result = runCommand("experience --fulltime --freelance")
+      expect(result.status).toBe("ok")
+      const text = result.lines.map((l) => l.text).join("\n")
+      expect(text).toContain("cannot use both")
+    })
+
+    it("returns error for unknown flag", () => {
+      const result = runCommand("experience --unknown")
+      expect(result.status).toBe("ok")
+      const text = result.lines.map((l) => l.text).join("\n")
+      expect(text).toContain("unknown flag")
+      expect(text).toContain("usage:")
+    })
+
+    it("formats durations using the duration utility", () => {
+      const result = runCommand("experience")
+      expect(result.status).toBe("ok")
+      // At least one line should contain a duration like "yr" or "mo"
+      const hasDuration = result.lines.some(
+        (l) => l.text.includes("yr") || l.text.includes("mo")
+      )
+      expect(hasDuration).toBe(true)
     })
   })
 
