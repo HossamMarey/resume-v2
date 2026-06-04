@@ -13,7 +13,14 @@ import { XPToast } from "@/components/xp-toast"
 import { useRouter } from "next/navigation"
 import { useXP } from "@/hooks/use-xp"
 import { useRecruiterMode } from "@/hooks/use-recruiter-mode"
-import { Code, Globe, Terminal, Activity, FileText } from "lucide-react"
+import {
+  Code,
+  Globe,
+  Terminal,
+  Activity,
+  FileText,
+  Briefcase,
+} from "lucide-react"
 import type { LucideIcon } from "lucide-react"
 
 interface Tab {
@@ -24,9 +31,10 @@ interface Tab {
 
 const tabs: Tab[] = [
   { href: "/", label: "Elements", icon: Code },
+  { href: "/experience", label: "Experience", icon: Briefcase },
   { href: "/work", label: "Network", icon: Globe },
   { href: "/console", label: "Console", icon: Terminal },
-  { href: "/perf", label: "Performance", icon: Activity },
+  // { href: "/perf", label: "Performance", icon: Activity },
   { href: "/sources", label: "Sources", icon: FileText },
 ]
 

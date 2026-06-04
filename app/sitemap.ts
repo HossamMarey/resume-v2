@@ -10,6 +10,7 @@ const staticRoutes = [
   "/sources",
   "/console",
   "/recruiter",
+  "/experience",
 ]
 
 export default function sitemap(): MetadataRoute.Sitemap {

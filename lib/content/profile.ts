@@ -99,8 +99,8 @@ const rawProfile: Profile = {
     { label: "Last Update", value: "June. 2026" },
   ],
   metrics: [
-    { label: "Years shipped", value: "8", suffix: "+" },
-    { label: "Projects shipped", value: "22" },
+    { label: "Years shipped", value: "6", suffix: "+" },
+    { label: "Projects shipped", value: "20" },
     { label: "Talks & articles", value: "3" },
     { label: "Mentees", value: "5" },
   ],

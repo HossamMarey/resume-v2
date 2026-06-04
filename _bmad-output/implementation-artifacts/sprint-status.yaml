@@ -35,7 +35,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 
 generated: 2026-05-30
-last_updated: 2026-06-03 # story 4-6 set to done (code review complete)
+last_updated: 2026-06-04 # epic-8 created; story 8-1 set to ready-for-dev (create-story)
 # all stories set done on 2026-06-02
 project: web
 # epic-1 set in-progress on 2026-05-30 (first story created via create-story)
@@ -104,3 +104,8 @@ development_status:
   7-4-mock-content-ci-gate-and-pre-commit-hooks: done
   7-5-csp-lighthouse-pass-and-vercel-deploy: done
   epic-7-retrospective: optional
+
+  # Epic 8: Experience Timeline (post-launch)
+  epic-8: in-progress
+  8-1-linkedin-style-experience-page: review
+  epic-8-retrospective: optional

@@ -8,12 +8,13 @@ export {
 } from "./projects"
 
 export {
-  ExperienceKind,
-  ExperienceMode,
-  HighlightSchema,
+  ExperienceType,
+  ExperienceCategory,
+  LocationType,
+  RoleSchema,
   ExperienceSchema,
   experience,
-  type Highlight,
+  type Role,
   type Experience,
 } from "./experience"
 

@@ -11,11 +11,13 @@ import type {
 const defaultAvailable: AvailableFilters = {
   type: ["web", "app", "lib"],
   stack: ["react", "vue"],
+  org: ["Acme Inc"],
 }
 
 const noFilters: ActiveFilters = {
   type: [],
   stack: [],
+  org: [],
 }
 
 describe("NetworkFilterBar", () => {
@@ -36,6 +38,7 @@ describe("NetworkFilterBar", () => {
     const active: ActiveFilters = {
       type: ["web", "app"],
       stack: [],
+      org: [],
     }
     render(
       <NetworkFilterBar
@@ -86,6 +89,7 @@ describe("NetworkFilterBar", () => {
     const active: ActiveFilters = {
       type: ["web"],
       stack: [],
+      org: [],
     }
     render(
       <NetworkFilterBar
@@ -120,6 +124,7 @@ describe("NetworkFilterBar", () => {
     const active: ActiveFilters = {
       type: ["web"],
       stack: [],
+      org: [],
     }
     render(
       <NetworkFilterBar

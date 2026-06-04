@@ -26,17 +26,20 @@ function deriveAvailableFilters(
 ): AvailableFilters {
   const types = new Set<string>()
   const stacks = new Set<string>()
+  const orgs = new Set<string>()
 
   for (const p of projects) {
     if (p.type) types.add(p.type)
     for (const s of p.stack) {
       stacks.add(s)
     }
+    if (p.org) orgs.add(p.org)
   }
 
   return {
     type: Array.from(types).sort(),
     stack: Array.from(stacks).sort(),
+    org: Array.from(orgs).sort(),
   }
 }
 
@@ -44,6 +47,7 @@ function parseActiveFilters(searchParams: URLSearchParams): ActiveFilters {
   return {
     type: searchParams.getAll("type").filter(Boolean),
     stack: searchParams.getAll("stack").filter(Boolean),
+    org: searchParams.getAll("org").filter(Boolean),
   }
 }
 
@@ -56,7 +60,8 @@ function applyFilters(
     const stackMatch =
       filters.stack.length === 0 ||
       filters.stack.some((s) => p.stack.includes(s))
-    return typeMatch && stackMatch
+    const orgMatch = filters.org.length === 0 || filters.org.includes(p.org)
+    return typeMatch && stackMatch && orgMatch
   })
 }
 

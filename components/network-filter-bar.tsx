@@ -10,16 +10,18 @@ import {
 } from "@/components/ui/popover"
 import { cn } from "@/lib/utils"
 
-type FilterCategory = "type" | "stack"
+type FilterCategory = "type" | "stack" | "org"
 
 export interface AvailableFilters {
   type: string[]
   stack: string[]
+  org: string[]
 }
 
 export interface ActiveFilters {
   type: string[]
   stack: string[]
+  org: string[]
 }
 
 interface NetworkFilterBarProps {
@@ -32,9 +34,10 @@ interface NetworkFilterBarProps {
 const CATEGORY_LABELS: Record<FilterCategory, string> = {
   type: "Type",
   stack: "Stack",
+  org: "Company",
 }
 
-const CATEGORIES: FilterCategory[] = ["type", "stack"]
+const CATEGORIES: FilterCategory[] = ["type", "stack", "org"]
 
 export function NetworkFilterBar({
   availableFilters,

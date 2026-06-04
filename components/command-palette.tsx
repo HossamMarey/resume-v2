@@ -144,25 +144,28 @@ export function CommandPalette() {
             Sources
           </CommandItem>
           <CommandItem
+            value="Experience"
+            keywords={["work", "history", "career", "jobs"]}
+            onSelect={() => handleNavigate("/experience")}
+          >
+            Experience
+          </CommandItem>
+
+          <CommandItem
+            value="Contact"
+            keywords={["contact", "message", "email", "phone", "address"]}
+            onSelect={() => handleNavigate("/sources?tab=contact")}
+          >
+            Contact
+          </CommandItem>
+
+          <CommandItem
             value="Recruiter"
             keywords={["resume", "cv", "hire"]}
             onSelect={() => handleNavigate("/recruiter")}
           >
             Recruiter
           </CommandItem>
-        </CommandGroup>
-
-        <CommandGroup heading="Projects">
-          {projects.map((p) => (
-            <CommandItem
-              key={p.slug}
-              value={p.name}
-              keywords={[p.slug, ...p.stack]}
-              onSelect={() => handleNavigate("/work/" + p.slug)}
-            >
-              {p.name}
-            </CommandItem>
-          ))}
         </CommandGroup>
 
         <CommandGroup heading="Actions">
@@ -215,6 +218,19 @@ export function CommandPalette() {
               onSelect={() => handleOpenSocial(s.href)}
             >
               {s.label}
+            </CommandItem>
+          ))}
+        </CommandGroup>
+
+        <CommandGroup heading="Projects">
+          {projects.map((p) => (
+            <CommandItem
+              key={p.slug}
+              value={p.name}
+              keywords={[p.slug, ...p.stack]}
+              onSelect={() => handleNavigate("/work/" + p.slug)}
+            >
+              {p.name}
             </CommandItem>
           ))}
         </CommandGroup>

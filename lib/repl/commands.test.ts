@@ -12,15 +12,16 @@ import {
 
 describe("runCommand", () => {
   describe("help", () => {
-    it("lists all 7 commands with the slash prefix", () => {
+    it("lists all 8 commands with the slash prefix", () => {
       const result = runCommand("help")
       expect(result.status).toBe("ok")
-      expect(result.lines).toHaveLength(7)
+      expect(result.lines).toHaveLength(8)
       const names = result.lines.map((l) => l.text.split(" — ")[0].trim())
       expect(names).toEqual([
         "/help",
         "/whoami",
         "/projects",
+        "/experience",
         "/contact",
         "/theme",
         "/clear",
@@ -245,6 +246,7 @@ describe("listCommands", () => {
       "help",
       "whoami",
       "projects",
+      "experience",
       "contact",
       "theme",
       "clear",

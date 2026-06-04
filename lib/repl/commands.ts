@@ -1,6 +1,7 @@
 import {
   EXPERIMENTAL_ENABLED,
   experimental,
+  experience,
   profile,
   projects,
 } from "@/lib/content"
@@ -205,6 +206,40 @@ const registry: CommandEntry[] = [
           `${i + 1}. ${p.name} — ${p.type}${p.stack.length ? ` · ${p.stack.slice(0, 3).join(", ")}` : ""}`
         )
       )
+      return ok(lines)
+    },
+  },
+  {
+    name: "experience",
+    summary: "list work history (flags: --fulltime, --freelance)",
+    run(args) {
+      const fulltimeFlag = args.includes("--fulltime")
+      const freelanceFlag = args.includes("--freelance")
+
+      let filtered = [...experience]
+
+      if (fulltimeFlag && !freelanceFlag) {
+        filtered = filtered.filter((e) => e.category === "fulltime")
+      } else if (freelanceFlag && !fulltimeFlag) {
+        filtered = filtered.filter((e) => e.category === "freelance")
+      }
+
+      if (filtered.length === 0) {
+        return ok([line("output", "no work history entries found")])
+      }
+
+      const lines: ReplLine[] = []
+      for (const entry of filtered) {
+        lines.push(line("output", `${entry.company} (${entry.category})`))
+        for (const role of entry.roles) {
+          const duration =
+            role.endDate === "present"
+              ? `${role.startDate} – present`
+              : `${role.startDate} – ${role.endDate}`
+          lines.push(line("output", `  · ${role.name} — ${duration}`))
+        }
+      }
+
       return ok(lines)
     },
   },
