@@ -5,7 +5,7 @@ import { InspectMeCta } from "@/components/inspect-me-cta"
 import { JsonLd } from "@/components/json-ld"
 import { SocialLinks } from "@/components/social-links"
 import { StackMarquee } from "@/components/stack-marquee"
-import { primarySkills } from "@/lib/content/skills"
+import { allSkills } from "@/lib/content/skills"
 import { profile } from "@/lib/content/profile"
 import { siteUrl } from "@/lib/site"
 
@@ -78,7 +78,7 @@ export default function ElementsPage() {
         </div>
       </section>
 
-      <StackMarquee skills={primarySkills} />
+      <StackMarquee skills={allSkills} />
 
       <GeneralInfo />
     </>

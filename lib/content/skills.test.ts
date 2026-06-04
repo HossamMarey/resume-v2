@@ -1,4 +1,9 @@
-import { SkillSchema, primarySkills } from "@/lib/content/skills"
+import {
+  SkillSchema,
+  allSkills,
+  primarySkills,
+  skillGroups,
+} from "@/lib/content/skills"
 
 describe("primarySkills selector", () => {
   it("is non-empty", () => {
@@ -8,6 +13,29 @@ describe("primarySkills selector", () => {
   it("contains only primary-tier skills", () => {
     for (const skill of primarySkills) {
       expect(skill.tier).toBe("primary")
+    }
+  })
+})
+
+describe("allSkills selector", () => {
+  it("is non-empty", () => {
+    expect(allSkills.length).toBeGreaterThan(0)
+  })
+
+  it("includes every skill from every group with no drops", () => {
+    const total = skillGroups.reduce((sum, g) => sum + g.skills.length, 0)
+    expect(allSkills).toHaveLength(total)
+  })
+
+  it("has unique skill names (names are used as React keys)", () => {
+    const names = allSkills.map((s) => s.name)
+    expect(new Set(names).size).toBe(names.length)
+  })
+
+  it("is a superset of primarySkills", () => {
+    expect(allSkills.length).toBeGreaterThanOrEqual(primarySkills.length)
+    for (const skill of primarySkills) {
+      expect(allSkills).toContain(skill)
     }
   })
 })

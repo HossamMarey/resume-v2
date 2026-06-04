@@ -474,6 +474,18 @@ Surfaced by quick-dev review loops. Each entry: source spec, finding, suggested 
 
 ---
 
+## From spec-skills-recruiter-chips-and-full-marquee (2026-06-04, loop 1 review)
+
+### 52. Marquee scroll speed now noticeably faster with the full skill set
+
+**Where:** `app/globals.css` `@keyframes marquee` (35s fixed) + `app/(chrome)/page.tsx` — the home marquee was switched from `primarySkills` (~18 items) to `allSkills` (~40 items). Since the keyframe animates a fixed `translateX(-50%)` over a fixed duration, the track is now ~2x wider so it scrolls ~2x faster. This is the live re-trigger of existing item #32 ("Scroll speed scales with content width").
+
+**Why deferred:** Adjusting the marquee animation/duration was fenced **Ask First / out of scope** by this spec (do not change `StackMarquee` internals/animation without approval). Functional behavior is correct; this is perceived-speed tuning.
+
+**Suggested fix:** Per #32 — scale `animation-duration` to item/track width (e.g. a CSS var set from `skills.length`, or a JS-driven duration), or simply bump the fixed duration to ~50–60s now that the list is longer.
+
+---
+
 ## From spec-network-table-image-trail (2026-06-03, loop 1 review)
 
 ### 1. Remote image host not in `remotePatterns` throws instead of `onError` fallback

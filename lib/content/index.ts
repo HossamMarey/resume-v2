@@ -26,6 +26,7 @@ export {
   SkillGroupSchema,
   skillGroups,
   primarySkills,
+  allSkills,
   type Skill,
   type SkillGroup,
 } from "./skills"

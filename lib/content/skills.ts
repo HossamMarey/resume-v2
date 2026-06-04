@@ -60,10 +60,12 @@ const legacy: LegacyGroup[] = [
       { title: "jQuery", img: "/images/skills/jQuery.png", level: 1 },
       { title: "Bootstrap", img: "/images/skills/bootstrap.png", level: 1 },
       { title: "TailwindCss", img: "/images/skills/tailwindcss.png", level: 1 },
+      { title: "ShadcnUI", img: "/images/skills/shadcn.png", level: 1 },
       { title: "Ant Design", img: "/images/skills/ant.png", level: 1 },
       { title: "Material Ui", img: "/images/skills/material.png", level: 1 },
       { title: "React.js", img: "/images/skills/react.png", level: 1 },
       { title: "Redux", img: "/images/skills/redux.png", level: 1 },
+      { title: "Zustand", img: "/images/skills/zustand.png", level: 1 },
       { title: "Next.js", img: "/images/skills/next.png", level: 1 },
       { title: "SWR", img: "/images/skills/swr.png", level: 1 },
       { title: "Vue.js", img: "/images/skills/vue.png", level: 1 },
@@ -75,7 +77,7 @@ const legacy: LegacyGroup[] = [
     ],
   },
   {
-    group: "Basics",
+    group: "Have a knowledge in",
     data: [
       { title: "Node (express.js)", img: "/images/skills/node.png", level: 2 },
       { title: "MongoDb", img: "/images/skills/mongodb.png", level: 2 },
@@ -84,16 +86,52 @@ const legacy: LegacyGroup[] = [
         img: "/images/skills/react-native.png",
         level: 2,
       },
+      {
+        title: "PostgreSQL",
+        img: "/images/skills/postgres.png",
+        level: 2,
+      },
+      {
+        title: "Python",
+        img: "/images/skills/python.png",
+        level: 2,
+      },
+      {
+        title: "Nest.js",
+        img: "/images/skills/nest.png",
+        level: 2,
+      },
+      {
+        title: "Svelte.js",
+        img: "/images/skills/svelte.png",
+        level: 2,
+      },
     ],
   },
   {
     group: "Tools",
     data: [
+      { title: "Jira", img: "/images/skills/jira.png", level: 2 },
+      { title: "ClickUp", img: "/images/skills/clickup.png", level: 2 },
       { title: "GIT", img: "/images/skills/git.png", level: 2 },
       { title: "Postman", img: "/images/skills/postman.png", level: 2 },
       { title: "Adobe XD", img: "/images/skills/adobexd.png", level: 2 },
       { title: "VS Code", img: "/images/skills/vscode.png", level: 2 },
+      { title: "Figma", img: "/images/skills/figma.png", level: 2 },
       { title: "Illustrator", img: "/images/skills/Illustrator.png", level: 2 },
+    ],
+  },
+
+  {
+    group: "AI Tools",
+    data: [
+      { title: "Curser", img: "/images/skills/curser.png", level: 2 },
+      { title: "Antigravity", img: "/images/skills/antigravity.png", level: 2 },
+      { title: "Claude Code", img: "/images/skills/claude.png", level: 2 },
+      { title: "OpenCode", img: "/images/skills/opencode.png", level: 2 },
+      { title: "SpecKit", img: "/images/skills/speckit.png", level: 2 },
+      { title: "OpenSpec", img: "/images/skills/opencode.png", level: 2 },
+      { title: "BMAD-Method", img: "/images/skills/bmad.png", level: 2 },
     ],
   },
 ]
@@ -114,4 +152,8 @@ export const skillGroups: readonly SkillGroup[] = Object.freeze(
 
 export const primarySkills: readonly Skill[] = Object.freeze(
   skillGroups.flatMap((g) => g.skills).filter((s) => s.tier === "primary")
+)
+
+export const allSkills: readonly Skill[] = Object.freeze(
+  skillGroups.flatMap((g) => g.skills)
 )

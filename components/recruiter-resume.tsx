@@ -148,16 +148,16 @@ export function RecruiterResume() {
         <h2 className="font-title text-2xl font-semibold tracking-tight text-foreground">
           Skills
         </h2>
-        <div className="grid grid-cols-1 gap-8 sm:grid-cols-3">
+        <div className="flex flex-col gap-8">
           {skillGroups.map((group) => (
             <div key={group.name} className="flex flex-col gap-3">
               <h3 className="text-sm font-medium tracking-wider text-muted-foreground uppercase">
                 {group.name}
               </h3>
-              <ul className="flex flex-col gap-1">
+              <ul className="flex flex-wrap gap-2">
                 {group.skills.map((skill) => (
-                  <li key={skill.name} className="text-sm text-foreground">
-                    {skill.name}
+                  <li key={skill.name}>
+                    <Badge variant="outline">{skill.name}</Badge>
                   </li>
                 ))}
               </ul>
